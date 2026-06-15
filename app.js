@@ -2022,7 +2022,7 @@ function makeChoices(correct, pool) {
 
 const fullQuestionBank = [...manualQuestions, ...generatedQuestions()];
 
-const flashCardBank = [
+const manualFlashCards = [
   fc("IPO", "Input, Processing, Output. A planning table for word problems.", "design"),
   fc("Pseudocode", "A plain-language plan for program logic.", "pseudocode"),
   fc("Variable", "A named storage location for a value.", "variables"),
@@ -2049,8 +2049,52 @@ const flashCardBank = [
   fc("Exception", "A runtime problem that Python can handle with try and except.", "files")
 ];
 
+const flashCardBank = dedupeCards([...manualFlashCards, ...generatedFlashCards()]);
+
 function fc(term, definition, topic) {
   return { id: `${topic}-${term.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`, term, definition, topic };
+}
+
+function generatedFlashCards() {
+  return topics.flatMap((topic) => topic.lessons.flatMap((lesson, lessonIndex) => {
+    const cards = [
+      fc(lesson.title, conciseDefinition(lesson.remember || (lesson.body || [])[0] || topic.title), topic.id)
+    ];
+    (lesson.sections || []).forEach((section, sectionIndex) => {
+      const items = (section.items || []).slice(0, 2);
+      items.forEach((item, itemIndex) => {
+        cards.push({
+          id: `${topic.id}-${lessonIndex}-${sectionIndex}-${itemIndex}-${section.title.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`,
+          term: `${section.title}: ${shortTerm(item)}`,
+          definition: conciseDefinition(item),
+          topic: topic.id
+        });
+      });
+    });
+    return cards;
+  }));
+}
+
+function conciseDefinition(text) {
+  const cleaned = String(text || "").replace(/\s+/g, " ").trim();
+  if (cleaned.length <= 170) return cleaned;
+  const sentence = cleaned.match(/^(.{60,170}?[.!?])\s/)?.[1];
+  return sentence || `${cleaned.slice(0, 167).trim()}...`;
+}
+
+function shortTerm(text) {
+  const cleaned = String(text || "").replace(/\s+/g, " ").trim();
+  const beforeColon = cleaned.split(":")[0];
+  return (beforeColon.length <= 34 ? beforeColon : cleaned.slice(0, 34)).replace(/[.!?]$/, "");
+}
+
+function dedupeCards(cards) {
+  const seen = new Set();
+  return cards.filter((card) => {
+    if (seen.has(card.id)) return false;
+    seen.add(card.id);
+    return true;
+  });
 }
 
 const state = {
@@ -2112,6 +2156,26 @@ function progress() {
   return { totalLessons, doneLessons, bestQuiz, attempts };
 }
 
+function weakAreas() {
+  const stats = load(STORAGE.stats, {});
+  const scored = topics.map((topic) => {
+    const item = stats[topic.id];
+    if (!item || item.total < 3) return null;
+    const score = Math.round((item.correct / item.total) * 100);
+    return { topic, score, total: item.total };
+  }).filter(Boolean);
+  return scored.sort((a, b) => a.score - b.score || b.total - a.total).slice(0, 3);
+}
+
+function focusNextTarget() {
+  const weak = weakAreas()[0];
+  if (weak) return { topicId: weak.topic.id, score: weak.score };
+  const firstOpen = topics.flatMap((topic) => topic.lessons.map((_, lessonIndex) => ({ topic, lessonIndex })))
+    .find((item) => !state.complete[`${item.topic.id}:${item.lessonIndex}`]);
+  if (firstOpen) return { topicId: firstOpen.topic.id, lessonIndex: firstOpen.lessonIndex };
+  return { topicId: topics[0].id, lessonIndex: 0 };
+}
+
 function render() {
   const app = document.getElementById("app");
   if (state.screen === "topic") app.innerHTML = renderTopic();
@@ -2160,16 +2224,7 @@ function renderHome() {
           <span>best quiz</span>
         </div>
       </section>
-      <section class="study-dashboard">
-        <div class="readiness-card">
-          <div>
-            <span>Study Path</span>
-            <strong>${p.doneLessons ? "Keep Building" : "Start With The Map"}</strong>
-            <small>Open a subject tile, read the lessons, then run the fresh 10-question quiz at the end.</small>
-          </div>
-          <button class="mini-action" data-action="startDailyDrill">10 Q</button>
-        </div>
-      </section>
+      ${renderStudyDashboard(p)}
       ${renderHomeBookmarks()}
       <section class="topic-grid">
         <button class="topic-card feature-card" data-action="startDailyDrill" aria-label="Quick Drill">
@@ -2193,6 +2248,37 @@ function renderHome() {
       </section>
       <p class="authorship-notice">Copyright 2026 Bianca Russek. All rights reserved.</p>
     </main>
+  `;
+}
+
+function renderStudyDashboard(p) {
+  const weak = weakAreas();
+  const focus = focusNextTarget();
+  const focusTopic = topicById(focus.topicId);
+  const focusLesson = typeof focus.lessonIndex === "number" ? focusTopic.lessons[focus.lessonIndex] : null;
+  const focusNote = weak.length
+    ? "These are the subjects with the lowest recent quiz accuracy."
+    : "Take a quiz or keep reading lessons to build a clearer weak-area map.";
+  return `
+    <section class="study-dashboard" aria-label="Study dashboard">
+      <div class="readiness-card">
+        <div>
+          <span>Focus Next</span>
+          <strong>${escapeHtml(focusTopic.title)}</strong>
+          <small>${escapeHtml(focusLesson ? focusLesson.title : focusNote)}</small>
+        </div>
+        <button class="mini-action" data-focus-topic="${focusTopic.id}" data-focus-lesson="${typeof focus.lessonIndex === "number" ? focus.lessonIndex : ""}">Open</button>
+      </div>
+      <div class="weak-panel">
+        <div class="section-heading"><h2>Weak Areas</h2><span>${weak.length}</span></div>
+        ${weak.length ? weak.map((item) => `
+          <button class="weak-row" data-topic="${item.topic.id}">
+            <span>${escapeHtml(item.topic.title)}</span>
+            <strong>${item.score}%</strong>
+          </button>
+        `).join("") : `<p class="empty-note">Take a quick drill or subject quiz to reveal what needs the most review.</p>`}
+      </div>
+    </section>
   `;
 }
 
@@ -2252,6 +2338,7 @@ function renderLesson() {
   return `
     <main class="screen reader">
       ${topbar(topic.title, bookmarked ? "starGold" : "star")}
+      <button class="return-home-link return-home-top" data-action="goHome">Return Home</button>
       <article class="reader-card" data-swipe="lesson">
         <h2>${escapeHtml(lesson.title)}</h2>
         ${(lesson.body || []).map((para) => `<p>${escapeHtml(para)}</p>`).join("")}
@@ -2261,10 +2348,10 @@ function renderLesson() {
       </article>
       ${dots(topic.lessons.length, state.lessonIndex)}
       <nav class="bottom-nav">
-        <button class="icon-button" data-action="prevLesson" aria-label="Previous">${svg("back")}</button>
+        <button class="pill-button secondary return-home-bottom" data-action="goHome">Return Home</button>
         <button class="pill-button secondary" data-action="markDone">Done</button>
         <button class="pill-button" data-action="lessonQuiz">Quiz</button>
-        <button class="icon-button" data-action="nextLesson" aria-label="Next">${svg("next")}</button>
+        <button class="pill-button secondary" data-action="nextLesson">Next Lesson</button>
       </nav>
     </main>
   `;
@@ -2326,6 +2413,7 @@ function renderResults(questions) {
   const correct = questions.filter((item) => state.answers[item.id]?.correct).length;
   const score = Math.round((correct / questions.length) * 100);
   const missed = questions.filter((item) => state.answers[item.id] && !state.answers[item.id].correct);
+  const nextLesson = resultNextLessonTarget();
   if (!state.resultSaved) {
     recordQuizResult(questions, correct);
     state.resultSaved = true;
@@ -2338,11 +2426,48 @@ function renderResults(questions) {
         <div class="score">${score}%</div>
         <p>${score >= 80 ? "Strong work. Run another fresh set to keep it sharp." : "Keep going. Review missed questions and try a fresh set."}</p>
         ${missed.length ? `<button class="pill-button" data-action="reviewMissed">Review Missed (${missed.length})</button>` : ""}
+        ${nextLesson ? `<button class="pill-button" data-action="quizNextLesson">Next Lesson</button>` : ""}
         <button class="pill-button" data-action="restartQuiz">Fresh 10 Questions</button>
         <button class="pill-button secondary" data-action="goHome">Home</button>
       </section>
     </main>
   `;
+}
+
+function resultNextLessonTarget() {
+  const sourceTopic = state.quizTopic === "daily" ? focusNextTarget().topicId : state.quizTopic;
+  if (!sourceTopic) return null;
+  if (typeof state.quizSourceLessonIndex === "number") {
+    return nextLessonTarget(sourceTopic, state.quizSourceLessonIndex);
+  }
+  return firstOpenLessonTarget(sourceTopic);
+}
+
+function nextLessonTarget(topicId, lessonIndex) {
+  const topicIndex = topics.findIndex((topic) => topic.id === topicId);
+  if (topicIndex < 0) return null;
+  const topic = topics[topicIndex];
+  const nextIndex = lessonIndex + 1;
+  if (nextIndex < topic.lessons.length) return { topicId, lessonIndex: nextIndex };
+  for (let index = topicIndex + 1; index < topics.length; index += 1) {
+    if (topics[index].lessons.length) return { topicId: topics[index].id, lessonIndex: 0 };
+  }
+  return null;
+}
+
+function firstOpenLessonTarget(topicId) {
+  const topic = topicById(topicId);
+  const openIndex = topic.lessons.findIndex((_, index) => !state.complete[`${topicId}:${index}`]);
+  if (openIndex >= 0) return { topicId, lessonIndex: openIndex };
+  return nextLessonTarget(topicId, topic.lessons.length - 1) || { topicId, lessonIndex: 0 };
+}
+
+function openLessonTarget(target) {
+  if (!target) return;
+  state.screen = "lesson";
+  state.topicId = target.topicId;
+  state.lessonIndex = target.lessonIndex;
+  render();
 }
 
 function renderFlashCards() {
@@ -2714,6 +2839,20 @@ function wire() {
   document.querySelectorAll("[data-flash-topic]").forEach((button) => {
     button.addEventListener("click", () => startFlashCards(button.dataset.flashTopic));
   });
+  document.querySelectorAll("[data-focus-topic]").forEach((button) => {
+    button.addEventListener("click", () => {
+      state.topicId = button.dataset.focusTopic;
+      const lessonIndex = Number(button.dataset.focusLesson);
+      if (Number.isInteger(lessonIndex) && lessonIndex >= 0) {
+        state.screen = "lesson";
+        state.lessonIndex = lessonIndex;
+      } else {
+        state.screen = "topic";
+        state.lessonIndex = 0;
+      }
+      render();
+    });
+  });
   document.querySelectorAll("[data-search-topic]").forEach((button) => {
     button.addEventListener("click", () => {
       state.screen = "lesson";
@@ -2776,6 +2915,7 @@ function act(action) {
     const missed = state.activeQuestions.filter((item) => state.answers[item.id] && !state.answers[item.id].correct);
     return startQuiz(state.quizTopic || "daily", { questions: missed.length ? missed : pickQuizSource(state.quizTopic || "daily") });
   }
+  if (action === "quizNextLesson") return openLessonTarget(resultNextLessonTarget());
   if (action === "restartQuiz") return startQuiz(state.quizTopic || "daily", { lessonIndex: state.quizSourceLessonIndex });
   if (action === "goHome") {
     state.screen = "home";
