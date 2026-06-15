@@ -10,21 +10,22 @@
   --panel: rgba(29, 18, 49, 0.78);
   --panel-top: rgba(96, 70, 130, 0.70);
   --panel-bottom: rgba(9, 6, 22, 0.94);
-  --line: rgba(243, 193, 255, 0.28);
-  --text: #fff0ff;
-  --muted: #d7bfdc;
-  --gold: #f1d8ff;
-  --accent: #f6c2ff;
-  --accent-2: #caa5ff;
-  --tile-accent: #f6c2ff;
+  --line: rgba(238, 247, 255, 0.28);
+  --text: #f8fbff;
+  --muted: #d8e1ef;
+  --gold: #f8fbff;
+  --accent: #f8fbff;
+  --accent-2: #dce9ff;
+  --tile-accent: #f8fbff;
   --green: #86ffd8;
   --orange: #8ed9ff;
   --red: #ff3f4f;
   --blue: #5fb0ff;
-  --chrome: #f0d6ff;
+  --chrome: #eef7ff;
   --dark-ink: #07111f;
   --shadow: 0 20px 60px rgba(0, 0, 0, 0.58);
-  --glow: 0 0 22px rgba(246, 194, 255, 0.58), 0 0 42px rgba(176, 111, 255, 0.34), 0 0 58px rgba(255, 96, 174, 0.18);
+  --glow: 0 0 22px rgba(248, 251, 255, 0.58), 0 0 42px rgba(214, 232, 255, 0.30), 0 0 58px rgba(176, 111, 255, 0.16);
+  --font-glow: 0 0 10px rgba(248, 251, 255, 0.32), 0 0 22px rgba(214, 232, 255, 0.20);
 }
 
 * {
@@ -80,18 +81,13 @@ button {
   z-index: 0;
   pointer-events: none;
   background:
-    radial-gradient(circle at 12% 18%, rgba(255, 222, 255, 0.80) 0 1px, transparent 2px),
-    radial-gradient(circle at 38% 33%, rgba(255, 197, 255, 0.70) 0 1px, transparent 2px),
-    radial-gradient(circle at 70% 18%, rgba(235, 208, 255, 0.82) 0 1px, transparent 2px),
-    radial-gradient(circle at 86% 44%, rgba(255, 191, 237, 0.68) 0 1px, transparent 2px),
-    radial-gradient(circle at 24% 78%, rgba(255, 216, 170, 0.54) 0 1px, transparent 2px),
     radial-gradient(ellipse at 28% 48%, rgba(255, 103, 182, 0.24), transparent 38%),
     radial-gradient(ellipse at 44% 30%, rgba(255, 61, 104, 0.18), transparent 40%),
     radial-gradient(ellipse at 72% 34%, rgba(137, 74, 255, 0.24), transparent 42%),
     radial-gradient(ellipse at 56% 58%, rgba(196, 150, 255, 0.14), transparent 44%);
-  background-size: 132px 132px, 178px 178px, 214px 214px, 156px 156px, 188px 188px, auto, auto, auto, auto;
+  background-size: auto;
   mix-blend-mode: screen;
-  opacity: 0.86;
+  opacity: 0.74;
 }
 
 .screen {
@@ -102,6 +98,7 @@ button {
   margin: 0 auto;
   display: flex;
   flex-direction: column;
+  text-shadow: var(--font-glow);
 }
 
 .topbar {
@@ -134,7 +131,7 @@ button {
   font-weight: 850;
   line-height: 1.08;
   overflow-wrap: anywhere;
-  text-shadow: 0 0 18px rgba(190, 131, 255, 0.34), 0 0 28px rgba(246, 194, 255, 0.36);
+  text-shadow: 0 0 16px rgba(248, 251, 255, 0.54), 0 0 30px rgba(214, 232, 255, 0.30);
 }
 
 .subtitle {
@@ -299,8 +296,8 @@ button {
 .mini-action {
   min-height: 52px;
   border-radius: 18px;
-  background: linear-gradient(180deg, #ffe8ff, #d8a3ff 52%, #875ee8);
-  color: var(--dark-ink);
+  background: linear-gradient(180deg, rgba(172, 126, 255, 0.98), rgba(126, 76, 224, 0.98) 52%, rgba(66, 35, 146, 0.98));
+  color: var(--text);
   font-weight: 950;
   box-shadow: 0 10px 28px rgba(176, 111, 255, 0.24), 0 0 24px rgba(246, 194, 255, 0.22);
 }
@@ -350,7 +347,7 @@ button {
 .authorship-notice {
   margin: 6px 0 0;
   padding-bottom: 6px;
-  color: rgba(214, 198, 238, 0.72);
+  color: rgba(248, 251, 255, 0.68);
   text-align: center;
   font-size: 0.82rem;
   font-weight: 750;
@@ -420,9 +417,9 @@ button {
 }
 
 .feature-card .topic-icon {
-  color: #f6c2ff;
-  border-color: #f6c2ff;
-  box-shadow: 0 0 28px rgba(246, 194, 255, 0.70), 0 0 42px rgba(176, 111, 255, 0.30), 0 10px 30px rgba(0, 0, 0, 0.5);
+  color: #f8fbff;
+  border-color: #f8fbff;
+  box-shadow: 0 0 28px rgba(248, 251, 255, 0.66), 0 0 42px rgba(214, 232, 255, 0.28), 0 10px 30px rgba(0, 0, 0, 0.5);
 }
 
 .section-heading {
@@ -525,7 +522,7 @@ button {
 
 .chevron,
 .subject-count {
-  color: rgba(255, 240, 255, 0.58);
+  color: rgba(248, 251, 255, 0.62);
   font-size: 2.4rem;
   font-weight: 900;
 }
@@ -560,7 +557,7 @@ button {
 
 .reader-card p,
 .reader-card li {
-  color: rgba(255, 240, 255, 0.92);
+  color: rgba(248, 251, 255, 0.92);
   font-size: clamp(1.04rem, 4.5vw, 1.32rem);
   line-height: 1.36;
 }
@@ -587,7 +584,7 @@ button {
   padding: 18px 22px;
   border-left: 7px solid var(--accent);
   background: rgba(246, 194, 255, 0.08);
-  color: #ffeaff;
+  color: #f8fbff;
   font-size: clamp(1rem, 4.1vw, 1.22rem);
   line-height: 1.35;
 }
@@ -599,7 +596,7 @@ button {
   border-radius: 18px;
   border: 1px solid rgba(243, 193, 255, 0.26);
   background: rgba(0, 0, 0, 0.42);
-  color: #ffeaff;
+  color: #f8fbff;
   font-size: 0.92rem;
   line-height: 1.45;
 }
@@ -645,8 +642,8 @@ button {
 .pill-button {
   min-height: 58px;
   border-radius: 999px;
-  background: linear-gradient(180deg, #ffe8ff, #d8a3ff 52%, #875ee8);
-  color: var(--dark-ink);
+  background: linear-gradient(180deg, rgba(172, 126, 255, 0.98), rgba(126, 76, 224, 0.98) 52%, rgba(66, 35, 146, 0.98));
+  color: var(--text);
   font-size: 0.98rem;
   line-height: 1.05;
   font-weight: 950;
@@ -728,7 +725,7 @@ button {
 }
 
 .answer-text {
-  color: rgba(255, 240, 255, 0.94);
+  color: rgba(248, 251, 255, 0.94);
   font-size: clamp(0.98rem, 4.2vw, 1.2rem);
   line-height: 1.22;
 }
@@ -745,7 +742,7 @@ button {
 }
 
 .answer.wrong .answer-letter {
-  color: #fff0ff;
+  color: #f8fbff;
   background: var(--red);
   border-color: var(--red);
 }
@@ -756,7 +753,7 @@ button {
   border-radius: 18px;
   border: 1px solid rgba(243, 193, 255, 0.22);
   background: rgba(246, 194, 255, 0.08);
-  color: #ffeaff;
+  color: #f8fbff;
   font-size: 0.95rem;
   line-height: 1.35;
 }
@@ -795,8 +792,8 @@ button {
 }
 
 .quiz-primary {
-  background: linear-gradient(180deg, #ffe8ff, #d8a3ff 52%, #875ee8);
-  color: var(--dark-ink);
+  background: linear-gradient(180deg, rgba(172, 126, 255, 0.98), rgba(126, 76, 224, 0.98) 52%, rgba(66, 35, 146, 0.98));
+  color: var(--text);
 }
 
 .quiz-primary.correct {
@@ -805,7 +802,7 @@ button {
 
 .quiz-primary.wrong {
   background: linear-gradient(180deg, #ff4a5e, #ba1c36);
-  color: #fff0ff;
+  color: #f8fbff;
 }
 
 .score-card {
@@ -866,8 +863,9 @@ button {
 }
 
 .flash-tool.saved {
-  color: var(--dark-ink);
-  background: var(--accent);
+  color: var(--text);
+  background: linear-gradient(180deg, rgba(172, 126, 255, 0.92), rgba(126, 76, 224, 0.92));
+  box-shadow: 0 0 18px rgba(248, 251, 255, 0.20);
 }
 
 .flash-card {
@@ -1176,7 +1174,7 @@ button {
     padding: 8px;
     border-radius: 28px;
     border: 1px solid rgba(205, 225, 246, 0.22);
-    background: rgba(7, 17, 31, 0.84);
+    background: rgba(12, 6, 27, 0.86);
     box-shadow: 0 16px 40px rgba(0, 0, 0, 0.46);
     backdrop-filter: blur(16px);
     -webkit-backdrop-filter: blur(16px);
