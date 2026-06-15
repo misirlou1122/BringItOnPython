@@ -1166,6 +1166,787 @@ const topics = [
   }
 ];
 
+function addDeepLessons() {
+  const append = (topicId, lessons) => {
+    const topic = topics.find((item) => item.id === topicId);
+    if (topic) topic.lessons.push(...lessons);
+  };
+
+  append("map", [
+    L("Trace Before You Trust", [
+      "Tracing means walking through the plan one step at a time and writing down what each variable contains after each step.",
+      "A trace catches mistakes that still look reasonable at first glance. For example, a total can be calculated before all inputs are entered, or a counter can increase in the wrong place.",
+      "Use tracing on pseudocode before building in RAPTOR. If the table does not match your expected answer, the flowchart will not fix it by itself."
+    ], "A trace table proves the plan before the program runs.", [
+      S("Trace Columns To Use", [
+        "Step or line number.",
+        "Input value used at that step.",
+        "Each important variable after the step runs.",
+        "The condition result when an If or loop is reached.",
+        "Any output that would be shown."
+      ]),
+      S("Good First Test Values", [
+        "Use small whole numbers for formulas.",
+        "Use one value that makes each branch true.",
+        "Use one value that makes each branch false.",
+        "Use a boundary value such as 0, 1, 50, or 100 when a range is involved."
+      ])
+    ]),
+    L("From Rough Idea To Exact Logic", [
+      "A rough idea says what you want. Exact logic says how the computer can do it. The difference matters because computers cannot guess missing steps.",
+      "Rough: calculate the bill. Exact: Set subtotal = price * quantity, Set tax = subtotal * taxRate, Set total = subtotal + tax.",
+      "Before translating to Python, rewrite every vague verb into a specific action: input, assignment, output, decision, or loop."
+    ], "Replace vague verbs with exact program actions.", [
+      S("Rewrite Examples", [
+        "Get the number -> Write prompt, then Input number.",
+        "Figure out discount -> If quantity meets rule, Set discountRate.",
+        "Show answer -> Write a labeled result.",
+        "Keep asking -> While input is invalid, ask again."
+      ])
+    ])
+  ]);
+
+  append("basics", [
+    L("Inside The CPU Cycle", [
+      "The CPU repeatedly fetches an instruction, decodes what it means, and executes it. This is why program order matters.",
+      "If a program tries to use a variable before an input or assignment gives it a value, the instruction order is wrong.",
+      "Pseudocode should read in the same order the computer must act: prepare variables, collect inputs, calculate, decide, repeat when needed, then output."
+    ], "Instruction order is part of the logic.", [
+      S("Order Problems To Watch", [
+        "Output before calculation.",
+        "Calculation before input.",
+        "Loop counter updated after the wrong statement.",
+        "Decision written before the value being tested exists."
+      ])
+    ]),
+    L("Bits, Bytes, And Data Meaning", [
+      "Computers store data as patterns of bits, but the program decides what those patterns mean.",
+      "The same stored value can be treated as a number, character, Boolean, or text depending on the type and operation.",
+      "This is why choosing a type matters. You cannot add a name like a number, and you cannot compare text input numerically until it has been converted."
+    ], "Data type tells the program how to treat a value.", [
+      S("Type Questions", [
+        "Will math be performed on this value?",
+        "Can the value contain decimals?",
+        "Is it only true or false?",
+        "Should leading zeros or letters be preserved as text?"
+      ])
+    ]),
+    L("Source Code, Runtime, And Bugs", [
+      "Source code is the text you write. Runtime is when the program is actually executing.",
+      "A syntax error prevents the program from running because the language rules were broken. A runtime error happens while running. A logic error runs but gives the wrong answer.",
+      "Beginner debugging gets easier when you name the bug type instead of treating every issue the same."
+    ], "Syntax errors stop the language; logic errors stop the answer.", [
+      S("Bug Types", [
+        "Syntax: missing quote, colon, parenthesis, or wrong indentation.",
+        "Runtime: invalid conversion, missing file, or division by zero.",
+        "Logic: wrong formula, wrong branch, or wrong loop update."
+      ])
+    ])
+  ]);
+
+  append("design", [
+    L("Documentation And Program Style", [
+      "Documentation explains a program to people. Internal documentation appears in the program as comments. External documentation can be planning notes, IPO charts, test cases, or user instructions.",
+      "Good documentation does not restate obvious syntax. It explains purpose, assumptions, formulas, and unusual choices.",
+      "A short comment beside a formula can be valuable when the formula came from the problem statement or a conversion rule."
+    ], "Document the why, not every tiny syntax detail.", [
+      S("Useful Documentation", [
+        "Purpose of the program.",
+        "Required inputs and expected outputs.",
+        "Important formulas and constants.",
+        "Known limits or validation rules.",
+        "Test cases used to verify the result."
+      ])
+    ]),
+    L("Hierarchy Charts", [
+      "A hierarchy chart breaks a larger program into modules before the detailed pseudocode is written.",
+      "The top box is the whole program. Lower boxes are tasks such as get input, calculate total, display report, or validate data.",
+      "This chart is helpful before functions because it shows which pieces of work should be separated."
+    ], "A hierarchy chart shows program parts, not detailed statements.", [
+      S("Good Module Names", [
+        "getInput",
+        "calculateSubtotal",
+        "determineDiscount",
+        "displayResults",
+        "validateQuantity"
+      ]),
+      S("What To Avoid", [
+        "Names that are too vague, such as doStuff.",
+        "Modules that mix input, calculation, and output without a reason.",
+        "A chart so detailed that it becomes pseudocode."
+      ])
+    ]),
+    L("Flowcharts Before RAPTOR", [
+      "A flowchart is the visual version of an algorithm. RAPTOR is one tool for creating and running a flowchart.",
+      "Before placing symbols, identify the shape each pseudocode action needs: input/output, assignment, selection, loop, or call.",
+      "If the pseudocode is clear, the flowchart becomes a translation job instead of a guessing job."
+    ], "Match each pseudocode action to a flowchart symbol.", [
+      S("Shape Matching", [
+        "Input and Write use input/output symbols.",
+        "Set statements use assignment symbols.",
+        "If and Else use selection diamonds.",
+        "While and repeat patterns use loop structures.",
+        "Module calls use call symbols."
+      ])
+    ])
+  ]);
+
+  append("pseudocode", [
+    L("Refining Pseudocode", [
+      "First-draft pseudocode can be a little rough, but final pseudocode should be specific enough to translate without invention.",
+      "A line like calculate total is not finished. A line like Set total = subtotal + tax is finished because it gives the exact operation.",
+      "Refinement means adding variable names, formulas, branch conditions, loop conditions, and output labels."
+    ], "Finished pseudocode can be translated line by line.", [
+      S("Refinement Checklist", [
+        "Every input has a variable name.",
+        "Every formula has an assignment target.",
+        "Every If has a clear Boolean condition.",
+        "Every loop has a clear stopping condition.",
+        "Every output has a label or clear value."
+      ])
+    ]),
+    L("Pseudocode Blocks And Indentation", [
+      "Indentation shows which statements belong inside a decision, loop, or function.",
+      "In pseudocode, indentation is not about Python syntax yet. It is about showing ownership: what happens only if the condition is true, what repeats, and what happens after the block ends.",
+      "End If, End While, and End Function make the closing point obvious, especially before translating to RAPTOR."
+    ], "Indentation shows what belongs inside a block.", [
+      S("Block Example", [
+        "If age >= 18 Then",
+        "  Write \"Adult\"",
+        "Else",
+        "  Write \"Minor\"",
+        "End If"
+      ])
+    ]),
+    L("Desk Checking Pseudocode", [
+      "Desk checking is testing the algorithm by hand before running it in software.",
+      "Choose test inputs, walk through the pseudocode, and record each variable after every important line. The goal is to find logic errors early.",
+      "Desk checking is especially useful for loops because you can see whether the loop starts correctly, updates correctly, and stops correctly."
+    ], "Desk checking is manual testing of the algorithm.", [
+      S("Desk Check Steps", [
+        "Pick input values with an expected answer.",
+        "List variables across the top of a table.",
+        "Run each pseudocode line by hand.",
+        "Mark which branch or loop path was taken.",
+        "Compare final output with the expected answer."
+      ])
+    ])
+  ]);
+
+  append("variables", [
+    L("Naming Variables Well", [
+      "A variable name should describe the value it stores. Clear names make pseudocode, RAPTOR, and Python easier to read.",
+      "Avoid names such as x, y, stuff, or number when the value has a real meaning. Use hoursWorked, payRate, subtotal, tax, or averageScore.",
+      "In Python, common style uses lowercase words joined by underscores, such as hours_worked. In pseudocode, many classes accept camelCase, such as hoursWorked."
+    ], "A good variable name explains the data.", [
+      S("Naming Rules", [
+        "Start with a letter or underscore.",
+        "Use letters, numbers, and underscores.",
+        "Do not use spaces.",
+        "Do not use reserved language words.",
+        "Keep names descriptive but not painfully long."
+      ])
+    ]),
+    L("Constants Versus Variables", [
+      "A variable can change while the program runs. A constant represents a value that should stay the same.",
+      "Tax rates, conversion factors, maximum attempts, and menu option numbers are common constants.",
+      "In Python, constants are often written in uppercase by convention. The language does not lock them automatically, but the style tells readers not to change them."
+    ], "Use constants for fixed values with meaning.", [
+      S("Examples", [
+        "TAX_RATE = 0.0825",
+        "LITERS_PER_GALLON = 3.78541",
+        "MAX_SCORE = 100",
+        "FREE_SHIPPING_MINIMUM = 50"
+      ])
+    ], [
+      "TAX_RATE = 0.0825",
+      "subtotal = price * quantity",
+      "tax = subtotal * TAX_RATE"
+    ].join("\n")),
+    L("Conversion And Type Safety", [
+      "Python input starts as text. Numeric calculations require conversion with int or float.",
+      "Use int for whole-number counts and float for measurements, money calculations, averages, rates, and values that may contain decimals.",
+      "A conversion should happen close to the input so the rest of the program can use the value as the intended type."
+    ], "Convert text input before numeric math.", [
+      S("Conversion Choices", [
+        "int(input(...)) for whole numbers.",
+        "float(input(...)) for decimal values.",
+        "str(value) when combining a number into a text message.",
+        "Keep codes such as zip codes as strings if math is not needed."
+      ])
+    ], [
+      "quantity = int(input(\"Quantity: \"))",
+      "price = float(input(\"Price: \"))",
+      "subtotal = quantity * price"
+    ].join("\n"))
+  ]);
+
+  append("operators", [
+    L("Precedence Deep Dive", [
+      "Operator precedence decides which parts of an expression happen first.",
+      "Parentheses happen before multiplication, division, floor division, and modulus. Addition and subtraction come after those. Comparisons happen after arithmetic.",
+      "When a formula comes from a word problem, use parentheses to make your intention clear even when precedence would already work."
+    ], "Parentheses make formulas safer to read.", [
+      S("Precedence Reminders", [
+        "Parentheses first.",
+        "Multiplication, division, floor division, and modulus before addition and subtraction.",
+        "Comparisons create true or false results.",
+        "Boolean operators combine true or false results."
+      ])
+    ], [
+      "average = (score1 + score2 + score3) / 3",
+      "total = subtotal + (subtotal * tax_rate)"
+    ].join("\n")),
+    L("Modulo Patterns", [
+      "The modulus operator gives the remainder after division. It is useful for divisibility checks, odd or even checks, and cycling through repeated positions.",
+      "A number is even when number % 2 equals 0. A value is divisible by 5 when value % 5 equals 0.",
+      "In beginner word problems, modulus often appears when breaking an amount into coins or checking whether a number divides evenly."
+    ], "Modulo answers the remainder question.", [
+      S("Common Uses", [
+        "Check even or odd.",
+        "Find leftover units after grouping.",
+        "Convert cents into coins.",
+        "Cycle through repeating positions."
+      ])
+    ], [
+      "if number % 2 == 0:",
+      "    print(\"Even\")",
+      "else:",
+      "    print(\"Odd\")"
+    ].join("\n")),
+    L("Compound Updates", [
+      "A compound update changes a variable using its current value. Totals, counters, and accumulators all use this idea.",
+      "Set count = count + 1 means the new count is one more than the old count. Set total = total + amount means the new total includes another amount.",
+      "In Python, += is a shorter form, but the longer version is often clearer while learning loops."
+    ], "Counters and totals reuse their old value.", [
+      S("Update Patterns", [
+        "count = count + 1",
+        "total = total + price",
+        "balance = balance - withdrawal",
+        "largest = value when value is greater than largest"
+      ])
+    ], [
+      "total = 0",
+      "total = total + price",
+      "count = count + 1"
+    ].join("\n"))
+  ]);
+
+  append("python", [
+    L("Python Statements And Indentation", [
+      "Python uses indentation to show which statements belong inside decisions, loops, and functions.",
+      "A colon starts many blocks, such as if, else, elif, while, for, def, try, and except. The indented lines after the colon are the block body.",
+      "When translating from pseudocode, each indented pseudocode block usually becomes an indented Python block."
+    ], "In Python, indentation is structure.", [
+      S("Block Starters", [
+        "if condition:",
+        "elif condition:",
+        "else:",
+        "while condition:",
+        "for item in sequence:",
+        "def function_name():"
+      ])
+    ], [
+      "if score >= 70:",
+      "    print(\"Pass\")",
+      "else:",
+      "    print(\"Try again\")"
+    ].join("\n")),
+    L("Formatted Output", [
+      "Output should be labeled so the user knows what each number means.",
+      "Python f-strings let you place variable values inside a message. Formatting can also control decimal places when the lesson allows it.",
+      "For money and averages, two decimal places are usually easier to read than a long floating-point value."
+    ], "A clear output label is part of a good program.", [
+      S("Output Habits", [
+        "Label every displayed value.",
+        "Use consistent wording.",
+        "Round or format only when the requirement allows it.",
+        "Do not hide input values when the assignment asks for them."
+      ])
+    ], [
+      "total = 12.5",
+      "print(f\"Total: ${total:.2f}\")"
+    ].join("\n")),
+    L("Using Import Statements", [
+      "An import statement lets a Python program use code from a module.",
+      "The math module contains common math functions and constants. The random module can generate random choices or numbers.",
+      "Only import modules that the assignment allows. For early practice, the goal is often to learn the basic logic without extra shortcuts."
+    ], "Import modules when the program needs outside tools.", [
+      S("Common Beginner Modules", [
+        "math for square roots, powers, and constants.",
+        "random for random numbers and choices.",
+        "datetime for dates and times.",
+        "os or pathlib for file paths in larger programs."
+      ])
+    ], [
+      "import math",
+      "radius = float(input(\"Radius: \"))",
+      "area = math.pi * radius ** 2"
+    ].join("\n"))
+  ]);
+
+  append("decisions", [
+    L("Nested Decisions", [
+      "A nested decision is an If statement inside another If statement.",
+      "Nesting is useful when the second question should only be asked after the first question is true. For example, check whether a user is a member before checking which member level applies.",
+      "Too much nesting can become hard to read. If the tests are separate choices from the same list, an if-elif-else chain may be clearer."
+    ], "Nest only when one decision belongs inside another.", [
+      S("Nested Example Logic", [
+        "If customer is a member, then check member level.",
+        "If operator is division, then check denominator.",
+        "If score is valid, then determine letter grade.",
+        "If login name is correct, then check password."
+      ])
+    ]),
+    L("if-elif-else Chains", [
+      "An if-elif-else chain chooses one path from several related choices.",
+      "Python checks from top to bottom and runs the first true branch. After one branch runs, the rest of that chain is skipped.",
+      "Order matters when ranges overlap. Test the most specific or highest-priority ranges first."
+    ], "An if-elif-else chain chooses one matching path.", [
+      S("Range Order", [
+        "For grades, check A before B before C when using minimum scores.",
+        "For price tiers, check the largest threshold first if using greater-than rules.",
+        "Use else for the default case when all previous tests are false."
+      ])
+    ], [
+      "if score >= 90:",
+      "    grade = \"A\"",
+      "elif score >= 80:",
+      "    grade = \"B\"",
+      "else:",
+      "    grade = \"Needs review\""
+    ].join("\n")),
+    L("Truth Tables", [
+      "A truth table lists every true or false combination for a Boolean expression.",
+      "AND is true only when both sides are true. OR is true when at least one side is true. NOT reverses a Boolean value.",
+      "Truth tables are useful when a validation rule feels confusing, especially with outside-range checks."
+    ], "AND requires both; OR accepts either.", [
+      S("Validation Rules", [
+        "Valid from 0 through 500: value >= 0 AND value <= 500.",
+        "Invalid outside 0 through 500: value < 0 OR value > 500.",
+        "Menu option valid for A or B: option == \"A\" OR option == \"B\".",
+        "Not finished yet: NOT done."
+      ])
+    ])
+  ]);
+
+  append("loops", [
+    L("Pre-Test Loop Thinking", [
+      "A while loop is a pre-test loop because it checks the condition before running the body.",
+      "If the condition starts false, the body may not run at all. This is correct for many programs, such as reading records until there are no more records.",
+      "When the body must run at least once, initialize the loop condition carefully or use a priming read pattern."
+    ], "A while loop can run zero times.", [
+      S("Pre-Test Questions", [
+        "What value makes the loop begin?",
+        "What value makes the loop stop?",
+        "Where is the tested value updated?",
+        "Can the condition become false?"
+      ])
+    ]),
+    L("Sentinel Loops", [
+      "A sentinel value is a special input that tells the loop to stop. The sentinel is not normal data and should not be processed as if it were.",
+      "For example, a user might enter -1 to stop entering scores. The program should not add -1 into the score total.",
+      "Sentinel loops often use a priming read: get the first value before the loop, process while it is not the sentinel, then read the next value at the end of the loop."
+    ], "Do not process the sentinel as real data.", [
+      S("Sentinel Pattern", [
+        "Input first value.",
+        "While value is not sentinel.",
+        "Process value.",
+        "Input next value.",
+        "End While."
+      ])
+    ], [
+      "score = int(input(\"Score or -1 to stop: \"))",
+      "while score != -1:",
+      "    total = total + score",
+      "    score = int(input(\"Score or -1 to stop: \"))"
+    ].join("\n")),
+    L("Nested Loops", [
+      "A nested loop is a loop inside another loop. The inner loop completes all its repetitions for each single repetition of the outer loop.",
+      "Nested loops are common for tables, rows and columns, repeated groups of input, and two-dimensional data.",
+      "Trace nested loops with small values first, such as 2 rows and 3 columns, because the number of repetitions grows quickly."
+    ], "Inner loop runs completely for each outer loop cycle.", [
+      S("Nested Loop Uses", [
+        "Print a table of rows and columns.",
+        "Process scores for several students.",
+        "Compare items in sorting algorithms.",
+        "Visit every cell in a grid."
+      ])
+    ]),
+    L("Input Validation Loops", [
+      "A validation loop repeats while input is invalid. This lets the user correct a value before the program calculates with it.",
+      "The condition should describe the bad input, not the good input, when the wording is while invalid.",
+      "After displaying the error message, the loop must input the value again. Otherwise the same bad value will repeat forever."
+    ], "A validation loop repeats while the value is bad.", [
+      S("Validation Pattern", [
+        "Input value.",
+        "While value is invalid.",
+        "Write a clear error message.",
+        "Input value again.",
+        "End While."
+      ])
+    ], [
+      "quantity = int(input(\"Quantity: \"))",
+      "while quantity < 0:",
+      "    print(\"Quantity cannot be negative.\")",
+      "    quantity = int(input(\"Quantity: \"))"
+    ].join("\n"))
+  ]);
+
+  append("functions", [
+    L("Void And Value-Returning Functions", [
+      "A void function performs a task but does not send a value back. A value-returning function uses return to send one value back to the caller.",
+      "Display functions are often void. Calculation functions are often value-returning because the caller needs the result.",
+      "In pseudocode, make the difference clear by using Call for a void function and Set variable = functionName(...) when a value is returned."
+    ], "Use return when the caller needs a result.", [
+      S("Design Choices", [
+        "getInput can return a value.",
+        "calculateTax can return tax.",
+        "displayResults can be void.",
+        "validateQuantity can return true or false."
+      ])
+    ], [
+      "def calculate_tax(subtotal, tax_rate):",
+      "    return subtotal * tax_rate"
+    ].join("\n")),
+    L("Arguments And Parameters", [
+      "A parameter is the variable name listed in the function definition. An argument is the actual value sent into the function call.",
+      "Parameters let a function work with different values without relying on global variables.",
+      "When translating from pseudocode, list the data the function needs inside the parentheses."
+    ], "Arguments are sent; parameters receive.", [
+      S("Example Match", [
+        "Definition: calculateTotal(price, quantity).",
+        "Parameters: price and quantity.",
+        "Call: calculateTotal(12.99, 4).",
+        "Arguments: 12.99 and 4."
+      ])
+    ]),
+    L("Local Scope", [
+      "A local variable is created inside a function and normally belongs only to that function.",
+      "Local scope helps keep functions independent. A function should receive what it needs through parameters and return what the caller needs.",
+      "Relying on global variables can make beginner programs harder to test because any part of the program may change the value."
+    ], "Keep function data local when possible.", [
+      S("Scope Habits", [
+        "Pass values into functions as parameters.",
+        "Return calculated results.",
+        "Avoid changing global variables from inside many functions.",
+        "Use clear names even for local variables."
+      ])
+    ]),
+    L("Recursion Preview", [
+      "Recursion happens when a function calls itself. It is usually taught after loops and functions because it requires careful stopping logic.",
+      "A recursive function needs a base case that stops the calls. Without a base case, recursion continues until the program fails.",
+      "For beginner work, loops are usually the first tool for repetition. Recursion is a later way to solve certain repeated or nested problems."
+    ], "Recursion needs a base case.", [
+      S("Recursion Parts", [
+        "Base case: the condition that stops.",
+        "Recursive case: the function calls itself with a smaller problem.",
+        "Progress: each call moves closer to the base case."
+      ])
+    ])
+  ]);
+
+  append("raptor", [
+    L("RAPTOR Build Order", [
+      "Build a RAPTOR chart from the top down. Start with Start and End, then add the main actions between them in the same order as the pseudocode.",
+      "Place input before calculations that use the input. Place decisions before branch-only calculations. Place output after the value is ready.",
+      "Run the chart with simple test values after each major section instead of waiting until the whole chart is finished."
+    ], "Add symbols in the same order the logic runs.", [
+      S("Build Checklist", [
+        "Start with the pseudocode beside you.",
+        "Add input symbols for user values.",
+        "Add assignment symbols for Set statements.",
+        "Add selection symbols for If statements.",
+        "Add loop structures for repeated logic.",
+        "Add output symbols for final messages."
+      ])
+    ]),
+    L("RAPTOR Input And Output Details", [
+      "RAPTOR input symbols store user-entered values in variables. Output symbols display text, values, or both.",
+      "Use prompts so the user knows what to enter. Keep output labels clear so the result is not just an unlabeled number.",
+      "If output combines text and variables, check the tool's expression rules carefully and test with small values."
+    ], "Input stores values; output communicates results.", [
+      S("Common Output Needs", [
+        "A prompt before input.",
+        "A label before a result.",
+        "Input echo when required.",
+        "A final summary after calculations."
+      ])
+    ]),
+    L("RAPTOR Selection Details", [
+      "A selection symbol asks a true-or-false question and sends control down one of two paths.",
+      "The true path should contain statements for the condition being true. The false path should contain the else logic or continue when no else action is needed.",
+      "After the branches finish, the flow joins again so the rest of the program can continue."
+    ], "A RAPTOR selection is an If decision.", [
+      S("Selection Checks", [
+        "The condition uses a comparison.",
+        "The true branch matches the true wording.",
+        "The false branch matches otherwise logic.",
+        "Both branches rejoin before the next shared step."
+      ])
+    ]),
+    L("RAPTOR Loop Details", [
+      "A RAPTOR loop repeats a group of symbols based on a condition.",
+      "The loop body should contain the work being repeated and the update that moves the loop toward stopping.",
+      "If a loop uses a counter, initialize the counter before the loop, test it in the loop condition, and update it inside the loop."
+    ], "Initialize, test, update: all three matter.", [
+      S("Loop Symbol Planning", [
+        "What starts the loop?",
+        "What condition controls the loop?",
+        "Which symbols repeat?",
+        "Where does the update happen?",
+        "What happens after the loop stops?"
+      ])
+    ]),
+    L("Subcharts And Calls", [
+      "A larger RAPTOR program can be divided into subcharts. A call symbol runs a named subchart.",
+      "Subcharts match the same modular design idea as functions. They help keep the main chart readable when a program has repeated or separate tasks.",
+      "Use subcharts for clear tasks such as input, calculation, validation, or display when the assignment allows modular design."
+    ], "A call symbol can run a separate subchart.", [
+      S("Subchart Candidates", [
+        "getInput",
+        "validateInput",
+        "calculateResult",
+        "displaySummary",
+        "processOneRecord"
+      ])
+    ])
+  ]);
+
+  append("patterns", [
+    L("Tax, Discount, And Shipping Pattern", [
+      "Many business word problems follow the same path: input quantity and price, calculate subtotal, apply a discount or fee rule, calculate tax, then display a total.",
+      "The safest plan is to calculate each named value separately instead of putting the entire formula into one long expression.",
+      "Separate variables make testing easier because you can check subtotal, discount, tax, and grand total one at a time."
+    ], "Break business totals into named steps.", [
+      S("Common Steps", [
+        "Input quantity and unit price.",
+        "Set subtotal = quantity * unitPrice.",
+        "Determine discount or shipping rule.",
+        "Set taxableAmount or totalBeforeTax.",
+        "Set tax and grandTotal.",
+        "Write labeled results."
+      ])
+    ]),
+    L("Range Table Pattern", [
+      "Some word problems give a table of ranges. Each range has a different rate, message, grade, or fee.",
+      "Translate the table into an if-elif-else chain. Make sure every possible value has exactly one path.",
+      "Test one value inside each range and one value on each boundary."
+    ], "A range table usually becomes an if-elif-else chain.", [
+      S("Boundary Tests", [
+        "The smallest valid value.",
+        "The largest valid value.",
+        "A value exactly on each cutoff.",
+        "A value just below each cutoff.",
+        "A value just above each cutoff."
+      ])
+    ]),
+    L("Conversion Pattern", [
+      "A conversion problem changes a value from one unit to another. The core formula usually multiplies or divides by a conversion factor.",
+      "Identify the direction before writing the formula. Miles to kilometers is not the same formula direction as kilometers to miles.",
+      "Use a named constant for the conversion factor so the formula reads like the problem."
+    ], "Know the direction before choosing multiply or divide.", [
+      S("Conversion Planning", [
+        "Input the original amount.",
+        "Name the conversion factor.",
+        "Set convertedAmount using the correct direction.",
+        "Write both the original and converted values with labels."
+      ])
+    ], [
+      "MILES_TO_KM = 1.60934",
+      "miles = float(input(\"Miles: \"))",
+      "kilometers = miles * MILES_TO_KM"
+    ].join("\n")),
+    L("Edge Case Testing", [
+      "An edge case is a value at or near a limit. Edge cases often reveal mistakes in comparison operators.",
+      "If free shipping begins at 50 items, test 49, 50, and 51. If a valid score is 0 through 100, test -1, 0, 100, and 101.",
+      "For division, zero is an important edge case because it can break the program if used as the denominator."
+    ], "Test the exact boundary and both sides of it.", [
+      S("Edge Case Targets", [
+        "Minimum valid value.",
+        "Maximum valid value.",
+        "One below the minimum.",
+        "One above the maximum.",
+        "Zero when division or counts are involved."
+      ])
+    ])
+  ]);
+
+  append("calculator", [
+    L("Menu-Driven Calculator Flow", [
+      "A calculator problem often uses a menu so the user can choose an operation.",
+      "The program should display the menu, input the choice, input the needed numbers, select the matching operation, and display the result.",
+      "If division is chosen, check the denominator before calculating. If the menu choice is invalid, display a helpful message."
+    ], "Menu choice controls the calculation path.", [
+      S("Calculator IPO", [
+        "Input: operation choice, first number, second number.",
+        "Processing: choose operation, check division, calculate result.",
+        "Output: result or error message."
+      ])
+    ]),
+    L("Guarding Division", [
+      "Division by zero is a runtime error in Python and an invalid calculation in most beginner programs.",
+      "The denominator is the second number in num1 / num2. Check num2 before performing division.",
+      "The zero check belongs inside the division branch, because addition, subtraction, and multiplication do not need it."
+    ], "Check the denominator before division.", [
+      S("Decision Order", [
+        "If operator is division.",
+        "Then If second number is zero.",
+        "Write cannot divide by zero.",
+        "Else calculate division result.",
+        "End If."
+      ])
+    ], [
+      "if operator == \"/\":",
+      "    if num2 == 0:",
+      "        print(\"Cannot divide by zero.\")",
+      "    else:",
+      "        print(num1 / num2)"
+    ].join("\n")),
+    L("Calculator Testing Table", [
+      "A calculator should be tested once for every operation and once for invalid input.",
+      "Use values with easy mental answers so a wrong operator is obvious. For example, 8 and 2 produce 10, 6, 16, and 4 for the four basic operations.",
+      "Also test division by zero and an invalid menu option so the error paths are proven."
+    ], "One test should cover each operation path.", [
+      S("Minimum Tests", [
+        "Addition with a known sum.",
+        "Subtraction with a known difference.",
+        "Multiplication with a known product.",
+        "Division with a known quotient.",
+        "Division by zero.",
+        "Invalid menu choice."
+      ])
+    ])
+  ]);
+
+  append("collections", [
+    L("Parallel Lists", [
+      "Parallel lists are separate lists where matching indexes describe the same record.",
+      "For example, names[0], scores[0], and grades[0] could all describe the same student. The index is the connection.",
+      "Parallel lists require careful updates because adding, removing, or sorting one list without the others breaks the relationship."
+    ], "Parallel lists match data by index.", [
+      S("Parallel List Rules", [
+        "Lists should stay the same length.",
+        "The same index should refer to the same record.",
+        "Update all related lists together.",
+        "A dictionary or object may be cleaner later."
+      ])
+    ]),
+    L("Two-Dimensional Lists", [
+      "A two-dimensional list stores rows and columns. It is useful for tables, grids, and repeated groups of related values.",
+      "Access usually needs two indexes: one for the row and one for the column.",
+      "Nested loops are often used to process every value in a two-dimensional list."
+    ], "Two-dimensional data uses row and column positions.", [
+      S("Table Thinking", [
+        "Outer loop controls rows.",
+        "Inner loop controls columns.",
+        "The first index often chooses the row.",
+        "The second index often chooses the column."
+      ])
+    ], [
+      "scores = [[90, 84], [76, 88]]",
+      "print(scores[0][1])"
+    ].join("\n")),
+    L("Dictionaries And Sets", [
+      "A dictionary stores key-value pairs. It is useful when a meaningful key, such as a name or code, should lead to a value.",
+      "A set stores unique values and is useful when duplicates should be removed or membership should be checked quickly.",
+      "Lists are usually taught first because they are simpler sequences. Dictionaries and sets become useful when the problem needs lookup or uniqueness."
+    ], "Dictionaries look up by key; sets keep unique values.", [
+      S("Use Cases", [
+        "List: ordered scores or names.",
+        "Dictionary: product code to price.",
+        "Set: unique categories entered.",
+        "Tuple: fixed group of values."
+      ])
+    ]),
+    L("Searching And Sorting", [
+      "Searching finds a target value. Sorting rearranges values into order.",
+      "A serial search checks items one at a time until the target is found or the list ends. A binary search is faster but requires the list to already be sorted.",
+      "Simple sorting algorithms compare and swap values until the list is in order. Built-in Python sorting is used in real projects, but learning the algorithm builds logic skill."
+    ], "Search finds; sort orders.", [
+      S("Core Ideas", [
+        "Serial search works on unsorted data.",
+        "Binary search requires sorted data.",
+        "Selection sort repeatedly chooses the next smallest value.",
+        "Bubble sort swaps neighboring values that are out of order."
+      ])
+    ])
+  ]);
+
+  append("files", [
+    L("Sequential File Processing", [
+      "A sequential file is processed from beginning to end. The program reads one line or record, processes it, then moves to the next.",
+      "This pattern is common for reports, totals, averages, and record updates.",
+      "The same loop rules apply: initialize totals before reading, update totals inside the loop, and display final results after the loop ends."
+    ], "Sequential processing reads records in order.", [
+      S("Sequential Pattern", [
+        "Open the file.",
+        "Read the first record or loop through each line.",
+        "Process the current record.",
+        "Update counters or totals.",
+        "Close the file or let with close it.",
+        "Display final results."
+      ])
+    ]),
+    L("File Maintenance Concepts", [
+      "File maintenance means adding, changing, deleting, or reporting stored records.",
+      "A common beginner strategy is to read an original file and write a temporary file with the desired changes. After testing, the temporary file can replace the original.",
+      "This approach prevents partially changed records from being mixed into the original file while the program is still processing."
+    ], "Maintenance changes records carefully.", [
+      S("Maintenance Jobs", [
+        "Add a new record.",
+        "Update a matching record.",
+        "Delete a matching record.",
+        "Search for a record.",
+        "Print a report from stored records."
+      ])
+    ]),
+    L("try-except Patterns", [
+      "A try block contains code that might fail at runtime. An except block handles a specific problem so the program can respond gracefully.",
+      "Catch specific exceptions when possible, such as ValueError for failed number conversion or FileNotFoundError for a missing file.",
+      "Exception handling does not replace good validation. Use validation for rules you can check directly, and exceptions for problems that happen while Python tries an operation."
+    ], "Use try-except for runtime risks.", [
+      S("Common Exceptions", [
+        "ValueError for invalid numeric conversion.",
+        "FileNotFoundError for a missing file.",
+        "ZeroDivisionError for division by zero.",
+        "IndexError for a list position that does not exist."
+      ])
+    ], [
+      "try:",
+      "    number = int(input(\"Number: \"))",
+      "except ValueError:",
+      "    print(\"Please enter a whole number.\")"
+    ].join("\n")),
+    L("Object-Oriented Preview", [
+      "Object-oriented programming groups data and behavior into objects. A class is a blueprint, and an object is an instance created from that blueprint.",
+      "For example, a Student class might store a name and score, and it might have a method that determines the grade.",
+      "This topic usually comes after variables, decisions, loops, functions, files, and lists because it combines several earlier ideas."
+    ], "A class is a blueprint; an object is an instance.", [
+      S("OOP Vocabulary", [
+        "Class: blueprint.",
+        "Object: item created from a class.",
+        "Attribute: data stored in the object.",
+        "Method: function that belongs to the object."
+      ])
+    ]),
+    L("Event-Driven Preview", [
+      "Event-driven programs respond to actions such as button clicks, menu selections, key presses, or timer ticks.",
+      "Instead of running straight from top to bottom once, the program waits for events and runs the matching event handler.",
+      "Graphical apps use this style often, but the logic inside each handler still uses variables, decisions, loops, functions, and validation."
+    ], "An event handler runs when an event happens.", [
+      S("Event Examples", [
+        "Button click starts a calculation.",
+        "Menu choice opens a screen.",
+        "Text box input changes a value.",
+        "Timer event updates a display."
+      ])
+    ])
+  ]);
+}
+
+addDeepLessons();
+
 let questionCounter = 0;
 
 const manualQuestions = [
@@ -1410,6 +2191,7 @@ function renderHome() {
           </button>
         `).join("")}
       </section>
+      <p class="authorship-notice">Copyright 2026 Bianca Russek. All rights reserved.</p>
     </main>
   `;
 }

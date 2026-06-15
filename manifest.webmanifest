@@ -4,8 +4,8 @@
   "description": "A beginner-friendly study app for Python, pseudocode, word problems, and RAPTOR.",
   "start_url": "./",
   "display": "standalone",
-  "background_color": "#10170f",
-  "theme_color": "#a7ff3d",
+  "background_color": "#14102a",
+  "theme_color": "#ff72cf",
   "icons": [
     {
       "src": "assets/icon-192.png",
