@@ -1,1402 +1,1312 @@
 "use strict";
 
-const STORAGE_KEY = "bringItOnPythonProgressV1";
-const app = document.getElementById("app");
-
-const iconPaths = {
-  home: '<path d="M3 11 12 3l9 8"/><path d="M5 10v10h14V10"/><path d="M9 20v-6h6v6"/>',
-  book: '<path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M4 4.5A2.5 2.5 0 0 1 6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5z"/>',
-  code: '<path d="m8 9-4 3 4 3"/><path d="m16 9 4 3-4 3"/><path d="m14 4-4 16"/>',
-  flow: '<path d="M6 3h12v6H6z"/><path d="M12 9v3"/><path d="M6 15h12v6H6z"/><path d="M8 12h8"/>',
-  decision: '<path d="m12 3 9 9-9 9-9-9 9-9z"/><path d="M12 8v4"/><path d="M12 16h.01"/>',
-  loop: '<path d="M17 2v5h-5"/><path d="M20 12a8 8 0 1 1-2.34-5.66L17 7"/>',
-  braces: '<path d="M8 3H7a2 2 0 0 0-2 2v4a2 2 0 0 1-2 2 2 2 0 0 1 2 2v4a2 2 0 0 0 2 2h1"/><path d="M16 3h1a2 2 0 0 1 2 2v4a2 2 0 0 0 2 2 2 2 0 0 0-2 2v4a2 2 0 0 1-2 2h-1"/>',
-  list: '<path d="M8 6h13"/><path d="M8 12h13"/><path d="M8 18h13"/><path d="M3 6h.01"/><path d="M3 12h.01"/><path d="M3 18h.01"/>',
-  file: '<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M8 13h8"/><path d="M8 17h6"/>',
-  cards: '<rect x="4" y="7" width="13" height="14" rx="2"/><path d="M8 3h10a2 2 0 0 1 2 2v12"/><path d="M8 12h5"/><path d="M8 16h3"/>',
-  search: '<circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/>',
-  check: '<path d="m5 12 4 4L19 6"/>',
-  next: '<path d="m9 18 6-6-6-6"/>',
-  back: '<path d="M15 18 9 12l6-6"/>',
-  copy: '<rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>',
-  reset: '<path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 3v6h6"/>',
-  trophy: '<path d="M8 21h8"/><path d="M12 17v4"/><path d="M7 4h10v5a5 5 0 0 1-10 0z"/><path d="M5 5H3v2a4 4 0 0 0 4 4"/><path d="M19 5h2v2a4 4 0 0 1-4 4"/>',
-  raptor: '<path d="M4 4h16v16H4z"/><path d="M8 8h8v4H8z"/><path d="M12 12v4"/><path d="M8 16h8"/>'
+const STORAGE = {
+  complete: "bip-complete-v2",
+  bookmarks: "bip-bookmarks-v2",
+  stats: "bip-topic-stats-v2",
+  bestQuiz: "bip-best-quiz-v2",
+  savedCards: "bip-saved-cards-v2"
 };
 
-const colors = ["#baff39", "#63e6de", "#ffd166", "#ff7c7c", "#c7a6ff", "#8ee6a2"];
+let touchStartX = 0;
+let touchEndX = 0;
+
+const iconPaths = {
+  exam: '<path d="M8 4h10v16H6V6a2 2 0 0 1 2-2Z"/><path d="M9 9h6"/><path d="M9 13h6"/><path d="M9 17h4"/>',
+  cloud: '<path d="M17 18H8a5 5 0 1 1 1.3-9.8A7 7 0 0 1 23 10a4 4 0 0 1-1 8h-1"/>',
+  layers: '<path d="m12 3 9 5-9 5-9-5 9-5Z"/><path d="m3 13 9 5 9-5"/><path d="m3 18 9 5 9-5"/>',
+  code: '<path d="m8 9-4 3 4 3"/><path d="m16 9 4 3-4 3"/><path d="m14 4-4 16"/>',
+  database: '<ellipse cx="12" cy="5" rx="7" ry="3"/><path d="M5 5v14c0 1.7 3.1 3 7 3s7-1.3 7-3V5"/><path d="M5 12c0 1.7 3.1 3 7 3s7-1.3 7-3"/>',
+  shield: '<path d="M12 3 20 7v6c0 5-3.4 8.5-8 10-4.6-1.5-8-5-8-10V7l8-4Z"/><path d="m9 12 2 2 4-5"/>',
+  tool: '<path d="M14.7 6.3a4 4 0 0 0-5 5L4 17v3h3l5.7-5.7a4 4 0 0 0 5-5l-2.7 2.7-3-3 2.7-2.7Z"/>',
+  chart: '<path d="M4 19V5"/><path d="M4 19h16"/><path d="M8 16v-5"/><path d="M12 16V8"/><path d="M16 16v-3"/>',
+  cards: '<rect x="4" y="7" width="13" height="14" rx="2"/><path d="M8 3h10a2 2 0 0 1 2 2v12"/><path d="M8 12h5"/><path d="M8 16h3"/>',
+  star: '<path d="m12 3 2.7 5.5 6.1.9-4.4 4.3 1 6.1-5.4-2.9-5.4 2.9 1-6.1-4.4-4.3 6.1-.9L12 3Z"/>',
+  back: '<path d="M15 18 9 12l6-6"/>',
+  next: '<path d="m9 18 6-6-6-6"/>',
+  info: '<circle cx="12" cy="12" r="9"/><path d="M12 10v6"/><path d="M12 7h.01"/>',
+  check: '<path d="m5 12 4 4L19 6"/>',
+  x: '<path d="M18 6 6 18"/><path d="m6 6 12 12"/>',
+  lock: '<rect x="5" y="10" width="14" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/>',
+  loop: '<path d="M17 2v5h-5"/><path d="M20 12a8 8 0 1 1-2.34-5.66L17 7"/>',
+  search: '<circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/>',
+  list: '<path d="M8 6h13"/><path d="M8 12h13"/><path d="M8 18h13"/><path d="M3 6h.01"/><path d="M3 12h.01"/><path d="M3 18h.01"/>',
+  file: '<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M8 13h8"/><path d="M8 17h6"/>',
+  flow: '<path d="M6 3h12v6H6z"/><path d="M12 9v3"/><path d="M6 15h12v6H6z"/><path d="M8 12h8"/>',
+  decision: '<path d="m12 3 9 9-9 9-9-9 9-9z"/><path d="M12 8v4"/><path d="M12 16h.01"/>'
+};
+
+function L(title, body, remember, sections = [], code = "") {
+  return { title, body, remember, sections, code };
+}
+
+function S(title, items) {
+  return { title, items };
+}
 
 const topics = [
   {
     id: "map",
     title: "Study Map",
-    icon: "book",
-    summary: "How the class material fits together before you write pseudocode, RAPTOR, or Python.",
-    tags: ["process", "source map", "study flow"],
+    icon: "exam",
     lessons: [
-      {
-        title: "The Big Route",
-        body: [
-          "Beginner programming is one idea said in several forms. A word problem is the story. IPO is the sorting table. Pseudocode is the plan. RAPTOR is the picture. Python is the real code.",
-          "When the story feels confusing, do not start with code. Start by naming the inputs, the processing, and the outputs. Then add decisions or loops only if the problem actually needs them.",
-          "The course materials repeat this pattern across simple calculations, conversions, recipe scaling, bank balances, shipping discounts, and calculator problems."
-        ],
-        keyPoints: [
-          "Word problem -> IPO -> pseudocode -> RAPTOR -> Python.",
-          "Every line should have a job: get data, calculate, decide, repeat, or display.",
-          "Use only techniques already covered by the assignment."
-        ],
-        example: {
-          title: "Tiny route",
-          lines: [
-            "Story: Ask for hours and pay rate. Display gross pay.",
-            "IPO: hours, payRate -> hours * payRate -> grossPay.",
-            "Pseudocode: Input hours, Input payRate, Set grossPay, Write grossPay.",
-            "RAPTOR: Output prompt, Input, Assignment, Output.",
-            "Python: input(), float(), assignment, print()."
-          ]
-        },
-        remember: "If you can explain the IPO in one sentence, the rest becomes much easier."
-      },
-      {
-        title: "The Program Development Cycle",
-        body: [
-          "The design step comes before coding. Read the problem, understand what is known and unknown, design the steps, write the program, test it, and fix mistakes.",
-          "The cycle is allowed to loop. If a test fails, you may return to the design and make the plan clearer before changing the code.",
-          "A good design is specific. A weak step says calculate total. A stronger step says Set total = price * quantity."
-        ],
-        keyPoints: [
-          "Understand the problem first.",
-          "Write the algorithm before typing Python.",
-          "Test with small values you can check by hand."
-        ],
-        pseudocode: [
-          "1. Start",
-          "2. Read the problem twice",
-          "3. List the inputs, processing, and outputs",
-          "4. Write exact formulas and decisions",
-          "5. Test the steps with sample data",
-          "6. End"
-        ],
-        remember: "The computer follows your steps literally, so your design has to be literal too."
-      },
-      {
-        title: "Academic-Friendly Practice",
-        body: [
-          "The safest way to study is to practice patterns without copying assignment answers. Use similar numbers, make your own variable names, and explain the logic in your own words.",
-          "When you review an assignment-style problem, separate the reusable pattern from the specific prompt. The pattern can become a study example. The exact homework wording should stay out of public code.",
-          "This app uses paraphrased practice patterns from the provided course files so you can learn the method without publishing assignment text."
-        ],
-        keyPoints: [
-          "Practice the process, not a copy-paste answer.",
-          "Use descriptive names that match your own solution.",
-          "Trace values line by line until the result makes sense."
-        ],
-        remember: "Your instructor wants your thinking. Pseudocode is where that thinking becomes visible."
-      }
+      L("How The Pieces Fit", [
+        "Beginner programming is one idea shown in several forms. The word problem is the story. The input, processing, output list is the sorting step. Pseudocode is the written plan. RAPTOR is the picture of the plan. Python is the runnable program.",
+        "When a problem feels too large, do not start by typing code. First ask what the program must receive, what it must calculate or decide, and what it must display.",
+        "The strongest path is always the same: understand the problem, design exact steps, translate those steps into symbols or code, test with simple values, then fix anything that does not match the expected result."
+      ], "Word problem -> IPO -> pseudocode -> RAPTOR -> Python.", [
+        S("Use This Order", [
+          "Read the problem twice.",
+          "Write the final output in one sentence.",
+          "List every input the user must provide.",
+          "Write each formula or decision in exact words.",
+          "Build the flowchart or Python code only after the plan is clear."
+        ]),
+        S("What Each Form Is For", [
+          "IPO helps you sort information before writing steps.",
+          "Pseudocode lets you say the logic without strict Python syntax.",
+          "RAPTOR helps you see the flow, branches, and repeated paths.",
+          "Python turns the plan into instructions the interpreter can run."
+        ])
+      ]),
+      L("The Program Development Cycle", [
+        "Programming is a cycle, not a straight line. You analyze, design, code, test, and debug. If the test fails, you return to an earlier step and improve the plan.",
+        "A common beginner mistake is skipping design and trying to solve the whole problem in Python syntax. That makes every mistake feel like a syntax problem, even when the real issue is the logic.",
+        "Good pseudocode saves time because it exposes missing inputs, vague calculations, and branch problems before you are also dealing with punctuation, indentation, or RAPTOR dialog boxes."
+      ], "Design first. Code second. Test often.", [
+        S("Cycle Steps", [
+          "Analyze: What is given? What is required?",
+          "Design: Write IPO, pseudocode, and maybe a flowchart.",
+          "Code: Translate the design into Python or RAPTOR.",
+          "Test: Use values you can check by hand.",
+          "Debug: Fix logic, syntax, spelling, type, or branch errors."
+        ])
+      ]),
+      L("How To Study Without Copying", [
+        "Use assignment-like patterns as practice, but do not memorize or copy one exact solution. Change the story, numbers, and variable names so you have to rebuild the logic yourself.",
+        "A good practice session asks: What are the inputs? What is the formula? What output should appear? What would happen with small test values?",
+        "When you can explain a solution in your own words, you can usually rebuild it in pseudocode, RAPTOR, or Python without needing the original example."
+      ], "Learn the pattern, then write your own version.", [
+        S("Safe Practice Method", [
+          "Change names such as gallons to miles or cups to pounds.",
+          "Keep the same structure but use new numbers.",
+          "Trace your answer by hand.",
+          "Explain why each line is there."
+        ])
+      ]),
+      L("The Small Vocabulary", [
+        "You do not need many words to write useful beginner pseudocode. Most early programs use Start, Declare, Write, Input, Set, If, Else, End If, While, End While, and End.",
+        "The words are intentionally simple. Write asks or shows. Input receives. Set calculates or stores. Declare prepares a variable. If chooses. While repeats.",
+        "Once you see those words as program actions, translating to RAPTOR and Python becomes more mechanical."
+      ], "Write shows. Input receives. Set calculates. If chooses. While repeats.", [
+        S("Core Words", [
+          "Declare: name a variable and type.",
+          "Write: show a prompt, message, or result.",
+          "Input: get a value from the user.",
+          "Set: calculate or assign a value.",
+          "If: branch based on a true or false condition.",
+          "While: repeat while a condition remains true."
+        ])
+      ]),
+      L("Testing With Tiny Numbers", [
+        "Testing is easier when the numbers are small enough to verify in your head. If a formula works for simple values, it is easier to trust it with larger values.",
+        "For a tax problem, try a total of 100 and tax rate of 8. The tax should be 8. For an average, try 80 and 100. The average should be 90.",
+        "If your program has decisions, test each branch. A range check needs a low invalid value, a high invalid value, and a valid value."
+      ], "A test case should prove one small part of the logic.", [
+        S("Test Case Checklist", [
+          "One normal valid case.",
+          "One low edge case.",
+          "One high edge case.",
+          "One invalid case for every validation rule.",
+          "One case for every branch in a table or operator menu."
+        ])
+      ])
     ]
   },
   {
-    id: "computer-basics",
+    id: "basics",
     title: "Computer Basics",
-    icon: "flow",
-    summary: "Core vocabulary from computer systems and early programming chapters.",
-    tags: ["CPU", "memory", "languages"],
+    icon: "cloud",
     lessons: [
-      {
-        title: "Hardware, Software, and Memory",
-        body: [
-          "Hardware is the physical machine. Software is the set of instructions that makes the machine do work.",
-          "The CPU carries out instructions. RAM is temporary working memory. When power is off, normal RAM contents are lost. Storage keeps files longer term.",
-          "Programs move data through memory. A variable is a name that lets the program reach a value stored while the program runs."
-        ],
-        keyPoints: [
-          "CPU executes instructions.",
-          "RAM is temporary.",
-          "Storage is for saved files and programs."
-        ],
-        remember: "A program is instructions plus data moving through memory."
-      },
-      {
-        title: "Programming Languages",
-        body: [
-          "A machine only understands very low-level instructions, but people usually write programs in high-level languages such as Python.",
-          "Assembly language is closer to the machine and can be useful when a programmer needs detailed control of hardware or speed.",
-          "A compiled language translates a program into machine code before it runs. Python is usually interpreted, meaning the interpreter reads and executes statements as the program runs."
-        ],
-        keyPoints: [
-          "High-level languages are easier for people.",
-          "Assembly is close to the hardware.",
-          "Compilers and interpreters both translate human-written code for the computer."
-        ],
-        remember: "Programming languages are bridges between human plans and machine instructions."
-      },
-      {
-        title: "Boolean Data",
-        body: [
-          "Boolean data has only two possible values: true or false.",
-          "A Boolean expression asks a yes/no question, such as quantity > 0 or operator == '+'.",
-          "Selections, loops, validation, and many Python conditions are powered by Boolean logic."
-        ],
-        keyPoints: [
-          "True and false are values.",
-          "Comparisons create Boolean results.",
-          "AND, OR, and NOT combine or reverse Boolean results."
-        ],
-        python: [
-          "quantity = 12",
-          "is_valid = quantity > 0",
-          "print(is_valid)  # True"
-        ],
-        remember: "Every If diamond in RAPTOR is really asking a Boolean question."
-      }
+      L("What A Program Is", [
+        "A program is a set of instructions that tells a computer what to do. The computer does not understand intention. It follows the instructions exactly as written.",
+        "Programming means creating those instructions in a language that can be translated for the machine. Python is easier for people to read than machine language, but it still has strict rules.",
+        "The early goal is not to memorize every Python feature. The early goal is to think in clear steps."
+      ], "A computer is literal, so the steps must be literal.", [
+        S("Program Parts", [
+          "Input: data that enters the program.",
+          "Processing: calculations, comparisons, decisions, and updates.",
+          "Output: information displayed or stored after processing."
+        ])
+      ]),
+      L("Hardware, Software, And Memory", [
+        "Hardware is the physical equipment. Software is the instructions and data that run on the hardware.",
+        "The CPU carries out instructions. RAM holds working data while programs run. Storage keeps files and programs after power is off.",
+        "Variables are names that let the program work with values in memory while it runs."
+      ], "RAM is temporary working space; storage is long-term file space.", [
+        S("Useful Terms", [
+          "CPU: executes instructions.",
+          "RAM: temporary memory used while programs run.",
+          "Storage: long-term place for files.",
+          "Software: programs and instructions."
+        ])
+      ]),
+      L("Languages And Translation", [
+        "High-level languages such as Python are designed for people to read and write. Low-level languages are closer to the machine.",
+        "Assembly language can be useful when programmers need very detailed hardware control, but it is harder for beginners to read.",
+        "Compiled languages translate source code before running. Interpreted languages usually read and run statements through an interpreter. Python commonly uses an interpreter."
+      ], "Programming languages bridge human logic and machine instructions.", [
+        S("Translation Ideas", [
+          "Source code is the program text a programmer writes.",
+          "A compiler translates code into another form before execution.",
+          "An interpreter runs code by reading and executing statements."
+        ])
+      ]),
+      L("Boolean Thinking", [
+        "Boolean data has only two possible values: true or false.",
+        "Every If condition asks a Boolean question. Is quantity less than zero? Is operator equal to plus? Is password correct?",
+        "Boolean thinking matters because decisions, loops, validation, and many bugs depend on the exact true or false result."
+      ], "A condition is a question with a true or false answer.", [
+        S("Examples", [
+          "quantity > 0",
+          "operator == \"+\"",
+          "score >= 70",
+          "num1 < 0 OR num1 > 500"
+        ])
+      ]),
+      L("Data Moving Through A Program", [
+        "Most beginner programs move data through a simple path. The user enters values. The program stores those values in variables. The program calculates or decides. The program displays the result.",
+        "A variable can be updated. If total starts at 0 and you set total = total + price, the old value helps create the new value.",
+        "Trace tables are useful because they show how values change after each instruction."
+      ], "Follow the data, and the logic becomes easier to see.", [
+        S("Trace Table Columns", [
+          "Line number.",
+          "Variable values after the line runs.",
+          "Output displayed, if any.",
+          "Notes about branch choices."
+        ])
+      ])
     ]
   },
   {
-    id: "word-problems",
-    title: "Word Problems",
-    icon: "search",
-    summary: "Turn plain English into variables, formulas, decisions, and outputs.",
-    tags: ["IPO", "clues", "analysis"],
+    id: "design",
+    title: "Program Design",
+    icon: "layers",
     lessons: [
-      {
-        title: "Read for Jobs",
-        body: [
-          "Read the problem once for the story, then again for jobs the program must do. Action words matter.",
-          "Ask, enter, prompt, or type usually means input. Calculate, convert, determine, or find usually means processing. Display, show, print, or output means output.",
-          "If, otherwise, valid, invalid, range, at least, no more than, and based on a table usually mean a decision."
-        ],
-        keyPoints: [
-          "Circle inputs.",
-          "Underline outputs.",
-          "Box formulas, rates, fees, and conversion factors.",
-          "Star decision words."
-        ],
-        example: {
-          title: "Clue words",
-          lines: [
-            "Prompt the user for gallons -> Input gallons.",
-            "Convert to liters -> Set liters = gallons * 3.78541.",
-            "Display the liters -> Write liters."
-          ]
-        },
-        remember: "A word problem is not magic. It is a list of jobs hiding in sentences."
-      },
-      {
-        title: "Find Output First",
-        body: [
-          "Many students start with inputs, but finding the final output first can make the whole problem clearer.",
-          "Once you know the final answer, work backward. What values are needed to calculate it? Which values come from the user? Which values are fixed in the problem?",
-          "For a bank balance, the final output is current balance. To get it, you need starting balance, deposits, and withdrawals."
-        ],
-        keyPoints: [
-          "Output tells you where the program is going.",
-          "Inputs are the values the program cannot invent.",
-          "Processing is the bridge between input and output."
-        ],
-        pseudocode: [
-          "1. Start",
-          "2. Declare startingBalance As Float",
-          "3. Declare depositAmount As Float",
-          "4. Declare withdrawalAmount As Float",
-          "5. Declare currentBalance As Float",
-          "6. Input startingBalance",
-          "7. Input depositAmount",
-          "8. Input withdrawalAmount",
-          "9. Set currentBalance = startingBalance + depositAmount - withdrawalAmount",
-          "10. Write currentBalance",
-          "11. End"
-        ],
-        remember: "Final output is the target. Inputs and processing are how you reach it."
-      },
-      {
-        title: "Missing Information",
-        body: [
-          "Some word problems give a story but leave out a formula or conversion factor. You must know or be given the relationship before pseudocode can be exact.",
-          "If the formula is known, write the formula directly. If it is not known, pause and identify what information is missing.",
-          "For example, converting feet and inches to centimeters needs 12 inches per foot and 2.54 centimeters per inch."
-        ],
-        keyPoints: [
-          "Do not hide missing math with vague words.",
-          "Use a fixed value directly or give it a clear constant name.",
-          "Validate the formula with a small test case."
-        ],
-        remember: "Clear pseudocode needs clear math."
-      }
-    ]
-  },
-  {
-    id: "variables",
-    title: "Variables + Types",
-    icon: "braces",
-    summary: "Names, declarations, constants, and beginner data types.",
-    tags: ["Declare", "Integer", "Float", "String"],
-    lessons: [
-      {
-        title: "Variables Are Labeled Boxes",
-        body: [
-          "A variable is a named storage location. The name lets you use the value later.",
-          "The value can change while the program runs. If you set total = 10 and later set total = 25, the current value is 25.",
-          "Use names that describe the value. grandTotal is clearer than g."
-        ],
-        keyPoints: [
-          "Variables store input, calculations, and temporary values.",
-          "A variable must have a value before it is used.",
-          "Spelling and capitalization must stay consistent."
-        ],
-        python: [
-          "price = 12.50",
-          "quantity = 4",
-          "total = price * quantity",
-          "print(total)"
-        ],
-        remember: "A variable name is not the value. It is the label for the value."
-      },
-      {
-        title: "Declare vs. Use",
-        body: [
-          "In textbook-style pseudocode, Declare creates the variable name and states the type before the variable is used.",
-          "RAPTOR does not have a separate Declare symbol. It creates a variable when the variable first appears in an Input or Assignment symbol.",
-          "Python also does not require Declare. A Python variable is created when you assign a value to it."
-        ],
-        keyPoints: [
-          "Declare quantity As Integer means quantity should hold a whole number.",
-          "Input quantity gives quantity a value from the user.",
-          "Set total = quantity * price stores a calculated value."
-        ],
-        pseudocode: [
-          "Declare quantity As Integer",
-          "Declare price As Float",
-          "Declare total As Float",
-          "Input quantity",
-          "Input price",
-          "Set total = quantity * price"
-        ],
-        raptor: [
-          "Input: quantity",
-          "Input: price",
-          "Assignment: total = quantity * price"
-        ],
-        remember: "Declare prepares the box. Input and Set put values in it."
-      },
-      {
-        title: "Pick the Right Type",
-        body: [
-          "Integer is for whole numbers used for counting. Float is for decimals, money, rates, measurements, averages, or conversions.",
-          "String is for text such as names, company names, and passwords. Character is a single text symbol such as '+'. Boolean is true or false.",
-          "Do not declare literal values. You declare taxRate, not 8. You declare companyName, not 'Google'."
-        ],
-        keyPoints: [
-          "Integer: numberOfItems, counter.",
-          "Float: retailPrice, taxAmount, gallons, liters.",
-          "String: companyName, firstName.",
-          "Boolean: isValid, hasDiscount."
-        ],
-        remember: "Integer counts. Float measures. String stores words. Boolean stores yes/no."
-      }
-    ]
-  },
-  {
-    id: "operators",
-    title: "Operators",
-    icon: "code",
-    summary: "Assignment, comparison, arithmetic, modulus, and order of operations.",
-    tags: ["=", "==", "%", "math"],
-    lessons: [
-      {
-        title: "Assignment Is Not Comparison",
-        body: [
-          "A single equals sign in pseudocode assignment means put the right-side value into the left-side variable.",
-          "A double equals sign in a condition asks whether two values are the same.",
-          "The left side of assignment must be a variable. 50 = money is backward. money = 50 is the correct assignment shape."
-        ],
-        keyPoints: [
-          "Set total = price * quantity changes total.",
-          "If operator == '+' asks a question.",
-          "Assignment stores. Comparison checks."
-        ],
-        python: [
-          "money = 50",
-          "if money == 50:",
-          "    print('Money is exactly 50')"
-        ],
-        remember: "One equals stores. Two equals compares."
-      },
-      {
-        title: "Arithmetic and Order",
-        body: [
-          "Programs follow the same order of operations you learned in math: parentheses first, then exponents, then multiplication/division/modulus, then addition/subtraction.",
-          "The modulus operator gives a remainder. 27 % 8 gives 3 because 8 fits into 27 three times with 3 left over.",
-          "Parentheses are a kindness to your future self. Use them when the calculation could be read more than one way."
-        ],
-        keyPoints: [
-          "Use * for multiplication.",
-          "Use / for division.",
-          "Use % for remainder.",
-          "Use parentheses to protect averages and grouped formulas."
-        ],
-        pseudocode: [
-          "Set average = (score1 + score2) / 2",
-          "Set taxAmount = totalCost * (taxRate / 100)",
-          "Set remainder = 27 % 8"
-        ],
-        remember: "For an average, add first, then divide. Parentheses make that visible."
-      },
-      {
-        title: "Output Spacing",
-        body: [
-          "Spaces around operators usually do not change the calculation, but they make code easier to read.",
-          "Spaces inside quote marks do change what appears on the screen.",
-          "When a sample output shows an exact layout, build that spacing into the Output or print statement."
-        ],
-        keyPoints: [
-          "total=price*quantity works, but total = price * quantity is easier to read.",
-          "'Total=$' displays no space. 'Total = $' displays spaces.",
-          "Join text and values carefully."
-        ],
-        python: [
-          "print('Total = $', total)",
-          "print(str(num1) + operator + str(num2) + ' = ' + str(result))"
-        ],
-        remember: "Operator spaces help humans. Quote spaces affect the screen."
-      }
+      L("Input Processing Output", [
+        "Input, processing, output is the simplest planning tool for beginner programs. It turns a word problem into three buckets.",
+        "Inputs are values the program must receive. Processing is the math or logic that changes inputs into results. Outputs are the values or messages the user must see.",
+        "If a problem includes decisions, add a fourth note for conditions. Conditions explain when the program should branch."
+      ], "IPO is the sorting table before pseudocode.", [
+        S("IPO Questions", [
+          "Input: What must the user type?",
+          "Processing: What formulas or decisions happen?",
+          "Output: What must be displayed?",
+          "Conditions: What makes the program choose a path?"
+        ])
+      ]),
+      L("Find Output First", [
+        "The final output tells you where the program is going. If the program must display current balance, then all inputs and processing must support current balance.",
+        "Working backward is powerful. To display liters, you need gallons and a conversion factor. To display gross pay, you need hours and pay rate.",
+        "If you cannot name the output, you probably do not understand the problem yet."
+      ], "The output is the target; processing is how you reach it.", [
+        S("Backward Planning", [
+          "Name the final result.",
+          "Ask what formula creates it.",
+          "Ask which values the formula needs.",
+          "Mark which values are user input and which are fixed constants."
+        ])
+      ]),
+      L("Clue Words In Word Problems", [
+        "Word problems often hide programming actions inside normal English. Prompt, ask, enter, and type usually mean input. Calculate, compute, determine, convert, and find usually mean processing.",
+        "Display, show, print, output, and report usually mean output. If, otherwise, when, valid, invalid, range, at least, and no more than usually mean a selection.",
+        "Clue words help, but they do not replace understanding. Always connect the word back to the actual job."
+      ], "Action words reveal program actions.", [
+        S("Common Clues", [
+          "Ask or enter -> Write prompt and Input variable.",
+          "Calculate or convert -> Set variable = expression.",
+          "Display or show -> Write result.",
+          "If or otherwise -> Selection.",
+          "Repeat, while, until -> Loop."
+        ])
+      ]),
+      L("Constants And Fixed Values", [
+        "A fixed value is a number or text that the problem gives and the user does not type. Examples include a tax rate, conversion factor, recipe amount, or shipping fee.",
+        "You can use a fixed value directly in a formula, but a named constant can make the plan easier to understand.",
+        "Do not declare literal values as if they were variables. Declare taxRate, not 8. Declare shippingFee, not 35."
+      ], "A fixed value is part of processing, not user input.", [
+        S("Good Constant Names", [
+          "LITERS_PER_GALLON = 3.78541",
+          "PENNIES_PER_QUARTER = 25",
+          "FREE_SHIPPING_QUANTITY = 50",
+          "BASE_RECIPE_COUNT = 20"
+        ])
+      ]),
+      L("Echo Printing", [
+        "Echo printing means displaying the input values along with the calculated results. This helps the user verify what they typed.",
+        "Many assignment-style programs expect output to include both input and calculated values. If the problem says display all input values and all calculated results, echo printing is required.",
+        "Use clear labels so each output value is easy to read."
+      ], "Echo print inputs when the output should show what was entered.", [
+        S("Output Labels", [
+          "Company Name: ",
+          "Quantity = ",
+          "Retail price = $",
+          "Tax = $",
+          "Grand total = $"
+        ])
+      ])
     ]
   },
   {
     id: "pseudocode",
     title: "Pseudocode",
     icon: "file",
-    summary: "Simple, numbered, English-like steps that map cleanly to RAPTOR and Python.",
-    tags: ["Start", "Input", "Set", "Write"],
     lessons: [
-      {
-        title: "A Clean Skeleton",
-        body: [
-          "Pseudocode is not Python yet. It is a plan written in plain language.",
-          "For class work, use short, numbered steps. Begin with Start or Main module, declare variables if your style requires it, then input, process, output, and end.",
-          "Avoid vague lines such as calculate answer. Write the actual formula."
-        ],
-        keyPoints: [
+      L("Clean Pseudocode Shape", [
+        "Pseudocode is a plain-language plan. It is not Python, and it is not meant to run by itself.",
+        "A clean beginner shape is Start, Declare variables, prompt and input values, set formulas, write outputs, and End.",
+        "Keep each step short. Numbered steps are easier to trace and easier to translate into RAPTOR symbols."
+      ], "Short, numbered, exact steps are easiest to translate.", [
+        S("Basic Skeleton", [
           "Start",
-          "Declare variables",
-          "Write prompts",
-          "Input values",
-          "Set formulas",
-          "Write results",
+          "Declare input variables.",
+          "Declare calculated result variables.",
+          "Write prompts and Input values.",
+          "Set formulas.",
+          "Write results.",
           "End"
-        ],
-        pseudocode: [
-          "1. Start",
-          "2. Declare num1 As Float",
-          "3. Declare num2 As Float",
-          "4. Declare average As Float",
-          "5. Write \"Enter first score:\"",
-          "6. Input num1",
-          "7. Write \"Enter second score:\"",
-          "8. Input num2",
-          "9. Set average = (num1 + num2) / 2",
-          "10. Write \"Average = \" + average",
-          "11. End"
-        ],
-        remember: "A good pseudocode line is short, specific, and testable."
-      },
-      {
-        title: "Modules and Comments",
-        body: [
-          "A module is a named section of a larger program. You may see Main module, Input Data module, Perform Calculations module, and Output Results module.",
-          "Comments are notes for humans. They explain purpose, input, processing, or output. They are not displayed to the user.",
-          "In RAPTOR, comments are added by right-clicking a symbol. Output symbols are for messages the program user sees."
-        ],
-        keyPoints: [
-          "Call a module when you split the program into named jobs.",
-          "Use comments to explain logic.",
-          "Do not confuse comments with output."
-        ],
-        pseudocode: [
-          "Main module",
-          "   Call InputData module",
-          "   Call CalculateTotal module",
-          "   Call DisplayResults module",
-          "End Program"
-        ],
-        remember: "A module is a smaller job. A comment is a note. Output is visible to the user."
-      },
-      {
-        title: "Trace Before Coding",
-        body: [
-          "Tracing means following the pseudocode line by line and writing down variable values after each step.",
-          "Use easy numbers first. If the answer should be obvious by hand, it is easier to find mistakes.",
-          "Trace assignments carefully because a variable can be overwritten."
-        ],
-        keyPoints: [
-          "Track each Set line.",
-          "Only Write lines display output.",
-          "Input lines pause and store a value."
-        ],
-        example: {
-          title: "Trace",
-          lines: [
-            "Set a = 12.8 -> a is 12.8.",
-            "Set a = 15.0 -> a is now 15.0.",
-            "Set b = 2 -> b is 2.",
-            "Set c = a + a + b -> c is 32.0.",
-            "Write c -> screen shows 32.0."
-          ]
-        },
-        remember: "The current value is whatever the last assignment made it."
-      }
+        ])
+      ], [
+        "1. Start",
+        "2. Declare gallons As Float",
+        "3. Declare liters As Float",
+        "4. Write \"Enter gallons:\"",
+        "5. Input gallons",
+        "6. Set liters = gallons * 3.78541",
+        "7. Write \"Liters = \" + liters",
+        "8. End"
+      ].join("\n")),
+      L("Declare, Input, Set, Write", [
+        "Declare prepares a variable name and type. Input stores a value from the user. Set stores a calculated or assigned value. Write displays text or values.",
+        "These four actions handle many early programming problems. When you feel stuck, ask which of the four actions the next line should perform.",
+        "In RAPTOR, there is no separate Declare symbol. Variables are created when first given a value through Input or Assignment."
+      ], "Declare prepares. Input receives. Set changes. Write displays.", [
+        S("Common Mistakes", [
+          "Using Write when the program needs to receive input.",
+          "Using Input when the program needs to calculate.",
+          "Writing a vague Set line without a formula.",
+          "Displaying a result before it has been calculated."
+        ])
+      ]),
+      L("Good Versus Weak Steps", [
+        "A weak pseudocode line is vague or wordy. A strong pseudocode line tells the exact operation.",
+        "For example, calculate the new price is weak. Set newPrice = bookPrice - bookPrice * discountRate / 100 is strong.",
+        "Avoid using complete paragraphs inside pseudocode. Use plain commands that another programmer could translate."
+      ], "If a line cannot be tested, make it more exact.", [
+        S("Better Lines", [
+          "Weak: get the first number from the user.",
+          "Better: Input num1.",
+          "Weak: calculate total.",
+          "Better: Set total = price * quantity.",
+          "Weak: show answer.",
+          "Better: Write \"Total = \" + total."
+        ])
+      ]),
+      L("Modules And Calls", [
+        "A module is a named part of a program with one job. Larger pseudocode can be split into modules such as Input Data, Perform Calculations, and Display Results.",
+        "Call means run a module, then return to the next line after the call.",
+        "Modules make longer programs easier to read, but for small programs a single main module is often enough."
+      ], "A module is a small named job.", [
+        S("Typical Modules", [
+          "Main module: controls the overall order.",
+          "Input module: gets user values.",
+          "Calculation module: performs formulas.",
+          "Output module: displays results."
+        ])
+      ], [
+        "Main module",
+        "   Call InputData module",
+        "   Call CalculateResults module",
+        "   Call DisplayResults module",
+        "End Program"
+      ].join("\n")),
+      L("Tracing Pseudocode", [
+        "Tracing means walking through each line and recording variable values as they change.",
+        "Only Write lines display output. Set lines change values. Input lines receive values. If lines choose paths.",
+        "Tracing catches overwritten variables, wrong order of operations, missing initialization, and branch mistakes."
+      ], "Trace values line by line, not by guessing.", [
+        S("Trace Example", [
+          "Set a = 12.8 -> a is 12.8.",
+          "Set a = 15.0 -> a is now 15.0.",
+          "Set b = 2 -> b is 2.",
+          "Set c = a + a + b -> c is 32.0.",
+          "Write c -> the screen shows 32.0."
+        ])
+      ])
     ]
   },
   {
-    id: "python-basics",
+    id: "variables",
+    title: "Variables Types",
+    icon: "database",
+    lessons: [
+      L("Variables As Named Storage", [
+        "A variable is a name for a storage location. The program uses the name to remember, calculate with, and display a value.",
+        "A variable can change. If dollars starts at 2.75 and later becomes 99.95, the current value is the last value assigned.",
+        "Variable names should explain what the value means. totalCost is clearer than t or x."
+      ], "A variable name is the label, not the value itself.", [
+        S("Name Values You Need To Remember", [
+          "User inputs.",
+          "Calculated outputs.",
+          "Temporary helper values.",
+          "Counters and running totals.",
+          "Rates, fees, and conversion factors if naming them improves clarity."
+        ])
+      ]),
+      L("Naming Rules", [
+        "Variable names should not contain spaces. Use camelCase, PascalCase, or underscores depending on the style expected.",
+        "Do not start names with a number. Avoid punctuation such as dollar signs, percent signs, hyphens, and hashtags.",
+        "Be consistent with capitalization. In many languages, total, Total, and TOTAL can be different names."
+      ], "Descriptive, consistent names prevent strange bugs.", [
+        S("Good Names", [
+          "numberOfItems",
+          "retailPrice",
+          "taxRate",
+          "taxAmount",
+          "grandTotal",
+          "operator"
+        ]),
+        S("Avoid", [
+          "Tax Rate with a space.",
+          "1Number starting with a digit.",
+          "$total with punctuation.",
+          "x when a clearer name is available."
+        ])
+      ]),
+      L("Integer Float String Boolean", [
+        "Integer is for whole numbers used for counting. Float is for decimal-capable values such as money, rates, measurements, and averages.",
+        "String is for text. Character is a single symbol or letter. Boolean is true or false.",
+        "Choosing the correct type helps the reader understand what kind of value belongs in the variable."
+      ], "Integer counts. Float measures. String stores text. Boolean stores true or false.", [
+        S("Type Choices", [
+          "Integer: quantity, count, numberOfStudents.",
+          "Float: price, taxRate, gallons, average.",
+          "String: companyName, userName, password.",
+          "Character: operator, response.",
+          "Boolean: isValid, hasDiscount."
+        ])
+      ]),
+      L("Python Variables", [
+        "Python does not require Declare lines. A Python variable is created when a value is assigned to it.",
+        "The equal sign performs assignment. The right side is evaluated first, then the result is stored in the left-side variable.",
+        "Python variable names often use lowercase with underscores, such as gross_pay or grand_total."
+      ], "Python creates variables through assignment.", [
+        S("Python Habits", [
+          "Use clear lowercase names with underscores.",
+          "Assign before using a variable.",
+          "Convert input text before math.",
+          "Use comments for logic that is not obvious."
+        ])
+      ], [
+        "quantity = int(input(\"Quantity: \"))",
+        "price = float(input(\"Price: \"))",
+        "total = quantity * price",
+        "print(\"Total =\", total)"
+      ].join("\n")),
+      L("Initialization", [
+        "Initialization means giving a variable a starting value before it is used.",
+        "Counters often start at 0 or 1. Running totals usually start at 0. Boolean flags often start as true or false.",
+        "Using a variable before it has a value causes errors in Python and RAPTOR."
+      ], "Create a value before you use the variable.", [
+        S("Common Starting Values", [
+          "total = 0",
+          "count = 0",
+          "isValid = true",
+          "result = 0 when a later branch will update it"
+        ])
+      ])
+    ]
+  },
+  {
+    id: "operators",
+    title: "Operators",
+    icon: "code",
+    lessons: [
+      L("Assignment And Comparison", [
+        "One equals sign assigns a value. It changes the variable on the left.",
+        "Double equals compares values. It asks whether the left and right side are equal.",
+        "In pseudocode, Set total = price * quantity is assignment. If operator == \"+\" Then is comparison."
+      ], "One equals stores. Two equals compares.", [
+        S("Use Correctly", [
+          "Assignment: Set money = 50.",
+          "Comparison: If money == 50 Then.",
+          "Invalid assignment: 50 = money.",
+          "Python uses = for assignment and == for equality comparison."
+        ])
+      ]),
+      L("Arithmetic Operators", [
+        "Use + for addition, - for subtraction, * for multiplication, / for division, % for modulus, and ^ in many pseudocode or RAPTOR examples for exponentiation.",
+        "In Python, exponentiation uses ** instead of ^.",
+        "Modulus gives the remainder after division. 27 % 8 gives 3."
+      ], "Use programming operators, not handwritten math symbols.", [
+        S("Examples", [
+          "total = price * quantity",
+          "remaining = balance - withdrawal",
+          "average = total / count",
+          "remainder = 27 % 8",
+          "squared = value ** 2 in Python"
+        ])
+      ]),
+      L("Order Of Operations", [
+        "Programs follow a standard order: parentheses first, exponents, multiplication/division/modulus, then addition/subtraction.",
+        "Without parentheses, average = score1 + score2 / 2 divides score2 first, then adds score1. That is not the average of two scores.",
+        "Use parentheses whenever the intended order could be misunderstood."
+      ], "Parentheses are cheap protection against wrong math.", [
+        S("Safe Formulas", [
+          "average = (score1 + score2) / 2",
+          "taxAmount = total * (taxRate / 100)",
+          "discountedPrice = price - (price * discountRate / 100)"
+        ])
+      ]),
+      L("Text Joining And Output", [
+        "The plus sign can add numbers, but it can also join text in some pseudocode and RAPTOR output examples.",
+        "Python is stricter. You cannot directly add a string and a number without converting the number or using comma-separated print items.",
+        "Spaces inside quote marks are displayed exactly. If you want a space around an operator in output, include that space in the string."
+      ], "Quote spacing affects the screen; operator spacing helps humans.", [
+        S("Output Examples", [
+          "\"Total = $\" + total in pseudocode-style output.",
+          "print(\"Total = $\", total) in Python.",
+          "str(num1) + operator + str(num2) + \" = \" + str(result) when building one string."
+        ])
+      ]),
+      L("Percent And Rates", [
+        "A whole-number percent such as 8 must usually be divided by 100 before multiplication.",
+        "If the user enters 8 for 8 percent, the decimal rate is 8 / 100, or 0.08.",
+        "Tax, discount, interest, and commission problems often use this pattern."
+      ], "Whole-number percent must become a decimal rate before multiplication.", [
+        S("Pattern", [
+          "Input taxRate",
+          "Set taxDecimal = taxRate / 100",
+          "Set taxAmount = total * taxDecimal"
+        ])
+      ], [
+        "tax_rate = float(input(\"Tax rate as a whole number: \"))",
+        "tax_amount = total * (tax_rate / 100)"
+      ].join("\n"))
+    ]
+  },
+  {
+    id: "python",
     title: "Python Basics",
     icon: "code",
-    summary: "Print, input, conversion, variables, and beginner expression code.",
-    tags: ["print", "input", "float", "int"],
     lessons: [
-      {
-        title: "Output with print",
-        body: [
-          "The print function displays output on the screen.",
-          "Text goes inside quote marks. A variable name does not go inside quotes if you want its value.",
-          "You can print several items by separating them with commas."
-        ],
-        keyPoints: [
-          "print('Hello') displays Hello.",
-          "print(total) displays the value stored in total.",
-          "print('Total = $', total) displays a label and a value."
-        ],
-        python: [
-          "room = 503",
-          "print('I am staying in room number')",
-          "print(room)",
-          "print('Room:', room)"
-        ],
-        remember: "Quoted text prints exactly as text. Unquoted variables print their values."
-      },
-      {
-        title: "Input and Conversion",
-        body: [
-          "Python input() collects text from the keyboard. If you need math, convert it with int() or float().",
-          "Use int() for whole-number counts and float() for decimals, money, rates, and measurements.",
-          "The prompt can go inside input(), so the user sees what to type."
-        ],
-        keyPoints: [
-          "name = input('Enter name: ') stores text.",
-          "quantity = int(input('Enter quantity: ')) stores a whole number.",
-          "price = float(input('Enter price: ')) stores a decimal-capable number."
-        ],
-        python: [
-          "gallons = float(input('Enter gallons: '))",
-          "liters = gallons * 3.78541",
-          "print('Liters =', liters)"
-        ],
-        remember: "input() gives you a string first. Convert before doing math."
-      },
-      {
-        title: "Python Calculation Shape",
-        body: [
-          "A Python assignment statement has the same core idea as pseudocode Set: variable = expression.",
-          "Python does not use Declare lines. It creates the variable when assignment runs.",
-          "Good variable names are lowercase with underscores in common Python style, such as grand_total."
-        ],
-        keyPoints: [
-          "Use = for assignment.",
-          "Use clear variable names.",
-          "Use comments with # when a line needs human explanation."
-        ],
-        python: [
-          "# Calculate gross pay",
-          "hours_worked = float(input('Hours worked: '))",
-          "pay_rate = float(input('Pay rate: '))",
-          "gross_pay = hours_worked * pay_rate",
-          "print('Gross pay =', gross_pay)"
-        ],
-        remember: "Python syntax is stricter than pseudocode, but the logic should already be solved."
-      }
+      L("Printing Output", [
+        "The print function displays output on the screen. Text goes inside quote marks.",
+        "A variable name should not be placed inside quotes when you want its value. print(\"total\") displays the word total. print(total) displays the value stored in total.",
+        "You can print several items by separating them with commas."
+      ], "Quoted text prints as text; unquoted variables print their values.", [
+        S("Print Examples", [
+          "print(\"Hello\")",
+          "print(total)",
+          "print(\"Total =\", total)",
+          "print(\"The answer is\", answer)"
+        ])
+      ], [
+        "room = 503",
+        "print(\"I am staying in room number\")",
+        "print(room)",
+        "print(\"Room:\", room)"
+      ].join("\n")),
+      L("Getting Keyboard Input", [
+        "Python input() pauses the program and lets the user type a value.",
+        "The value returned by input() is text. If you need arithmetic, convert it with int() or float().",
+        "The prompt can be written inside input(), which combines the prompt and input step."
+      ], "input() gives text first; convert before math.", [
+        S("Input Choices", [
+          "Use int() for whole-number counts.",
+          "Use float() for decimals, money, rates, and measurements.",
+          "Use plain input() for names, words, and operator symbols."
+        ])
+      ], [
+        "name = input(\"Enter name: \")",
+        "quantity = int(input(\"Enter quantity: \"))",
+        "price = float(input(\"Enter price: \"))"
+      ].join("\n")),
+      L("Comments And Readability", [
+        "A comment is a note for humans that Python ignores. Comments start with #.",
+        "Use comments to explain the purpose of a program, a tricky formula, or a decision rule. Do not comment every obvious line.",
+        "Readable code uses good names, spacing, and simple structure."
+      ], "Comments explain why, not every tiny what.", [
+        S("Good Comment Uses", [
+          "Describe the program at the top.",
+          "Explain a formula from the problem.",
+          "Mark major sections such as input, processing, and output.",
+          "Clarify a decision table or validation rule."
+        ])
+      ], [
+        "# Convert gallons to liters.",
+        "liters = gallons * 3.78541"
+      ].join("\n")),
+      L("Python Formatting Basics", [
+        "Beginner assignments often do not require formatted decimals, so follow the assignment requirements carefully.",
+        "When formatting is allowed, Python f-strings can display values with labels and decimal places.",
+        "Do not use a formatting feature if your current course material has not covered it and the assignment says not to use outside techniques."
+      ], "Follow the expected style for the current lesson.", [
+        S("Useful Later", [
+          "f\"Total = ${total:.2f}\" displays two decimal places.",
+          "round(value, 2) rounds a number for display.",
+          "Comma-separated print is simpler for early practice."
+        ])
+      ], [
+        "total = 12.3456",
+        "print(\"Total =\", total)",
+        "print(f\"Total = ${total:.2f}\")"
+      ].join("\n")),
+      L("Syntax Errors Versus Logic Errors", [
+        "A syntax error means Python cannot understand the code grammar. Missing colons, unmatched quotes, and wrong indentation can cause syntax errors.",
+        "A logic error means the program runs but produces the wrong answer. Wrong formulas, wrong branches, or wrong order of operations cause logic errors.",
+        "Pseudocode helps reduce logic errors before Python syntax gets involved."
+      ], "Running without crashing is not the same as being correct.", [
+        S("Debug Questions", [
+          "Did every variable get a value before use?",
+          "Did input values get converted before math?",
+          "Did the formula match the word problem?",
+          "Did every branch get tested?"
+        ])
+      ])
     ]
   },
   {
     id: "decisions",
-    title: "Decisions",
+    title: "Decisions Logic",
     icon: "decision",
-    summary: "Selection structures, relational operators, logical operators, and validation.",
-    tags: ["if", "else", "AND", "OR"],
     lessons: [
-      {
-        title: "Single and Dual Alternatives",
-        body: [
-          "A selection structure lets the program choose a path.",
-          "Single-alternative If does something only when a condition is true. Dual-alternative If/Else does one thing when true and another when false.",
-          "In RAPTOR, a Selection symbol creates Yes and No branches. In Python, indentation shows which statements belong to each branch."
-        ],
-        keyPoints: [
-          "If quantity <= 0 Then error.",
-          "Else continue with calculations.",
-          "End If closes the decision in pseudocode."
-        ],
-        pseudocode: [
-          "If quantity <= 0 Then",
-          "   Write \"ERROR - invalid quantity\"",
+      L("If Then Else", [
+        "A decision structure lets a program choose between paths.",
+        "A single-alternative If only does something when the condition is true. A dual-alternative If/Else does one thing when true and another when false.",
+        "In RAPTOR, a Selection symbol creates Yes and No branches. In Python, indentation shows which statements belong to each branch."
+      ], "A decision starts with a true or false question.", [
+        S("Basic Shape", [
+          "If condition Then",
+          "   true path statements",
           "Else",
-          "   Set total = quantity * price",
-          "   Write total",
+          "   false path statements",
           "End If"
-        ],
-        python: [
-          "if quantity <= 0:",
-          "    print('ERROR - invalid quantity')",
-          "else:",
-          "    total = quantity * price",
-          "    print(total)"
-        ],
-        remember: "Read the condition as a yes/no question, then put the right steps on the right branch."
-      },
-      {
-        title: "Relational and Logical Operators",
-        body: [
-          "Relational operators compare values: <, <=, >, >=, ==, and !=.",
-          "AND means both parts must be true. OR means at least one part must be true. NOT flips true to false or false to true.",
-          "Parentheses can make mixed AND/OR logic easier to understand."
-        ],
-        keyPoints: [
-          "Valid range: num >= 0 AND num <= 500.",
-          "Invalid range: num < 0 OR num > 500.",
-          "Invalid operator: operator != '+' AND operator != '-' AND operator != '*' AND operator != '/'."
-        ],
-        python: [
-          "if num1 < 0 or num1 > 500:",
-          "    print('Number is outside the range')",
-          "",
-          "if operator == '+' or operator == '-':",
-          "    print('Operator is allowed')"
-        ],
-        remember: "Use OR when any bad case should trigger an error."
-      },
-      {
-        title: "Table and Range Decisions",
-        body: [
-          "A rate table usually becomes a chain of decisions. Each row becomes one condition.",
-          "Choose one direction and stay consistent. You can start with the smallest range and move upward or start with the largest and move downward.",
-          "Make sure one branch cannot accidentally overwrite a rate chosen by an earlier branch."
-        ],
-        keyPoints: [
-          "1 to 9 items -> 0 percent.",
-          "10 to 19 -> 10 percent.",
-          "20 to 39 -> 15 percent.",
-          "40 to 79 -> 20 percent.",
-          "80 to 99 -> 25 percent.",
-          "100 or more -> 30 percent."
-        ],
-        pseudocode: [
-          "If quantity <= 9 Then",
-          "   Set discountRate = 0",
-          "Else If quantity <= 19 Then",
-          "   Set discountRate = 0.10",
-          "Else If quantity <= 39 Then",
-          "   Set discountRate = 0.15",
-          "Else If quantity <= 79 Then",
-          "   Set discountRate = 0.20",
-          "Else If quantity <= 99 Then",
-          "   Set discountRate = 0.25",
-          "Else",
-          "   Set discountRate = 0.30",
-          "End If"
-        ],
-        remember: "A table is a decision chain wearing a nicer outfit."
-      }
+        ])
+      ], [
+        "if quantity <= 0:",
+        "    print(\"Invalid quantity\")",
+        "else:",
+        "    total = quantity * price",
+        "    print(total)"
+      ].join("\n")),
+      L("Relational Operators", [
+        "Relational operators compare values. The result is true or false.",
+        "Use < for less than, <= for less than or equal to, > for greater than, >= for greater than or equal to, == for equal to, and != for not equal to.",
+        "Use == in conditions when you want to check equality."
+      ], "Relational operators build Boolean questions.", [
+        S("Examples", [
+          "score >= 70",
+          "quantity <= 0",
+          "operator == \"+\"",
+          "password != \"secret\""
+        ])
+      ]),
+      L("AND OR NOT", [
+        "AND means both parts must be true. OR means at least one part must be true. NOT reverses true and false.",
+        "Use AND when a value must be inside a valid range. Use OR when any bad condition should trigger an error.",
+        "Parentheses can make mixed logic clearer."
+      ], "Use OR to catch any invalid case.", [
+        S("Range Thinking", [
+          "Valid: number >= 0 AND number <= 500.",
+          "Invalid: number < 0 OR number > 500.",
+          "Both formulas describe the same range from opposite directions."
+        ])
+      ], [
+        "if number < 0 or number > 500:",
+        "    print(\"Number is outside the valid range\")"
+      ].join("\n")),
+      L("Input Validation", [
+        "Validation checks input before the program uses it. This prevents impossible or unsafe calculations.",
+        "If a quantity must be positive, check it before calculating totals. If a divisor cannot be zero, check it before division.",
+        "Some programs display an error and stop. Later programs may use loops to keep asking until the input is valid."
+      ], "Validate before calculating.", [
+        S("Validation Examples", [
+          "Quantity cannot be 0 or less.",
+          "Number must be from 0 through 500.",
+          "Operator must be +, -, *, or /.",
+          "Denominator cannot be 0."
+        ])
+      ]),
+      L("Decision Tables", [
+        "A table of rates, categories, grades, or fees usually becomes a chain of decisions.",
+        "Each row becomes one condition. Start at the smallest range and move upward, or start at the largest and move downward. Do not mix the order randomly.",
+        "Once a row matches, the later rows should not overwrite the selected value."
+      ], "A table is a decision chain.", [
+        S("Discount Range Pattern", [
+          "If quantity <= 9, rate is 0.",
+          "Else if quantity <= 19, rate is 0.10.",
+          "Else if quantity <= 39, rate is 0.15.",
+          "Else use the next ranges until the final else."
+        ])
+      ])
     ]
   },
   {
     id: "loops",
-    title: "Loops",
+    title: "Loops Validation",
     icon: "loop",
-    summary: "Repeat steps safely with while loops, for loops, counters, and sentinels.",
-    tags: ["while", "for", "counter"],
     lessons: [
-      {
-        title: "Why Loops Exist",
-        body: [
-          "A loop repeats a block of steps. It is useful when the same job must happen more than once.",
-          "A while loop repeats while a condition is true. A for loop is often used when you know how many times to repeat.",
-          "Every loop needs a way to stop. If nothing changes the condition, the loop may repeat forever."
-        ],
-        keyPoints: [
-          "Use while for validation and unknown repetition.",
-          "Use for for counted repetition.",
-          "Update counters or inputs inside the loop."
-        ],
-        python: [
-          "count = 1",
-          "while count <= 5:",
-          "    print(count)",
-          "    count = count + 1"
-        ],
-        remember: "A loop condition must eventually become false."
-      },
-      {
-        title: "Counters and Running Totals",
-        body: [
-          "A counter tracks how many times something has happened. A running total adds values over time.",
-          "Initialize them before the loop. Update them inside the loop.",
-          "For five test scores, count can control how many scores are read while total adds them."
-        ],
-        pseudocode: [
-          "Set total = 0",
-          "Set count = 1",
-          "While count <= 5",
-          "   Input score",
-          "   Set total = total + score",
-          "   Set count = count + 1",
-          "End While",
-          "Set average = total / 5",
-          "Write average"
-        ],
-        python: [
-          "total = 0",
-          "for count in range(5):",
-          "    score = float(input('Score: '))",
-          "    total = total + score",
-          "average = total / 5",
-          "print('Average =', average)"
-        ],
-        remember: "Initialize before, update inside, use after."
-      },
-      {
-        title: "Sentinels and Validation Loops",
-        body: [
-          "A sentinel is a special value that means stop. For example, enter -1 when there are no more scores.",
-          "A validation loop keeps asking until the input is acceptable.",
-          "Use validation when the problem says the value must be within a range or cannot be zero."
-        ],
-        python: [
-          "number = int(input('Enter 1 through 10: '))",
-          "while number < 1 or number > 10:",
-          "    print('Invalid number')",
-          "    number = int(input('Enter 1 through 10: '))"
-        ],
-        remember: "Validation loops guard the rest of the program from bad data."
-      }
+      L("Why Loops Exist", [
+        "A loop repeats a block of steps. Use loops when the same action must happen more than once.",
+        "A while loop repeats while a condition is true. A for loop is often used when you know the number of repetitions.",
+        "Every loop must have a way to stop. If the condition never changes, the loop can repeat forever."
+      ], "A loop needs a condition and a path to stop.", [
+        S("Loop Uses", [
+          "Ask for multiple scores.",
+          "Repeat until input is valid.",
+          "Process every item in a list.",
+          "Keep a running total."
+        ])
+      ]),
+      L("While Loops", [
+        "A while loop checks a condition before each repetition.",
+        "The loop body should change something that can eventually make the condition false.",
+        "Validation loops often start by reading a value, then repeat while the value is invalid."
+      ], "While means keep going as long as the condition is true.", [
+        S("Validation Shape", [
+          "Input number.",
+          "While number is invalid.",
+          "Display error.",
+          "Input number again.",
+          "End While."
+        ])
+      ], [
+        "number = int(input(\"Enter 1 through 10: \"))",
+        "while number < 1 or number > 10:",
+        "    print(\"Invalid\")",
+        "    number = int(input(\"Enter 1 through 10: \"))"
+      ].join("\n")),
+      L("Counters And Running Totals", [
+        "A counter tracks how many times something has happened. A running total adds values over time.",
+        "Initialize counters and totals before the loop. Update them inside the loop.",
+        "For five scores, a counter can control repetition while a total accumulates scores."
+      ], "Initialize before the loop; update inside the loop.", [
+        S("Common Updates", [
+          "count = count + 1",
+          "total = total + score",
+          "itemsProcessed = itemsProcessed + 1",
+          "balance = balance + deposit"
+        ])
+      ]),
+      L("For Loops In Python", [
+        "Python for loops are often used when you know how many times to repeat.",
+        "range(5) produces five repetitions using values 0 through 4. range(1, 6) produces 1 through 5.",
+        "For loops are useful for repeated input when the count is known."
+      ], "Use for when the repetition count is known.", [
+        S("Example Uses", [
+          "Read 5 scores.",
+          "Print numbers 1 through 10.",
+          "Process each item in a list.",
+          "Repeat a practice calculation a fixed number of times."
+        ])
+      ], [
+        "total = 0",
+        "for count in range(5):",
+        "    score = float(input(\"Score: \"))",
+        "    total = total + score",
+        "average = total / 5"
+      ].join("\n")),
+      L("Sentinel Values", [
+        "A sentinel is a special value that means stop. For example, the user might enter -1 when there are no more scores.",
+        "Sentinel loops are useful when you do not know ahead of time how many values will be entered.",
+        "The sentinel should not be processed as normal data."
+      ], "A sentinel is a stop signal, not real data.", [
+        S("Sentinel Pattern", [
+          "Input first value.",
+          "While value is not the sentinel.",
+          "Process the value.",
+          "Input the next value.",
+          "End While."
+        ])
+      ])
     ]
   },
   {
     id: "functions",
-    title: "Functions",
+    title: "Functions Modules",
     icon: "flow",
-    summary: "Split programs into named pieces that can receive values and return results.",
-    tags: ["module", "def", "return"],
     lessons: [
-      {
-        title: "Functions Are Named Jobs",
-        body: [
-          "A function groups statements under one name. Calling the function runs those statements.",
-          "Functions make larger programs easier to read because each part has one clear job.",
-          "In pseudocode, you may see modules. In Python, you write functions with def."
-        ],
-        python: [
-          "def show_heading():",
-          "    print('Shipping Calculator')",
-          "",
-          "show_heading()"
-        ],
-        remember: "A function name should sound like the job it performs."
-      },
-      {
-        title: "Arguments and Return Values",
-        body: [
-          "An argument is a value you send into a function. A return value is the answer the function sends back.",
-          "Use return when a function calculates a value that the rest of the program needs.",
-          "Avoid relying on hidden global values when passing the needed values would be clearer."
-        ],
-        python: [
-          "def calculate_total(price, quantity):",
-          "    return price * quantity",
-          "",
-          "total = calculate_total(12.50, 4)",
-          "print(total)"
-        ],
-        remember: "Arguments go in. Return values come out."
-      },
-      {
-        title: "Top-Down Design",
-        body: [
-          "Top-down design starts with the big job, then splits it into smaller jobs.",
-          "For a shipping program, the big jobs might be input data, choose discount rate, calculate totals, and display results.",
-          "This matches RAPTOR subcharts and Python functions well."
-        ],
-        pseudocode: [
-          "Main module",
-          "   Call getInput",
-          "   Call chooseDiscountRate",
-          "   Call calculateTotals",
-          "   Call displayResults",
-          "End Program"
-        ],
-        remember: "If a program feels long, look for smaller jobs with names."
-      }
-    ]
-  },
-  {
-    id: "collections",
-    title: "Lists + Strings",
-    icon: "list",
-    summary: "Later Python tools for many values and text processing.",
-    tags: ["lists", "tuples", "strings"],
-    lessons: [
-      {
-        title: "Lists Hold Many Values",
-        body: [
-          "A list is a sequence of values stored under one name.",
-          "Lists are useful when you have many related values, such as scores, prices, or names.",
-          "Python list indexes start at 0, so the first item is listName[0]."
-        ],
-        python: [
-          "scores = [82, 91, 77]",
-          "total = sum(scores)",
-          "average = total / len(scores)",
-          "print(average)"
-        ],
-        remember: "A list is one variable name for many positions."
-      },
-      {
-        title: "Strings Are Sequences Too",
-        body: [
-          "A string stores text. Python can inspect characters, slice pieces, change case, and search for text.",
-          "String values stay in quotes. If a number is inside quotes, it is text until converted.",
-          "Use string methods when you need to clean or compare user input."
-        ],
-        python: [
-          "operator = input('Operator: ')",
-          "operator = operator.strip()",
-          "if operator == '+':",
-          "    print('Add')"
-        ],
-        remember: "Text that looks like a number is still text until you convert it."
-      },
-      {
-        title: "When Not to Use a List Yet",
-        body: [
-          "Early assignments often expect only variables, selections, and simple formulas.",
-          "If the course has not introduced lists, do not use a list just because it would be shorter.",
-          "Follow the covered material. A longer beginner solution can be the correct solution for that week."
-        ],
-        remember: "Use the tool the assignment is practicing."
-      }
-    ]
-  },
-  {
-    id: "files",
-    title: "Files + Errors",
-    icon: "file",
-    summary: "A preview of reading, writing, and handling problems in Python.",
-    tags: ["files", "exceptions", "records"],
-    lessons: [
-      {
-        title: "Sequential Files",
-        body: [
-          "A sequential file stores data one piece after another. Programs can read from files or write to files.",
-          "File processing is useful when data should survive after the program ends.",
-          "Always close files or use a with statement so Python handles closing for you."
-        ],
-        python: [
-          "with open('notes.txt', 'w') as file:",
-          "    file.write('Python practice\\n')"
-        ],
-        remember: "Variables disappear when the program ends. Files can persist."
-      },
-      {
-        title: "Exceptions",
-        body: [
-          "An exception is an error that happens while the program is running.",
-          "For example, converting 'hello' with int() causes a ValueError because the text is not a valid integer.",
-          "Python can catch exceptions with try and except, but use this only when your course has reached it."
-        ],
-        python: [
-          "try:",
-          "    quantity = int(input('Quantity: '))",
-          "except ValueError:",
-          "    print('Please enter a whole number')"
-        ],
-        remember: "Validation prevents bad input. Exceptions handle runtime problems."
-      },
-      {
-        title: "Records and Fields",
-        body: [
-          "A field is one piece of data, such as name or price. A record is a group of related fields.",
-          "A file can hold many records, such as many products or many customers.",
-          "This idea becomes important when programs move beyond single-screen calculations."
-        ],
-        remember: "Field is one value. Record is a related group of values."
-      }
+      L("Functions As Named Jobs", [
+        "A function is a named group of statements. Calling the function runs those statements.",
+        "Functions help split a larger program into smaller jobs. This is similar to modules in pseudocode or Call symbols in RAPTOR.",
+        "A good function name describes the job, such as get_input, calculate_total, or display_results."
+      ], "A function should do one clear job.", [
+        S("Why Use Functions", [
+          "Reduce repeated code.",
+          "Make long programs easier to read.",
+          "Test small pieces separately.",
+          "Match top-down design."
+        ])
+      ], [
+        "def show_heading():",
+        "    print(\"Practice Program\")",
+        "",
+        "show_heading()"
+      ].join("\n")),
+      L("Arguments", [
+        "An argument is a value sent into a function. A parameter is the variable name that receives it inside the function.",
+        "Arguments let a function work with different values without relying on hidden global variables.",
+        "For example, calculate_total(price, quantity) can work for any price and quantity."
+      ], "Arguments carry values into a function.", [
+        S("Argument Example", [
+          "price and quantity are sent into the function.",
+          "The function uses them in a formula.",
+          "The caller gets the calculated answer."
+        ])
+      ], [
+        "def calculate_total(price, quantity):",
+        "    total = price * quantity",
+        "    return total"
+      ].join("\n")),
+      L("Return Values", [
+        "A return value is the answer a function sends back to the caller.",
+        "Use return when the rest of the program needs the calculated value.",
+        "Printing inside a function displays information, but returning gives the program a value it can keep using."
+      ], "Return sends an answer back.", [
+        S("Print Versus Return", [
+          "print displays something now.",
+          "return hands a value back to the caller.",
+          "A function can return a total, discount, tax, or validation result."
+        ])
+      ]),
+      L("Top-Down Design", [
+        "Top-down design starts with the big program goal, then breaks it into smaller named tasks.",
+        "A shipping calculator might have get_input, choose_discount_rate, calculate_totals, and display_results.",
+        "This makes the program easier to read because the main section shows the order of jobs."
+      ], "Main should read like a table of contents.", [
+        S("Top-Down Steps", [
+          "Write the main program as a few calls.",
+          "Define each called module or function.",
+          "Give each function one clear purpose.",
+          "Test each piece with simple values."
+        ])
+      ]),
+      L("Local And Global Values", [
+        "A local variable is created inside a function and normally exists only inside that function.",
+        "A global variable is created outside functions and can be seen more broadly, but relying on globals can make programs harder to debug.",
+        "Passing arguments and returning values usually creates clearer beginner programs."
+      ], "Prefer passing values over depending on hidden globals.", [
+        S("Cleaner Function Flow", [
+          "Input values in one place.",
+          "Pass values into calculation functions.",
+          "Return calculated results.",
+          "Display results in one place."
+        ])
+      ])
     ]
   },
   {
     id: "raptor",
     title: "RAPTOR",
-    icon: "raptor",
-    summary: "Translate pseudocode into flowchart symbols and common RAPTOR rules.",
-    tags: ["symbols", "flowchart", "comments"],
+    icon: "flow",
     lessons: [
-      {
-        title: "Six Core Symbols",
-        body: [
-          "RAPTOR turns logic into a flowchart. Each symbol has a job.",
-          "Start and End mark the program boundaries. Input receives user values. Output displays text or values. Assignment stores calculations. Selection branches. Loop repeats.",
-          "Call is used for subcharts or modules when a program is split into named sections."
-        ],
-        keyPoints: [
-          "Output prompt -> Input variable.",
-          "Set formula -> Assignment symbol.",
-          "If condition -> Selection symbol.",
-          "While/For idea -> Loop symbol.",
+      L("RAPTOR Symbol Map", [
+        "RAPTOR is a flowchart tool. It lets you focus on logic without writing full Python syntax.",
+        "Each flowchart symbol matches a type of pseudocode action. Start and End mark boundaries. Input receives values. Output displays values. Assignment calculates or stores. Selection branches. Loop repeats. Call runs a subchart.",
+        "The fastest build method is to translate one pseudocode line at a time."
+      ], "Pseudocode line type tells you the RAPTOR symbol.", [
+        S("Symbol Match", [
+          "Start or End -> Oval.",
+          "Input variable -> Input parallelogram.",
+          "Write result -> Output parallelogram.",
+          "Set variable = expression -> Assignment rectangle.",
+          "If condition -> Selection diamond.",
+          "While or repeat -> Loop symbol.",
           "Call module -> Call symbol."
-        ],
-        remember: "Pseudocode line type tells you the RAPTOR symbol."
-      },
-      {
-        title: "Build Order",
-        body: [
-          "Start with required heading comments. Then add prompts, inputs, validation selections, assignments, decision rules, and final outputs.",
-          "If bad input should stop the program, connect the invalid branch to an error Output and then to End.",
-          "Test every branch. A discount table with six ranges needs test values that touch different ranges."
-        ],
-        raptor: [
-          "Start",
-          "Comment heading",
-          "Output prompt",
-          "Input variable",
-          "Selection for validation",
-          "Assignment formulas",
-          "Output final results",
-          "End"
-        ],
-        remember: "Build the chart in the same order as the pseudocode."
-      },
-      {
-        title: "Common RAPTOR Errors",
-        body: [
-          "Variable not found usually means the variable was used before an Input or Assignment created it, or the name was misspelled.",
-          "Cannot assign string to numeric variable means the variable started as one type and later received a different type.",
-          "Wrong branch behavior usually means the condition was phrased one way but the Yes/No steps were placed as if it meant the opposite."
-        ],
-        keyPoints: [
-          "Create variables before using them.",
-          "Keep number variables numeric and string variables text.",
-          "Read every diamond as a yes/no question."
-        ],
-        remember: "Most RAPTOR bugs are order, spelling, type, or branch bugs."
-      }
+        ])
+      ]),
+      L("Input And Output Symbols", [
+        "An Input symbol receives a value and stores it in a variable. It can also display a prompt depending on how the dialog is filled out.",
+        "An Output symbol displays text, variables, results, headings, or error messages.",
+        "Comments are not output. A comment is a note for the programmer or grader. Output is something the user sees."
+      ], "Input stores; Output displays; comments explain.", [
+        S("Output Tips", [
+          "Put literal text in quotes.",
+          "Use variable names when you want values.",
+          "Include spaces inside quoted text when the screen needs spaces.",
+          "Use comments to explain the logic, not to display results."
+        ])
+      ]),
+      L("Assignment Symbols", [
+        "An Assignment symbol stores a value in a variable or calculates a new value.",
+        "The receiving variable is on the left. The expression is on the right. The expression is evaluated first.",
+        "Use one assignment symbol per important calculation when you want the flowchart to be easy to read."
+      ], "Assignment changes a variable.", [
+        S("Examples", [
+          "total = quantity * price",
+          "tax = total * (taxRate / 100)",
+          "average = total / count",
+          "counter = counter + 1"
+        ])
+      ]),
+      L("Selection Diamonds", [
+        "A Selection diamond asks a yes or no question. The Yes branch runs when the condition is true. The No branch runs when it is false.",
+        "Branch mistakes happen when the condition says one thing but the steps are placed as if it says the opposite.",
+        "Read the diamond out loud before adding symbols to the branches."
+      ], "Match branch actions to the exact question in the diamond.", [
+        S("Branch Sanity Check", [
+          "Condition: quantity <= 0.",
+          "Yes branch: display invalid quantity error.",
+          "No branch: continue calculations.",
+          "Condition: quantity > 0 would reverse those branches."
+        ])
+      ]),
+      L("Common RAPTOR Errors", [
+        "Variable not found usually means a variable was used before it was created or the name is misspelled.",
+        "Type errors happen when a variable starts as a number and later receives text, or starts as text and later receives a number.",
+        "Bad output often comes from missing quote marks around text or missing spaces inside quoted labels."
+      ], "Most RAPTOR errors are spelling, order, type, or branch errors.", [
+        S("Fix Checklist", [
+          "Check spelling and capitalization of every variable.",
+          "Make sure each variable has an Input or Assignment before use.",
+          "Keep numeric variables numeric and text variables text.",
+          "Verify Yes and No branches match the condition.",
+          "Separate comments from Output symbols."
+        ])
+      ])
     ]
   },
   {
-    id: "practice-patterns",
-    title: "Practice Patterns",
-    icon: "cards",
-    summary: "Common lab and homework-style structures without copying the original prompts.",
-    tags: ["conversion", "recipe", "calculator"],
+    id: "patterns",
+    title: "Word Patterns",
+    icon: "tool",
     lessons: [
-      {
-        title: "Conversion Problems",
-        body: [
-          "A conversion problem gives an input unit, a conversion factor, and an output unit.",
-          "The processing is usually one formula. Name the input and output clearly.",
-          "Gallons to liters uses liters = gallons * 3.78541."
-        ],
-        pseudocode: [
-          "1. Start",
-          "2. Declare gallons As Float",
-          "3. Declare liters As Float",
-          "4. Write \"Enter gallons:\"",
-          "5. Input gallons",
-          "6. Set liters = gallons * 3.78541",
-          "7. Write \"Liters = \" + liters",
-          "8. End"
-        ],
-        remember: "Input unit times conversion factor equals output unit."
-      },
-      {
-        title: "Scaling Problems",
-        body: [
-          "A recipe or scaling problem starts with an original amount and asks for a different amount.",
-          "Find the scale factor first: desired amount / original amount.",
-          "Multiply each original ingredient by that scale factor."
-        ],
-        pseudocode: [
-          "Set scaleFactor = desiredDonuts / 20",
-          "Set sugarCups = scaleFactor * 2.5",
-          "Set butterCups = scaleFactor * 5",
-          "Set flourCups = scaleFactor * 1.8",
-          "Set saltCups = scaleFactor * 1"
-        ],
-        remember: "Desired divided by original gives the multiplier."
-      },
-      {
-        title: "Guarded Calculator",
-        body: [
-          "A calculator problem combines validation, operator decisions, and one special division rule.",
-          "First validate the numbers. Then validate the operator. Then handle each operator. For division, check the denominator before dividing.",
-          "Use quotes around operator comparisons because +, -, *, and / are characters."
-        ],
-        pseudocode: [
-          "If num1 < 0 OR num1 > 500 OR num2 < 0 OR num2 > 500 Then",
-          "   Write \"ERROR\"",
-          "Else",
-          "   Input operator",
-          "   If operator == \"+\" Then",
-          "      Set result = num1 + num2",
-          "   Else If operator == \"/\" Then",
-          "      If num2 == 0 Then",
-          "         Write \"Cannot divide by zero\"",
-          "      Else",
-          "         Set result = num1 / num2",
-          "      End If",
-          "   End If",
-          "End If"
-        ],
-        remember: "Validate before calculate. Protect division by zero before dividing."
-      }
-    ]
-  }
-];
-
-const scenarios = [
-  {
-    id: "average-two",
-    title: "Average Two Scores",
-    brief: "Ask for two test scores, calculate the average, and display it.",
-    clues: ["ask for two scores", "calculate average", "display average"],
-    ipo: {
-      input: ["score1", "score2"],
-      processing: ["total = score1 + score2", "average = total / 2"],
-      output: ["average"],
-      decisions: ["none"]
-    },
-    pseudocode: [
-      "1. Start",
-      "2. Declare score1 As Float",
-      "3. Declare score2 As Float",
-      "4. Declare total As Float",
-      "5. Declare average As Float",
-      "6. Write \"Enter first score:\"",
-      "7. Input score1",
-      "8. Write \"Enter second score:\"",
-      "9. Input score2",
-      "10. Set total = score1 + score2",
-      "11. Set average = total / 2",
-      "12. Write \"Average = \" + average",
-      "13. End"
-    ],
-    raptor: [
-      ["start", "Start"],
-      ["output", "Prompt for first score"],
-      ["input", "Input score1"],
-      ["output", "Prompt for second score"],
-      ["input", "Input score2"],
-      ["assignment", "total = score1 + score2"],
-      ["assignment", "average = total / 2"],
-      ["output", "Display average"],
-      ["end", "End"]
-    ],
-    python: [
-      "score1 = float(input('Enter first score: '))",
-      "score2 = float(input('Enter second score: '))",
-      "total = score1 + score2",
-      "average = total / 2",
-      "print('Average =', average)"
-    ]
-  },
-  {
-    id: "gallons-liters",
-    title: "Gallons to Liters",
-    brief: "Ask for a US gallon amount, convert it to liters, and display the result.",
-    clues: ["volume in gallons", "conversion factor 3.78541", "display liters"],
-    ipo: {
-      input: ["gallons"],
-      processing: ["liters = gallons * 3.78541"],
-      output: ["liters"],
-      decisions: ["none unless the assignment asks for validation"]
-    },
-    pseudocode: [
-      "1. Start",
-      "2. Declare gallons As Float",
-      "3. Declare liters As Float",
-      "4. Write \"Enter gallons:\"",
-      "5. Input gallons",
-      "6. Set liters = gallons * 3.78541",
-      "7. Write \"Liters = \" + liters",
-      "8. End"
-    ],
-    raptor: [
-      ["start", "Start"],
-      ["output", "Prompt for gallons"],
-      ["input", "Input gallons"],
-      ["assignment", "liters = gallons * 3.78541"],
-      ["output", "Display liters"],
-      ["end", "End"]
-    ],
-    python: [
-      "gallons = float(input('Enter gallons: '))",
-      "liters = gallons * 3.78541",
-      "print('Liters =', liters)"
-    ]
-  },
-  {
-    id: "donut-scale",
-    title: "Recipe Scaling",
-    brief: "Ask how many items to make, scale each ingredient from the original recipe, and display the ingredient amounts.",
-    clues: ["original recipe makes 20", "desired amount from user", "ingredient amounts scale together"],
-    ipo: {
-      input: ["desiredDonuts"],
-      processing: ["scaleFactor = desiredDonuts / 20", "each ingredient = scaleFactor * original ingredient"],
-      output: ["sugarCups", "butterCups", "flourCups", "saltCups"],
-      decisions: ["optional validation if desiredDonuts <= 0"]
-    },
-    pseudocode: [
-      "1. Start",
-      "2. Declare desiredDonuts As Integer",
-      "3. Declare scaleFactor As Float",
-      "4. Declare sugarCups As Float",
-      "5. Declare butterCups As Float",
-      "6. Declare flourCups As Float",
-      "7. Declare saltCups As Float",
-      "8. Write \"Enter number of donuts:\"",
-      "9. Input desiredDonuts",
-      "10. Set scaleFactor = desiredDonuts / 20",
-      "11. Set sugarCups = scaleFactor * 2.5",
-      "12. Set butterCups = scaleFactor * 5",
-      "13. Set flourCups = scaleFactor * 1.8",
-      "14. Set saltCups = scaleFactor * 1",
-      "15. Write sugarCups, butterCups, flourCups, saltCups",
-      "16. End"
-    ],
-    raptor: [
-      ["start", "Start"],
-      ["output", "Prompt for desired amount"],
-      ["input", "Input desiredDonuts"],
-      ["assignment", "scaleFactor = desiredDonuts / 20"],
-      ["assignment", "sugarCups = scaleFactor * 2.5"],
-      ["assignment", "butterCups = scaleFactor * 5"],
-      ["assignment", "flourCups = scaleFactor * 1.8"],
-      ["assignment", "saltCups = scaleFactor * 1"],
-      ["output", "Display ingredient amounts"],
-      ["end", "End"]
-    ],
-    python: [
-      "desired_donuts = int(input('Enter number of donuts: '))",
-      "scale_factor = desired_donuts / 20",
-      "sugar_cups = scale_factor * 2.5",
-      "butter_cups = scale_factor * 5",
-      "flour_cups = scale_factor * 1.8",
-      "salt_cups = scale_factor * 1",
-      "print('Sugar cups =', sugar_cups)",
-      "print('Butter cups =', butter_cups)",
-      "print('Flour cups =', flour_cups)",
-      "print('Salt cups =', salt_cups)"
-    ]
-  },
-  {
-    id: "coins",
-    title: "Coin Value",
-    brief: "Ask for counts of quarters, dimes, and nickels. Display total value in pennies.",
-    clues: ["three coin counts", "quarter = 25 pennies", "dime = 10 pennies", "nickel = 5 pennies"],
-    ipo: {
-      input: ["quarters", "dimes", "nickels"],
-      processing: ["totalPennies = quarters * 25 + dimes * 10 + nickels * 5"],
-      output: ["totalPennies"],
-      decisions: ["optional validation for negative counts"]
-    },
-    pseudocode: [
-      "1. Start",
-      "2. Declare quarters As Integer",
-      "3. Declare dimes As Integer",
-      "4. Declare nickels As Integer",
-      "5. Declare totalPennies As Integer",
-      "6. Input quarters",
-      "7. Input dimes",
-      "8. Input nickels",
-      "9. Set totalPennies = quarters * 25 + dimes * 10 + nickels * 5",
-      "10. Write \"Total pennies = \" + totalPennies",
-      "11. End"
-    ],
-    raptor: [
-      ["start", "Start"],
-      ["input", "Input quarters"],
-      ["input", "Input dimes"],
-      ["input", "Input nickels"],
-      ["assignment", "totalPennies = quarters * 25 + dimes * 10 + nickels * 5"],
-      ["output", "Display totalPennies"],
-      ["end", "End"]
-    ],
-    python: [
-      "quarters = int(input('Quarters: '))",
-      "dimes = int(input('Dimes: '))",
-      "nickels = int(input('Nickels: '))",
-      "total_pennies = quarters * 25 + dimes * 10 + nickels * 5",
-      "print('Total pennies =', total_pennies)"
-    ]
-  },
-  {
-    id: "shipping",
-    title: "Shipping Discount",
-    brief: "Use quantity, item price, tax rate, discount ranges, and shipping rules to calculate a grand total.",
-    clues: ["company name", "quantity must be positive", "tax is before discount", "shipping free at 50 or more", "discount table"],
-    ipo: {
-      input: ["companyName", "quantity", "retailPrice", "taxRate"],
-      processing: ["total = quantity * retailPrice", "tax = total * (taxRate / 100)", "discount = total * discountRate", "shipping = 0 or 35", "grandTotal = total - discount + tax + shipping"],
-      output: ["all inputs", "total", "discount", "tax", "shipping", "grandTotal"],
-      decisions: ["quantity <= 0 error", "discount range", "shipping fee rule"]
-    },
-    pseudocode: [
-      "1. Start",
-      "2. Input companyName",
-      "3. Input quantity",
-      "4. If quantity <= 0 Then",
-      "5.    Write \"ERROR - invalid quantity\"",
-      "6. Else",
-      "7.    Input retailPrice",
-      "8.    Input taxRate",
-      "9.    Set total = quantity * retailPrice",
-      "10.   If quantity <= 9 Then Set discountRate = 0",
-      "11.   Else If quantity <= 19 Then Set discountRate = 0.10",
-      "12.   Else If quantity <= 39 Then Set discountRate = 0.15",
-      "13.   Else If quantity <= 79 Then Set discountRate = 0.20",
-      "14.   Else If quantity <= 99 Then Set discountRate = 0.25",
-      "15.   Else Set discountRate = 0.30",
-      "16.   Set discount = total * discountRate",
-      "17.   Set tax = total * (taxRate / 100)",
-      "18.   If quantity >= 50 Then Set shipping = 0 Else Set shipping = 35",
-      "19.   Set grandTotal = total - discount + tax + shipping",
-      "20.   Write companyName, quantity, total, discount, tax, shipping, grandTotal",
-      "21. End If",
-      "22. End"
-    ],
-    raptor: [
-      ["start", "Start"],
-      ["input", "Input companyName"],
-      ["input", "Input quantity"],
-      ["selection", "quantity <= 0?"],
-      ["output", "Yes branch: display error"],
-      ["input", "No branch: input retailPrice and taxRate"],
-      ["assignment", "total = quantity * retailPrice"],
-      ["selection", "Choose discount range"],
-      ["assignment", "discount = total * discountRate"],
-      ["assignment", "tax = total * (taxRate / 100)"],
-      ["selection", "quantity >= 50?"],
-      ["assignment", "shipping = 0 or 35"],
-      ["assignment", "grandTotal = total - discount + tax + shipping"],
-      ["output", "Display all required values"],
-      ["end", "End"]
-    ],
-    python: [
-      "company_name = input('Company name: ')",
-      "quantity = int(input('Quantity: '))",
-      "if quantity <= 0:",
-      "    print('ERROR - invalid quantity')",
-      "else:",
-      "    retail_price = float(input('Retail price: '))",
-      "    tax_rate = float(input('Tax rate as whole number: '))",
-      "    total = quantity * retail_price",
-      "    if quantity <= 9:",
-      "        discount_rate = 0",
-      "    elif quantity <= 19:",
-      "        discount_rate = 0.10",
-      "    elif quantity <= 39:",
-      "        discount_rate = 0.15",
-      "    elif quantity <= 79:",
-      "        discount_rate = 0.20",
-      "    elif quantity <= 99:",
-      "        discount_rate = 0.25",
-      "    else:",
-      "        discount_rate = 0.30",
-      "    discount = total * discount_rate",
-      "    tax = total * (tax_rate / 100)",
-      "    shipping = 0 if quantity >= 50 else 35",
-      "    grand_total = total - discount + tax + shipping",
-      "    print(company_name, grand_total)"
+      L("Conversion Pattern", [
+        "A conversion problem asks for a value in one unit and displays the value in another unit.",
+        "The important pieces are the input unit, conversion factor, formula, and output unit.",
+        "For gallons to liters, the formula is liters = gallons * 3.78541."
+      ], "Input unit times conversion factor equals output unit.", [
+        S("Conversion Steps", [
+          "Declare input value and converted value.",
+          "Prompt and input the original unit.",
+          "Set converted value using the factor.",
+          "Display the converted value with a label."
+        ])
+      ], [
+        "gallons = float(input(\"Gallons: \"))",
+        "liters = gallons * 3.78541",
+        "print(\"Liters =\", liters)"
+      ].join("\n")),
+      L("Recipe Scaling Pattern", [
+        "Recipe scaling uses a base recipe and a desired amount.",
+        "First calculate the scale factor: desired amount divided by original amount. Then multiply each original ingredient by the scale factor.",
+        "This pattern works for donuts, paint mixture, serving sizes, batches, or any proportional recipe."
+      ], "Scale factor = desired amount / original amount.", [
+        S("Recipe Steps", [
+          "Input desired amount.",
+          "Set scaleFactor = desiredAmount / originalAmount.",
+          "Set each needed ingredient = scaleFactor * original ingredient.",
+          "Display each needed ingredient."
+        ])
+      ]),
+      L("Coin Total Pattern", [
+        "A coin total problem uses counts and fixed coin values.",
+        "Each coin count is multiplied by its value, then the results are added.",
+        "Use Integer for coin counts and total pennies because they are whole-number counts."
+      ], "Count times value, then add.", [
+        S("Formula", [
+          "totalPennies = quarters * 25 + dimes * 10 + nickels * 5",
+          "Use clear names for each count.",
+          "Do not put coin values in quote marks because they are numbers."
+        ])
+      ]),
+      L("Bank Balance Pattern", [
+        "A balance problem usually begins with a starting balance and changes it using deposits and withdrawals.",
+        "Deposits increase the balance. Withdrawals decrease it.",
+        "The current balance is starting balance plus deposits minus withdrawals."
+      ], "Current balance = starting + deposits - withdrawals.", [
+        S("Bank Steps", [
+          "Input startingBalance.",
+          "Input depositAmount.",
+          "Input withdrawalAmount.",
+          "Set currentBalance = startingBalance + depositAmount - withdrawalAmount.",
+          "Display currentBalance."
+        ])
+      ]),
+      L("Shipping Discount Pattern", [
+        "A shipping and discount problem combines several ideas: input, validation, rate table, tax, shipping rule, and final total.",
+        "Calculate tax according to the order described in the problem. If tax is before discount, use the original total before subtracting discount.",
+        "For shipping rules, write a clear decision: if quantity is at least the free-shipping threshold, shipping is 0; otherwise shipping is the flat fee."
+      ], "Do validation first, then rates, then final total.", [
+        S("Processing Order", [
+          "Validate quantity.",
+          "Calculate total = quantity * retailPrice.",
+          "Choose discountRate from the table.",
+          "Calculate discount.",
+          "Calculate tax based on the required order.",
+          "Choose shipping fee.",
+          "Calculate grandTotal."
+        ])
+      ])
     ]
   },
   {
     id: "calculator",
-    title: "Guarded Calculator",
-    brief: "Ask for two numbers in range and an operator. Display the result or an error.",
-    clues: ["numbers must be 0 to 500", "operator must be +, -, *, or /", "division by zero is not allowed"],
-    ipo: {
-      input: ["num1", "num2", "operator"],
-      processing: ["result depends on operator"],
-      output: ["expression and result or error message"],
-      decisions: ["number range", "operator validity", "division by zero"]
-    },
-    pseudocode: [
-      "1. Start",
-      "2. Input num1",
-      "3. Input num2",
-      "4. If num1 < 0 OR num1 > 500 OR num2 < 0 OR num2 > 500 Then",
-      "5.    Write \"ERROR - number outside range\"",
-      "6. Else",
-      "7.    Input operator",
-      "8.    If operator == \"+\" Then Set result = num1 + num2",
-      "9.    Else If operator == \"-\" Then Set result = num1 - num2",
-      "10.   Else If operator == \"*\" Then Set result = num1 * num2",
-      "11.   Else If operator == \"/\" Then",
-      "12.      If num2 == 0 Then Write \"Cannot divide by zero\"",
-      "13.      Else Set result = num1 / num2",
-      "14.   Else Write \"ERROR - invalid operator\"",
-      "15.   Write num1 + operator + num2 + \" = \" + result",
-      "16. End If",
-      "17. End"
-    ],
-    raptor: [
-      ["start", "Start"],
-      ["input", "Input num1"],
-      ["input", "Input num2"],
-      ["selection", "Any number outside 0 to 500?"],
-      ["output", "Invalid branch: display range error"],
-      ["input", "Valid branch: input operator"],
-      ["selection", "operator == '+'?"],
-      ["assignment", "result = num1 + num2"],
-      ["selection", "operator == '-'?"],
-      ["assignment", "result = num1 - num2"],
-      ["selection", "operator == '*'?"],
-      ["assignment", "result = num1 * num2"],
-      ["selection", "operator == '/'?"],
-      ["selection", "num2 == 0?"],
-      ["output", "Display divide-by-zero error or result"],
-      ["end", "End"]
-    ],
-    python: [
-      "num1 = float(input('Num1: '))",
-      "num2 = float(input('Num2: '))",
-      "if num1 < 0 or num1 > 500 or num2 < 0 or num2 > 500:",
-      "    print('ERROR - number outside range')",
-      "else:",
-      "    operator = input('Operator: ')",
-      "    if operator == '+':",
-      "        result = num1 + num2",
-      "        print(num1, '+', num2, '=', result)",
-      "    elif operator == '/' and num2 == 0:",
-      "        print('Invalid operation - cannot divide by 0')"
+    title: "Calculator Logic",
+    icon: "chart",
+    lessons: [
+      L("Calculator Inputs", [
+        "A simple calculator usually needs two numbers and one operator.",
+        "If the numbers must be within a range, validate both numbers before asking for the operator or calculating a result.",
+        "The operator is text, so compare it with quoted symbols such as \"+\" or \"/\"."
+      ], "Validate numbers before choosing the operation.", [
+        S("Inputs", [
+          "num1: numeric.",
+          "num2: numeric.",
+          "operator: text or character.",
+          "result: numeric calculated output."
+        ])
+      ]),
+      L("Operator Branches", [
+        "Each allowed operator becomes a branch. Plus adds, minus subtracts, star multiplies, and slash divides.",
+        "Use an error branch when the operator is not one of the allowed choices.",
+        "Nested selections or else-if chains both work as long as only the matching operation runs."
+      ], "Each operator is one decision path.", [
+        S("Branch Map", [
+          "operator == \"+\" -> result = num1 + num2.",
+          "operator == \"-\" -> result = num1 - num2.",
+          "operator == \"*\" -> result = num1 * num2.",
+          "operator == \"/\" -> check denominator, then divide.",
+          "Else -> invalid operator."
+        ])
+      ]),
+      L("Division By Zero", [
+        "Division by zero is not allowed. If the operator is division, check the second number before dividing.",
+        "The second number is the denominator. If it is 0, display an error and do not calculate division.",
+        "This is a special validation rule inside the division branch."
+      ], "Check num2 before dividing by num2.", [
+        S("Safe Division", [
+          "If operator == \"/\" Then",
+          "   If num2 == 0 Then display error.",
+          "   Else result = num1 / num2.",
+          "End If."
+        ])
+      ]),
+      L("Expression Output", [
+        "Calculator output often displays the expression and result together.",
+        "If the sample output has no spaces around the operator, match it. If it has spaces, include those spaces inside the output text.",
+        "In Python, convert numbers to strings if you build one combined output string."
+      ], "Output spacing must match the desired screen display.", [
+        S("Examples", [
+          "15+4 = 19",
+          "15 + 4 = 19",
+          "Both can be correct if they match the expected style."
+        ])
+      ]),
+      L("Calculator Test Cases", [
+        "A calculator has many branches, so it needs multiple test cases.",
+        "Test a low invalid number, a high invalid number, an invalid operator, each valid operator, and division by zero.",
+        "A program that only works for addition is not finished."
+      ], "Every branch needs a test.", [
+        S("Minimum Tests", [
+          "num1 too low.",
+          "num2 too high.",
+          "invalid operator.",
+          "addition.",
+          "subtraction.",
+          "multiplication.",
+          "division.",
+          "division by zero."
+        ])
+      ])
+    ]
+  },
+  {
+    id: "collections",
+    title: "Lists Strings",
+    icon: "list",
+    lessons: [
+      L("Lists Hold Many Values", [
+        "A list stores multiple values under one name.",
+        "Lists are useful for scores, names, prices, or repeated values when you do not want a separate variable for each item.",
+        "Python list indexes start at 0, so the first item is scores[0]."
+      ], "A list is one name with many positions.", [
+        S("List Actions", [
+          "Create a list.",
+          "Append new values.",
+          "Loop through values.",
+          "Use len() for count.",
+          "Use sum() for numeric totals."
+        ])
+      ], [
+        "scores = [82, 91, 77]",
+        "average = sum(scores) / len(scores)",
+        "print(average)"
+      ].join("\n")),
+      L("Tuples", [
+        "A tuple is a sequence like a list, but it is normally not changed after creation.",
+        "Tuples are useful when values belong together and should stay fixed.",
+        "For beginner programs, lists are more common when values need to be added or changed."
+      ], "Tuple values are grouped and usually unchanged.", [
+        S("Examples", [
+          "point = (4, 9)",
+          "rgb = (120, 255, 60)",
+          "Use a list when you plan to append or update."
+        ])
+      ]),
+      L("String Basics", [
+        "A string stores text. Names, prompts, passwords, operators, and messages are strings.",
+        "Strings are sequences of characters. Python can inspect, slice, search, and clean them.",
+        "If a number is inside quote marks, it is text until converted."
+      ], "Text that looks numeric is still text until converted.", [
+        S("String Methods", [
+          "strip() removes extra spaces.",
+          "lower() makes text lowercase.",
+          "upper() makes text uppercase.",
+          "in checks whether text contains another piece of text."
+        ])
+      ]),
+      L("Processing User Text", [
+        "User input often includes extra spaces or unexpected capitalization.",
+        "For menu choices, it can help to strip spaces and normalize case before comparing.",
+        "For operator symbols, strip spaces so a user typing a space around + does not break the comparison."
+      ], "Clean text before comparing it.", [
+        S("Text Cleanup", [
+          "operator = operator.strip()",
+          "answer = answer.lower()",
+          "name = name.strip()"
+        ])
+      ], [
+        "operator = input(\"Operator: \").strip()",
+        "if operator == \"+\":",
+        "    print(\"Add\")"
+      ].join("\n")),
+      L("When Not To Use Lists Yet", [
+        "Sometimes a shorter Python feature is not the right choice for the assignment.",
+        "If the current material is practicing variables, formulas, and decisions, use those tools unless the assignment says lists are allowed.",
+        "Learning the expected pattern matters more than producing the shortest possible code."
+      ], "Use the tool the lesson is practicing.", [
+        S("Early-Course Discipline", [
+          "Use separate variables when lists have not been covered.",
+          "Avoid advanced formatting if the instructions say not to format.",
+          "Use covered decision structures even if you know another shortcut."
+        ])
+      ])
+    ]
+  },
+  {
+    id: "files",
+    title: "Files Errors",
+    icon: "file",
+    lessons: [
+      L("Why Files Matter", [
+        "Variables disappear when a program ends. Files can keep data after the program stops.",
+        "Programs can write output to files, read input from files, and process stored records.",
+        "File work is important when a program needs more than one run or more data than a user should type each time."
+      ], "Files let data persist beyond one run.", [
+        S("File Uses", [
+          "Save results.",
+          "Read lists of values.",
+          "Store records.",
+          "Create reports."
+        ])
+      ]),
+      L("Reading And Writing", [
+        "Python can open files for reading or writing. The with statement is helpful because it closes the file automatically.",
+        "Writing stores text in a file. Reading brings file contents into the program.",
+        "A newline character, written as \\n, moves file output to the next line."
+      ], "Use with open(...) so Python handles closing.", [
+        S("Modes", [
+          "\"r\" means read.",
+          "\"w\" means write and replace.",
+          "\"a\" means append.",
+          "Text files store strings."
+        ])
+      ], [
+        "with open(\"notes.txt\", \"w\") as file:",
+        "    file.write(\"Python practice\\n\")"
+      ].join("\n")),
+      L("Records And Fields", [
+        "A field is one piece of data. A record is a group of related fields.",
+        "For example, name, quantity, and price can be fields in one product record.",
+        "Files can contain many records, and programs can process each record in order."
+      ], "Field is one value; record is a related group.", [
+        S("Record Examples", [
+          "Student record: name, score, grade.",
+          "Product record: itemName, quantity, price.",
+          "Sale record: date, customer, total."
+        ])
+      ]),
+      L("Exceptions", [
+        "An exception is an error that happens while the program is running.",
+        "Converting the text hello to an integer causes a ValueError. Opening a missing file can cause a file error.",
+        "Python can handle exceptions with try and except, but use this only when the lesson has reached it."
+      ], "Exceptions handle runtime problems.", [
+        S("Common Runtime Problems", [
+          "User types text when a number is required.",
+          "File does not exist.",
+          "Division by zero.",
+          "A variable is used before assignment."
+        ])
+      ]),
+      L("Validation Before Exceptions", [
+        "Validation checks known rules before a calculation. Exceptions handle problems that happen during execution.",
+        "For beginner work, simple validation often comes before exception handling.",
+        "A clear validation message helps the user fix the input."
+      ], "Validation prevents expected bad input.", [
+        S("Validation Messages", [
+          "Please enter a positive quantity.",
+          "Number must be from 0 through 500.",
+          "Operator must be +, -, *, or /.",
+          "Cannot divide by zero."
+        ])
+      ])
     ]
   }
 ];
 
-const glossary = [
-  ["Algorithm", "A step-by-step recipe for solving a problem in a finite number of steps."],
-  ["Pseudocode", "A plain-language plan for program logic. It is not meant to run by itself."],
-  ["IPO", "Input, Processing, Output. The simplest way to sort a word problem."],
-  ["Variable", "A named storage place for a value that may change while the program runs."],
-  ["Declare", "A pseudocode statement that introduces a variable and its data type."],
-  ["Integer", "A whole number type, useful for counts."],
-  ["Float", "A decimal-capable number type, useful for money, measurements, and rates."],
-  ["String", "Text data, such as names or messages."],
-  ["Boolean", "A true or false value."],
-  ["Assignment", "Putting a value into a variable, usually with variable = expression."],
-  ["Expression", "A value or calculation that produces a value."],
-  ["Relational operator", "An operator such as <, <=, >, >=, ==, or != that compares values."],
-  ["Logical operator", "AND, OR, or NOT. Used to combine or reverse Boolean conditions."],
-  ["Selection", "A decision structure that chooses a path based on a true/false condition."],
-  ["Loop", "A structure that repeats steps while a condition is true or for a known count."],
-  ["Counter", "A variable that counts repetitions."],
-  ["Accumulator", "A variable that keeps a running total."],
-  ["Sentinel", "A special value that tells a loop to stop."],
-  ["Function", "A named group of statements that can be called."],
-  ["Argument", "A value passed into a function."],
-  ["Return value", "A value sent back from a function."],
-  ["RAPTOR Input", "A flowchart symbol that receives a value from the user."],
-  ["RAPTOR Output", "A flowchart symbol that displays text or values."],
-  ["RAPTOR Assignment", "A flowchart symbol that calculates or stores a value."],
-  ["RAPTOR Selection", "A diamond that asks a yes/no question and branches."],
-  ["Comment", "A note for humans that the program user does not see."],
-  ["Validation", "Checking input before using it in calculations."],
-  ["Trace", "Following code or pseudocode line by line to track values."],
-  ["Syntax", "The exact grammar rules of a programming language."],
-  ["Runtime error", "An error that happens while a program is running."]
+let questionCounter = 0;
+
+const manualQuestions = [
+  q("map", "Which order best matches the normal planning path?", ["Python -> RAPTOR -> output -> IPO", "Word problem -> IPO -> pseudocode -> RAPTOR -> Python", "Input -> syntax -> compiler -> storage", "Loop -> string -> file -> output"], 1, "The safest path is to understand the story, sort it with IPO, plan with pseudocode, then translate."),
+  q("basics", "What does Boolean data represent?", ["Whole numbers only", "Text only", "True or false", "A file record"], 2, "Boolean data has exactly two possible values: true or false."),
+  q("design", "The word 'display' in a word problem usually means:", ["Input", "Write", "Declare", "Loop"], 1, "Display, show, print, and output all point to Write or Output."),
+  q("pseudocode", "Which pseudocode line is most exact?", ["Calculate total", "Do the math", "Set total = price * quantity", "Find the answer"], 2, "The exact formula makes the step testable and translatable."),
+  q("variables", "Which type best fits cups of flour that may include decimals?", ["Integer", "Float", "String", "Boolean"], 1, "Ingredient measurements can have decimals, so Float is the best fit."),
+  q("operators", "What does % calculate?", ["A percent automatically", "A remainder", "A string length", "A comparison"], 1, "Modulus gives the remainder after division."),
+  q("python", "What does input() return before conversion?", ["Integer", "Float", "String text", "Boolean"], 2, "Python input() returns text first."),
+  q("decisions", "Which condition catches a number outside 0 through 500?", ["number >= 0 AND number <= 500", "number < 0 OR number > 500", "number == 0 AND number == 500", "number != 0 OR number != 500"], 1, "Any value below 0 or above 500 is invalid, so OR catches either bad case."),
+  q("loops", "What must a loop have to avoid repeating forever?", ["A string variable", "A way for the condition to become false", "A file", "A comment after every line"], 1, "A loop must eventually change something that can stop it."),
+  q("functions", "What does return do?", ["Displays a value only", "Sends a value back to the caller", "Creates a loop", "Deletes a variable"], 1, "return gives the caller a value to use later."),
+  q("raptor", "Which RAPTOR symbol matches Set total = price * quantity?", ["Input", "Output", "Assignment", "Loop"], 2, "Set statements translate to Assignment symbols."),
+  q("patterns", "For recipe scaling, what is the usual scale factor?", ["original / desired", "desired / original", "desired + original", "original % desired"], 1, "Desired amount divided by original amount gives the multiplier."),
+  q("calculator", "What must be checked before division?", ["num1 == 0", "num2 == 0", "operator == '+'", "result == 0"], 1, "The second number is the denominator, so check it before dividing."),
+  q("collections", "What index is the first item in a Python list?", ["0", "1", "-1", "10"], 0, "Python list indexes start at 0."),
+  q("files", "What does a with open(...) block help with?", ["Closing the file properly", "Creating a RAPTOR diamond", "Converting strings to floats", "Choosing a discount rate"], 0, "The with statement handles file cleanup such as closing.")
 ];
 
-const flashcards = [
-  ["Write asks or shows. Input receives. Set calculates. Declare prepares.", "What is the quick memory trick for basic pseudocode words?"],
-  ["Use Input or an input symbol.", "The problem says the user enters a value. What kind of step is that?"],
-  ["Use Assignment in RAPTOR and Set in pseudocode.", "The problem says calculate total = price * quantity. What step is that?"],
-  ["Use Output in RAPTOR and Write in pseudocode.", "The problem says display the result. What step is that?"],
-  ["A Selection diamond.", "Which RAPTOR symbol matches If/Else?"],
-  ["No. That tries to assign into a literal value.", "Is 50 = money a valid assignment?"],
-  ["Use == in conditions.", "What operator should compare two values for equality?"],
-  ["Use OR.", "Which logical operator catches any invalid case?"],
-  ["Convert it with int() or float().", "Python input() gives text. What do you do before math?"],
-  ["It was used before it had a value or the name is misspelled.", "What does a RAPTOR variable-not-found error usually mean?"],
-  ["Tax is calculated on the total before discount, when that is what the prompt says.", "In the shipping pattern, when is tax calculated?"],
-  ["Check num2 == 0 before dividing.", "How do you protect division by zero?"]
+function q(topic, prompt, choices, answer, explanation, lessonIndex = null) {
+  questionCounter += 1;
+  return { id: `${topic}-${questionCounter}`, topic, lessonIndex, prompt, choices, answer, explanation };
+}
+
+function generatedQuestions() {
+  const remembers = topics.flatMap((topic) => topic.lessons.map((lesson, lessonIndex) => ({
+    topic: topic.id,
+    lessonIndex,
+    title: lesson.title,
+    remember: lesson.remember
+  }))).filter((item) => item.remember);
+  const allItems = topics.flatMap((topic) => topic.lessons.flatMap((lesson, lessonIndex) =>
+    (lesson.sections || []).flatMap((section) => (section.items || []).map((item) => ({
+      topic: topic.id,
+      lessonIndex,
+      title: lesson.title,
+      section: section.title,
+      item
+    })))
+  ));
+  const questions = [];
+  remembers.forEach((item) => {
+    const pool = remembers.filter((other) => other.remember !== item.remember).map((other) => other.remember);
+    questions.push(makeQuestion(item.topic, item.lessonIndex, `Which takeaway best matches "${item.title}"?`, item.remember, pool, `The key takeaway is: ${item.remember}`));
+  });
+  allItems.forEach((item) => {
+    const pool = allItems.filter((other) => other.item !== item.item).map((other) => other.item);
+    questions.push(makeQuestion(item.topic, item.lessonIndex, `Which detail belongs with "${item.title}"?`, item.item, pool, `This detail belongs to ${item.title}.`));
+  });
+  return questions;
+}
+
+function makeQuestion(topic, lessonIndex, prompt, correct, pool, explanation) {
+  const choices = makeChoices(correct, pool);
+  return {
+    id: `${topic}-${lessonIndex}-${prompt.slice(0, 18).replace(/[^a-z0-9]+/gi, "-")}-${Math.random().toString(36).slice(2)}`,
+    topic,
+    lessonIndex,
+    prompt,
+    choices,
+    answer: choices.indexOf(correct),
+    explanation
+  };
+}
+
+function makeChoices(correct, pool) {
+  const unique = [...new Set(pool.filter((item) => item && item !== correct))];
+  const picked = shuffle(unique).slice(0, 3);
+  while (picked.length < 3) picked.push(["Input receives values.", "Set calculates values.", "Write displays values.", "If chooses a branch."][picked.length]);
+  return shuffle([correct, ...picked]);
+}
+
+const fullQuestionBank = [...manualQuestions, ...generatedQuestions()];
+
+const flashCardBank = [
+  fc("IPO", "Input, Processing, Output. A planning table for word problems.", "design"),
+  fc("Pseudocode", "A plain-language plan for program logic.", "pseudocode"),
+  fc("Variable", "A named storage location for a value.", "variables"),
+  fc("Integer", "A whole-number type used for counts.", "variables"),
+  fc("Float", "A decimal-capable type used for money, rates, and measurements.", "variables"),
+  fc("String", "Text data such as names, prompts, and operators.", "variables"),
+  fc("Boolean", "A true or false value.", "basics"),
+  fc("Assignment", "Putting the value on the right into the variable on the left.", "operators"),
+  fc("Comparison", "A true or false check such as operator == '+'.", "operators"),
+  fc("Selection", "A decision structure with true and false paths.", "decisions"),
+  fc("Loop", "A structure that repeats steps.", "loops"),
+  fc("Counter", "A variable that tracks repetitions.", "loops"),
+  fc("Accumulator", "A variable that keeps a running total.", "loops"),
+  fc("Function", "A named block of statements with one job.", "functions"),
+  fc("Argument", "A value passed into a function.", "functions"),
+  fc("Return", "A value sent back from a function.", "functions"),
+  fc("Input Symbol", "A RAPTOR symbol that receives a user value.", "raptor"),
+  fc("Output Symbol", "A RAPTOR symbol that displays text or values.", "raptor"),
+  fc("Assignment Symbol", "A RAPTOR symbol that calculates or stores a value.", "raptor"),
+  fc("Selection Diamond", "A RAPTOR symbol that asks a yes or no question.", "raptor"),
+  fc("Validation", "Checking input before using it.", "decisions"),
+  fc("Sentinel", "A special value that means stop.", "loops"),
+  fc("List", "A Python sequence that stores multiple values.", "collections"),
+  fc("Exception", "A runtime problem that Python can handle with try and except.", "files")
 ];
 
-const questionBank = [
-  q("variables", "Which variable type is best for cups of sugar that may include decimals?", ["Integer", "Float", "String", "Boolean"], 1, "Ingredient measurements may have decimals, so Float is the best fit."),
-  q("variables", "Which line uses assignment correctly?", ["50 = money", "money = 50", "\"money\" = 50", "Set 50 = money"], 1, "The variable receiving the value goes on the left."),
-  q("operators", "What is the result of 27 % 8?", ["2", "3", "4", "8"], 1, "8 fits into 27 three times with 3 left over."),
-  q("operators", "Why should average = (num1 + num2) / 2 use parentheses?", ["To convert to string", "To add before dividing", "To make a loop", "To declare variables"], 1, "Without parentheses, division would happen before addition."),
-  q("word-problems", "The phrase 'display the total' usually means which pseudocode action?", ["Input", "Write", "Declare", "Call"], 1, "Display, show, print, and output all point to Write."),
-  q("word-problems", "The phrase 'prompt the user to enter price' usually creates what pair?", ["Write then Input", "Set then Write", "If then End", "Call then Return"], 0, "A prompt is displayed, then the value is input."),
-  q("pseudocode", "Which pseudocode step is most specific?", ["Calculate total", "Do math", "Set total = price * quantity", "Find answer"], 2, "The exact formula makes the step testable."),
-  q("pseudocode", "Only which pseudocode statement displays something to the user?", ["Input", "Set", "Write", "Declare"], 2, "Write/Display/Output statements show information."),
-  q("computer-basics", "What does RAM do in a running program?", ["Stores temporary working data", "Permanently stores files only", "Compiles Python", "Prints output"], 0, "RAM is temporary working memory."),
-  q("computer-basics", "Boolean data has which possible values?", ["Numbers only", "Text only", "True or false", "Files and records"], 2, "Boolean means true/false."),
-  q("python-basics", "What does Python input() return first?", ["Integer", "Float", "String text", "Boolean"], 2, "input() reads text; convert it for math."),
-  q("python-basics", "Which Python line gets a decimal-capable price?", ["price = input(float)", "price = float(input('Price: '))", "float = price(input())", "price as Float"], 1, "Wrap input() with float() for decimal numeric input."),
-  q("decisions", "Which condition checks that num is outside 0 through 500?", ["num >= 0 AND num <= 500", "num < 0 OR num > 500", "num == 0 AND num == 500", "num != 0 OR num != 500"], 1, "Any value below 0 or above 500 is invalid, so OR fits."),
-  q("decisions", "In RAPTOR, a Selection symbol creates which branches?", ["Input and Output", "Start and End", "Yes and No", "Read and Write"], 2, "A selection asks a true/false question and branches Yes/No."),
-  q("decisions", "A discount table with several ranges is usually translated as:", ["One Input symbol only", "A chain of decisions", "Only comments", "A file write"], 1, "Each table row becomes a condition."),
-  q("loops", "What must happen inside a while loop to avoid repeating forever?", ["The condition must eventually change", "All variables must be strings", "Output must be removed", "Declare must run last"], 0, "A loop needs a path to make its condition false."),
-  q("loops", "A running total should usually be initialized when?", ["After display", "Before the loop", "Inside only the final branch", "Never"], 1, "Start totals at 0 before adding values in the loop."),
-  q("functions", "What does a function argument do?", ["Sends a value into a function", "Deletes a variable", "Stops RAPTOR", "Creates a file"], 0, "Arguments are inputs to functions."),
-  q("functions", "What does return do in a Python function?", ["Displays text", "Sends a value back", "Starts a loop", "Creates a comment"], 1, "return gives the caller a value."),
-  q("raptor", "Which RAPTOR symbol matches Set total = price * quantity?", ["Input", "Output", "Assignment", "Selection"], 2, "Set statements become Assignment symbols."),
-  q("raptor", "Which RAPTOR symbol is used for a user prompt message?", ["Output", "Input", "Selection", "Loop"], 0, "Prompt text is displayed, so Output is appropriate."),
-  q("raptor", "A RAPTOR comment is different from Output because:", ["The user sees comments", "Comments are notes for humans and are not displayed", "Comments store numbers", "Output is only for code"], 1, "Comments document logic; Output displays to the program user."),
-  q("practice-patterns", "For recipe scaling, the scale factor is usually:", ["original / desired", "desired / original", "desired + original", "original % desired"], 1, "Desired amount divided by original amount gives the multiplier."),
-  q("practice-patterns", "For gallons to liters, which formula matches the provided factor?", ["liters = gallons + 3.78541", "liters = gallons / 3.78541", "liters = gallons * 3.78541", "gallons = liters * gallons"], 2, "Multiply gallons by the conversion factor."),
-  q("practice-patterns", "Before dividing in a calculator, what should you check?", ["num1 == 0", "operator != '+'", "num2 == 0", "result == 0"], 2, "The denominator is num2, so check it before division."),
-  q("operators", "What does total = total + price usually do?", ["Resets total to 0", "Adds price into a running total", "Compares total and price", "Displays total"], 1, "The old total is used on the right, then the new total is stored on the left."),
-  q("variables", "Which is the clearest variable name for a grand total?", ["g", "x2", "grandTotal", "t"], 2, "Descriptive names make code easier to understand."),
-  q("pseudocode", "What should a pseudocode End If do?", ["Close a decision block", "Start a file", "Display a result", "Convert input"], 0, "End If marks the end of the branch structure."),
-  q("collections", "What index is the first item in a Python list?", ["0", "1", "-1", "10"], 0, "Python lists are zero-indexed."),
-  q("files", "What does a with open(...) statement help with?", ["Closing the file properly", "Creating a RAPTOR diamond", "Changing an integer to string", "Skipping validation"], 0, "with handles setup and closing for file work.")
-];
-
-function q(topic, prompt, choices, answer, why) {
-  return { topic, prompt, choices, answer, why };
+function fc(term, definition, topic) {
+  return { id: `${topic}-${term.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`, term, definition, topic };
 }
 
 const state = {
-  view: "home",
-  query: "",
-  topicId: topics[0].id,
+  screen: "home",
+  topicId: null,
   lessonIndex: 0,
-  scenarioId: scenarios[0].id,
+  quizIndex: 0,
+  activeQuestions: [],
+  answers: {},
+  selected: null,
+  quizTopic: null,
+  quizSourceLessonIndex: null,
+  resultSaved: false,
+  flashCards: [],
   flashIndex: 0,
-  flashBack: false,
-  quizTopic: "all",
-  quiz: null,
-  copyNotice: ""
+  flashFlipped: false,
+  flashFilterTopic: "all",
+  searchQuery: "",
+  complete: load(STORAGE.complete, {}),
+  bookmarks: load(STORAGE.bookmarks, {}),
+  savedCards: load(STORAGE.savedCards, {})
 };
 
-let progress = loadProgress();
-
-function loadProgress() {
+function load(key, fallback) {
   try {
-    const data = JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}");
-    return {
-      completed: data.completed || {},
-      quizScores: data.quizScores || []
-    };
+    return JSON.parse(localStorage.getItem(key) || JSON.stringify(fallback));
   } catch {
-    return { completed: {}, quizScores: [] };
+    return fallback;
   }
 }
 
-function saveProgress() {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(progress));
+function save(key, value) {
+  localStorage.setItem(key, JSON.stringify(value));
 }
 
-function icon(name) {
-  return `<svg class="icon" viewBox="0 0 24 24" aria-hidden="true">${iconPaths[name] || iconPaths.book}</svg>`;
+function svg(name) {
+  return `<svg viewBox="0 0 24 24" aria-hidden="true">${iconPaths[name] || iconPaths.exam}</svg>`;
 }
 
 function escapeHtml(value) {
@@ -1408,346 +1318,550 @@ function escapeHtml(value) {
     .replaceAll("'", "&#039;");
 }
 
-function codeBlock(lines) {
-  return `<pre class="code-block"><code>${escapeHtml(lines.join("\n"))}</code></pre>`;
+function topicById(id) {
+  return topics.find((topic) => topic.id === id) || topics[0];
 }
 
-function list(items) {
-  if (!items || !items.length) return "";
-  return `<ul>${items.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul>`;
-}
-
-function completedKey(topicId, lessonIndex) {
-  return `${topicId}:${lessonIndex}`;
-}
-
-function isLessonDone(topicId, lessonIndex) {
-  return Boolean(progress.completed[completedKey(topicId, lessonIndex)]);
-}
-
-function totalLessons() {
-  return topics.reduce((sum, topic) => sum + topic.lessons.length, 0);
-}
-
-function completedLessons() {
-  return Object.keys(progress.completed).length;
-}
-
-function topicProgress(topic) {
-  const done = topic.lessons.filter((_, index) => isLessonDone(topic.id, index)).length;
-  return Math.round((done / topic.lessons.length) * 100);
-}
-
-function bestQuizScore() {
-  if (!progress.quizScores.length) return 0;
-  return Math.max(...progress.quizScores.map((score) => score.percent || 0));
+function progress() {
+  const totalLessons = topics.reduce((sum, topic) => sum + topic.lessons.length, 0);
+  const doneLessons = Object.keys(state.complete).length;
+  const bestQuiz = load(STORAGE.bestQuiz, 0);
+  const stats = load(STORAGE.stats, {});
+  const attempts = Object.values(stats).reduce((sum, item) => sum + (item.attempts || 0), 0);
+  return { totalLessons, doneLessons, bestQuiz, attempts };
 }
 
 function render() {
-  app.innerHTML = `
-    <main class="screen">
-      ${renderTopbar()}
-      ${renderView()}
-    </main>
-  `;
+  const app = document.getElementById("app");
+  if (state.screen === "topic") app.innerHTML = renderTopic();
+  else if (state.screen === "lesson") app.innerHTML = renderLesson();
+  else if (state.screen === "quiz") app.innerHTML = renderQuiz();
+  else if (state.screen === "flashcards") app.innerHTML = renderFlashCards();
+  else if (state.screen === "flashSubjects") app.innerHTML = renderFlashSubjectPicker();
+  else if (state.screen === "search") app.innerHTML = renderSearch();
+  else app.innerHTML = renderHome();
+  wire();
+  animateStats();
 }
 
-function renderTopbar() {
-  const nav = [
-    ["home", "Dashboard", "home"],
-    ["lessons", "Lessons", "book"],
-    ["practice", "Practice", "cards"],
-    ["raptor", "RAPTOR", "raptor"],
-    ["glossary", "Glossary", "search"]
-  ];
+function topbar(title, right = "info") {
+  const rightIcon = right === "starGold" ? "star" : right;
+  const rightAction = rightIcon === "star" ? "star" : rightIcon;
+  const rightClass = right === "starGold" ? "gold" : "";
+  const back = state.screen === "home" ? "<div></div>" : `<button class="icon-button" data-action="back" aria-label="Back">${svg("back")}</button>`;
   return `
     <header class="topbar">
-      <div class="brand">
-        <div class="brand-mark">${icon("code")}</div>
-        <div>
-          <h1>BringItOnPython</h1>
-          <p>Python, pseudocode, word problems, and RAPTOR</p>
-        </div>
-      </div>
-      <nav class="nav" aria-label="Primary">
-        ${nav.map(([view, label, iconName]) => `
-          <button class="nav-button ${state.view === view ? "active" : ""}" data-nav="${view}" title="${label}">
-            ${icon(iconName)}<span>${label}</span>
-          </button>
-        `).join("")}
-      </nav>
+      ${back}
+      <div><h1 class="title">${escapeHtml(title)}</h1></div>
+      <button class="icon-button ${rightClass}" data-action="${rightAction}" aria-label="${rightAction}">${svg(rightIcon)}</button>
     </header>
   `;
 }
 
-function renderView() {
-  if (state.view === "lessons") return renderLessons();
-  if (state.view === "practice") return renderPractice();
-  if (state.view === "raptor") return renderRaptor();
-  if (state.view === "glossary") return renderGlossary();
-  return renderHome();
-}
-
 function renderHome() {
-  const done = completedLessons();
-  const total = totalLessons();
+  const p = progress();
+  const pct = Math.round((p.doneLessons / p.totalLessons) * 100);
   return `
-    <section class="section-head">
-      <div>
-        <h2>Build the plan before the code.</h2>
-        <p>Study the same idea in four forms: English problem, pseudocode, RAPTOR flowchart, and Python.</p>
-      </div>
-      <button class="action-button" data-nav="lessons">${icon("book")}Start Lessons</button>
-    </section>
-
-    <section class="stats-grid" aria-label="Progress stats">
-      <div class="stat-tile"><span>Lessons done</span><strong>${done}/${total}</strong></div>
-      <div class="stat-tile"><span>Completion</span><strong>${Math.round((done / total) * 100)}%</strong></div>
-      <div class="stat-tile"><span>Best quiz</span><strong>${bestQuizScore()}%</strong></div>
-      <div class="stat-tile"><span>Transforms</span><strong>${scenarios.length}</strong></div>
-    </section>
-
-    <section class="dash-layout">
-      <div class="panel">
-        <h3>Learning Route</h3>
-        <div class="path-list">
-          ${[
-            ["Read", "Find what the problem gives you and what it wants back."],
-            ["Sort", "Make the Input, Processing, Output list before writing steps."],
-            ["Plan", "Write simple pseudocode with Declare, Input, Set, Write, If, and End If."],
-            ["Build", "Map each pseudocode line to a RAPTOR symbol, then translate the logic to Python."]
-          ].map(([title, text], index) => `
-            <div class="path-item">
-              <div class="path-number">${index + 1}</div>
-              <div><strong>${title}</strong><p>${text}</p></div>
-            </div>
-          `).join("")}
+    <main class="screen">
+      ${topbar("BringItOnPython")}
+      <p class="subtitle">Python and pseudocode swipe study</p>
+      <section class="hero-stat" aria-label="Study stats">
+        <div class="stat-card">
+          <div class="stat-ring" style="--value:${pct}%;"><div class="stat-ring-inner"><strong>${p.doneLessons}/${p.totalLessons}</strong></div></div>
+          <span>lessons</span>
         </div>
-      </div>
-      <aside class="panel">
-        <h3>Continue</h3>
-        ${renderContinueCard()}
-      </aside>
-    </section>
-
-    <section class="section-head" style="margin-top: 18px;">
-      <div>
-        <h2>Topic Deck</h2>
-        <p>Each topic keeps the reading short, direct, and practice-ready.</p>
-      </div>
-    </section>
-    <section class="topic-grid">
-      ${topics.slice(0, 6).map(renderTopicCard).join("")}
-    </section>
-  `;
-}
-
-function renderContinueCard() {
-  const next = findNextLesson();
-  if (!next) {
-    return `
-      <p>All lessons are marked complete. Nice, tidy finish.</p>
-      <button class="ghost-button" data-reset-progress>${icon("reset")}Reset Progress</button>
-    `;
-  }
-  return `
-    <div class="mini-card" style="margin-top: 12px;">
-      <div class="mini-icon" style="--accent:${next.color};">${icon(next.topic.icon)}</div>
-      <h3 style="margin-top: 12px;">${escapeHtml(next.topic.title)}</h3>
-      <p>${escapeHtml(next.lesson.title)}</p>
-      <button class="action-button" data-open-lesson="${next.topic.id}" data-lesson-index="${next.index}">${icon("next")}Open Lesson</button>
-    </div>
-  `;
-}
-
-function findNextLesson() {
-  for (const [topicIndex, topic] of topics.entries()) {
-    for (const [index, lesson] of topic.lessons.entries()) {
-      if (!isLessonDone(topic.id, index)) {
-        return { topic, lesson, index, color: colors[topicIndex % colors.length] };
-      }
-    }
-  }
-  return null;
-}
-
-function renderTopicCard(topic, index = topics.indexOf(topic)) {
-  const pct = topicProgress(topic);
-  return `
-    <button class="topic-card" data-open-topic="${topic.id}" style="--accent:${colors[index % colors.length]};">
-      <div class="topic-top">
-        <div>
-          <h3>${escapeHtml(topic.title)}</h3>
-          <p>${escapeHtml(topic.summary)}</p>
+        <div class="stat-card">
+          <div class="stat-ring readiness-build" style="--value:${Math.min(100, p.attempts * 8)}%;"><div class="stat-ring-inner"><strong>${p.attempts}</strong></div></div>
+          <span>quiz runs</span>
         </div>
-        <div class="topic-icon">${icon(topic.icon)}</div>
-      </div>
-      <div class="tag-row">
-        ${topic.tags.map((tag) => `<span class="tag">${escapeHtml(tag)}</span>`).join("")}
-      </div>
-      <div>
-        <div class="topic-meta"><span>${topic.lessons.length} lessons</span><span>${pct}% done</span></div>
-        <div class="progress-track" aria-hidden="true"><div class="progress-fill" style="--progress:${pct}%"></div></div>
-      </div>
-    </button>
-  `;
-}
-
-function renderLessons() {
-  const query = state.query.trim().toLowerCase();
-  const matches = topics.filter((topic) => {
-    if (!query) return true;
-    const haystack = [
-      topic.title,
-      topic.summary,
-      topic.tags.join(" "),
-      ...topic.lessons.flatMap((lesson) => [lesson.title, ...(lesson.body || []), ...(lesson.keyPoints || [])])
-    ].join(" ").toLowerCase();
-    return haystack.includes(query);
-  });
-
-  if (!state.topicId || !topics.some((topic) => topic.id === state.topicId)) {
-    state.topicId = topics[0].id;
-  }
-
-  const activeTopic = topics.find((topic) => topic.id === state.topicId);
-  const activeLesson = activeTopic.lessons[state.lessonIndex] || activeTopic.lessons[0];
-  state.lessonIndex = Math.min(state.lessonIndex, activeTopic.lessons.length - 1);
-
-  return `
-    <section class="section-head">
-      <div>
-        <h2>Lessons</h2>
-        <p>Short readings with pseudocode, Python, and RAPTOR cues kept side by side.</p>
-      </div>
-    </section>
-    <div class="search-row">
-      <input type="search" value="${escapeHtml(state.query)}" data-search placeholder="Search topics, lessons, or terms">
-      <button class="ghost-button" data-clear-search>${icon("reset")}Clear</button>
-    </div>
-    ${query ? `
-      <section class="topic-grid" style="margin-bottom: 14px;">
-        ${matches.length ? matches.map(renderTopicCard).join("") : `<div class="empty-state">No lesson matches found.</div>`}
+        <div class="stat-card">
+          <div class="stat-ring" style="--value:${p.bestQuiz}%;"><div class="stat-ring-inner"><strong>${p.bestQuiz}%</strong></div></div>
+          <span>best quiz</span>
+        </div>
       </section>
-    ` : ""}
-    <section class="lesson-layout">
-      <aside class="panel lesson-list">
+      <section class="study-dashboard">
+        <div class="readiness-card">
+          <div>
+            <span>Study Path</span>
+            <strong>${p.doneLessons ? "Keep Building" : "Start With The Map"}</strong>
+            <small>Open a subject tile, read the lessons, then run the fresh 10-question quiz at the end.</small>
+          </div>
+          <button class="mini-action" data-action="startDailyDrill">10 Q</button>
+        </div>
+      </section>
+      ${renderHomeBookmarks()}
+      <section class="topic-grid">
+        <button class="topic-card feature-card" data-action="startDailyDrill" aria-label="Quick Drill">
+          <span class="topic-icon">${svg("exam")}</span>
+          <span>Quick Drill</span>
+        </button>
+        <button class="topic-card feature-card" data-action="openSearch" aria-label="Search">
+          <span class="topic-icon">${svg("search")}</span>
+          <span>Search</span>
+        </button>
+        <button class="topic-card feature-card" data-action="startFlashCards" aria-label="Flash Cards">
+          <span class="topic-icon">${svg("cards")}</span>
+          <span>Flash Cards</span>
+        </button>
         ${topics.map((topic) => `
-          <button class="lesson-nav-button ${topic.id === activeTopic.id ? "active" : ""}" data-select-topic="${topic.id}">
-            ${escapeHtml(topic.title)}
-            <span style="display:block;color:var(--muted);font-size:0.78rem;margin-top:4px;">${topicProgress(topic)}% complete</span>
+          <button class="topic-card" data-topic="${topic.id}" aria-label="${escapeHtml(topic.title)}">
+            <span class="topic-icon">${svg(topic.icon)}</span>
+            <span>${escapeHtml(topic.title)}</span>
           </button>
         `).join("")}
-      </aside>
-      <article class="lesson-detail">
-        <div class="panel">
-          <div class="lesson-title-row">
-            <div>
-              <div class="tag-row">${activeTopic.tags.map((tag) => `<span class="tag">${escapeHtml(tag)}</span>`).join("")}</div>
-              <h2>${escapeHtml(activeLesson.title)}</h2>
-              <p>${escapeHtml(activeTopic.title)} - Lesson ${state.lessonIndex + 1} of ${activeTopic.lessons.length}</p>
-            </div>
-            <div class="topic-icon" style="--accent:${colors[topics.indexOf(activeTopic) % colors.length]};">${icon(activeTopic.icon)}</div>
-          </div>
-        </div>
-        ${renderLesson(activeLesson)}
-        <div class="lesson-actions panel">
-          <button class="ghost-button" data-prev-lesson>${icon("back")}Previous</button>
-          <button class="action-button" data-complete-lesson="${activeTopic.id}" data-lesson-index="${state.lessonIndex}">
-            ${icon("check")}${isLessonDone(activeTopic.id, state.lessonIndex) ? "Completed" : "Mark Complete"}
+      </section>
+    </main>
+  `;
+}
+
+function renderHomeBookmarks() {
+  const items = Object.keys(state.bookmarks).map((key) => {
+    const [topicId, lessonText] = key.split(":");
+    const topic = topicById(topicId);
+    const lessonIndex = Number(lessonText);
+    const lesson = topic.lessons[lessonIndex];
+    return lesson ? { topic, lesson, lessonIndex } : null;
+  }).filter(Boolean).slice(0, 4);
+  if (!items.length) return "";
+  return `
+    <section class="bookmark-panel">
+      <div class="section-heading"><h2>Saved Lessons</h2><span>${items.length}</span></div>
+      <div class="bookmark-list">
+        ${items.map((item) => `
+          <button class="bookmark-row" data-bookmark-topic="${item.topic.id}" data-bookmark-lesson="${item.lessonIndex}">
+            <span class="bookmark-star">${svg("star")}</span>
+            <span><strong>${escapeHtml(item.lesson.title)}</strong><small>${escapeHtml(item.topic.title)}</small></span>
+            <span class="chevron">&rsaquo;</span>
           </button>
-          <button class="ghost-button" data-next-lesson>Next${icon("next")}</button>
-        </div>
+        `).join("")}
+      </div>
+    </section>
+  `;
+}
+
+function renderTopic() {
+  const topic = topicById(state.topicId);
+  return `
+    <main class="screen topic-screen">
+      ${topbar(topic.title)}
+      <section class="list">
+        ${topic.lessons.map((lesson, index) => `
+          <button class="lesson-row" data-lesson="${index}">
+            <span class="mini-icon">${state.complete[`${topic.id}:${index}`] ? svg("check") : index + 1}</span>
+            <strong>${escapeHtml(lesson.title)}</strong>
+            <span class="chevron">&rsaquo;</span>
+          </button>
+        `).join("")}
+        <button class="lesson-row" data-action="topicQuiz">
+          <span class="mini-icon">Q</span>
+          <strong>Quiz: ${escapeHtml(topic.title)}</strong>
+          <span class="chevron">&rsaquo;</span>
+        </button>
+      </section>
+    </main>
+  `;
+}
+
+function renderLesson() {
+  const topic = topicById(state.topicId);
+  const lesson = topic.lessons[state.lessonIndex];
+  const key = `${topic.id}:${state.lessonIndex}`;
+  const bookmarked = Boolean(state.bookmarks[key]);
+  return `
+    <main class="screen reader">
+      ${topbar(topic.title, bookmarked ? "starGold" : "star")}
+      <article class="reader-card" data-swipe="lesson">
+        <h2>${escapeHtml(lesson.title)}</h2>
+        ${(lesson.body || []).map((para) => `<p>${escapeHtml(para)}</p>`).join("")}
+        ${renderLessonSections(lesson.sections)}
+        ${lesson.remember ? `<div class="memory-box">${escapeHtml(lesson.remember)}</div>` : ""}
+        ${lesson.code ? `<pre class="code-strip">${escapeHtml(lesson.code)}</pre>` : ""}
       </article>
-    </section>
+      ${dots(topic.lessons.length, state.lessonIndex)}
+      <nav class="bottom-nav">
+        <button class="icon-button" data-action="prevLesson" aria-label="Previous">${svg("back")}</button>
+        <button class="pill-button secondary" data-action="markDone">Done</button>
+        <button class="pill-button" data-action="lessonQuiz">Quiz</button>
+        <button class="icon-button" data-action="nextLesson" aria-label="Next">${svg("next")}</button>
+      </nav>
+    </main>
   `;
 }
 
-function renderLesson(lesson) {
-  const parts = [];
-  parts.push(`<section class="lesson-card">${lesson.body.map((text) => `<p>${escapeHtml(text)}</p>`).join("")}</section>`);
-  if (lesson.keyPoints) parts.push(`<section class="lesson-card"><h3>Key Points</h3>${list(lesson.keyPoints)}</section>`);
-  if (lesson.example) parts.push(`<section class="lesson-card"><h3>${escapeHtml(lesson.example.title)}</h3>${list(lesson.example.lines)}</section>`);
-  if (lesson.pseudocode) parts.push(`<section class="lesson-card"><h3>Pseudocode</h3>${codeBlock(lesson.pseudocode)}</section>`);
-  if (lesson.python) parts.push(`<section class="lesson-card"><h3>Python</h3>${codeBlock(lesson.python)}</section>`);
-  if (lesson.raptor) parts.push(`<section class="lesson-card"><h3>RAPTOR</h3>${list(lesson.raptor)}</section>`);
-  if (lesson.remember) parts.push(`<section class="note"><strong>Remember:</strong> ${escapeHtml(lesson.remember)}</section>`);
-  return parts.join("");
-}
-
-function renderPractice() {
-  if (!state.quiz) startQuiz(state.quizTopic);
-  const quiz = state.quiz;
-  const current = quiz.questions[quiz.index];
-  const selected = quiz.answers[quiz.index];
-  const answered = selected !== undefined;
-  const flash = flashcards[state.flashIndex % flashcards.length];
-
+function renderLessonSections(sections = []) {
+  if (!sections.length) return "";
   return `
-    <section class="section-head">
-      <div>
-        <h2>Practice</h2>
-        <p>Quick checks for vocabulary, logic tracing, RAPTOR mapping, and Python translation.</p>
-      </div>
-    </section>
-    <section class="practice-layout">
-      <div class="quiz-card">
-        <div class="toolbar-row">
-          <select data-quiz-topic title="Quiz topic">
-            <option value="all" ${state.quizTopic === "all" ? "selected" : ""}>All topics</option>
-            ${topics.map((topic) => `<option value="${topic.id}" ${state.quizTopic === topic.id ? "selected" : ""}>${escapeHtml(topic.title)}</option>`).join("")}
-          </select>
-          <button class="ghost-button" data-restart-quiz>${icon("reset")}New Quiz</button>
-        </div>
-        ${quiz.completed ? renderQuizSummary(quiz) : `
-          <p class="tag">Question ${quiz.index + 1} of ${quiz.questions.length}</p>
-          <h3>${escapeHtml(current.prompt)}</h3>
-          <div class="choice-grid">
-            ${current.choices.map((choice, index) => {
-              let klass = "";
-              if (answered && index === current.answer) klass = "correct";
-              if (answered && index === selected && index !== current.answer) klass = "wrong";
-              return `<button class="choice-button ${klass}" data-quiz-answer="${index}" ${answered ? "disabled" : ""}>${escapeHtml(choice)}</button>`;
-            }).join("")}
-          </div>
-          ${answered ? `<div class="explain"><strong>${selected === current.answer ? "Correct." : "Not quite."}</strong> ${escapeHtml(current.why)}</div>` : ""}
-          <div class="quiz-actions" style="margin-top: 14px;">
-            <span>${quiz.answers.filter((answer, i) => answer === quiz.questions[i].answer).length} correct so far</span>
-            <button class="action-button" data-next-question ${answered ? "" : "disabled"}>${quiz.index === quiz.questions.length - 1 ? "Finish" : "Next"}${icon("next")}</button>
-          </div>
-        `}
-      </div>
-      <aside class="quiz-card">
-        <h3>Flashcards</h3>
-        <div class="flashcard-face" data-toggle-flash>
-          <span class="tag">${state.flashBack ? "Answer" : "Prompt"}</span>
-          <strong>${escapeHtml(state.flashBack ? flash[0] : flash[1])}</strong>
-        </div>
-        <div class="quiz-actions" style="margin-top: 12px;">
-          <button class="ghost-button" data-toggle-flash>${state.flashBack ? "Show Prompt" : "Show Answer"}</button>
-          <button class="action-button" data-next-flash>Next${icon("next")}</button>
-        </div>
-      </aside>
-    </section>
-  `;
-}
-
-function renderQuizSummary(quiz) {
-  const correct = quiz.answers.filter((answer, i) => answer === quiz.questions[i].answer).length;
-  const percent = Math.round((correct / quiz.questions.length) * 100);
-  return `
-    <div class="empty-state">
-      <h3>Quiz Complete</h3>
-      <p>${correct} of ${quiz.questions.length} correct - ${percent}%</p>
-      <button class="action-button" data-restart-quiz>${icon("reset")}Try Another Set</button>
+    <div class="lesson-sections">
+      ${sections.map((section) => `
+        <section class="lesson-section">
+          <h3>${escapeHtml(section.title)}</h3>
+          <ul>${section.items.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul>
+        </section>
+      `).join("")}
     </div>
   `;
 }
 
-function startQuiz(topicId = "all") {
-  const source = topicId === "all" ? questionBank : questionBank.filter((item) => item.topic === topicId);
-  const questions = shuffle(source).slice(0, Math.min(10, source.length));
-  state.quiz = { questions, index: 0, answers: [], completed: false };
+function renderQuiz() {
+  const questions = state.activeQuestions;
+  const current = questions[state.quizIndex];
+  if (!current) return renderResults(questions);
+  const record = state.answers[current.id];
+  const checked = Boolean(record);
+  const selected = checked ? record.selected : state.selected;
+  return `
+    <main class="screen quiz-screen" data-swipe="quiz">
+      ${topbar(quizTitle())}
+      <section class="quiz-panel">
+        <div class="quiz-circles">${questions.map((_, index) => `<span class="${index === state.quizIndex ? "active" : ""} ${state.answers[questions[index].id] ? "done" : ""}">${index + 1}</span>`).join("")}</div>
+        <p class="question">${state.quizIndex + 1}. ${escapeHtml(current.prompt)}</p>
+        <section class="answer-list">
+          ${current.choices.map((choice, index) => {
+            let cls = selected === index ? "selected" : "";
+            if (checked && index === current.answer) cls += " correct";
+            if (checked && selected === index && index !== current.answer) cls += " wrong";
+            return `
+              <button class="answer ${cls}" data-answer="${index}">
+                <span class="answer-letter">${String.fromCharCode(65 + index)}.</span>
+                <span class="answer-text">${escapeHtml(choice)}</span>
+              </button>
+            `;
+          }).join("")}
+        </section>
+        ${checked ? `<div class="feedback">${escapeHtml(current.explanation)}</div>` : ""}
+      </section>
+      <nav class="quiz-actions">
+        <button class="quiz-nav-button" data-action="prevQuestion">${svg("back")}<span>Prev</span></button>
+        <button class="quiz-primary ${checked ? (record.correct ? "correct" : "wrong") : ""}" data-action="check">${checked ? (record.correct ? "Correct" : "Review") : "Check"}</button>
+        <button class="quiz-ghost" data-action="showAnswer">Show Answer</button>
+        <button class="quiz-nav-button" data-action="nextQuestion"><span>Next</span>${svg("next")}</button>
+      </nav>
+    </main>
+  `;
+}
+
+function renderResults(questions) {
+  const correct = questions.filter((item) => state.answers[item.id]?.correct).length;
+  const score = Math.round((correct / questions.length) * 100);
+  const missed = questions.filter((item) => state.answers[item.id] && !state.answers[item.id].correct);
+  if (!state.resultSaved) {
+    recordQuizResult(questions, correct);
+    state.resultSaved = true;
+  }
+  return `
+    <main class="screen">
+      ${topbar("Quiz Results")}
+      <section class="score-card">
+        <p>${correct} of ${questions.length} correct</p>
+        <div class="score">${score}%</div>
+        <p>${score >= 80 ? "Strong work. Run another fresh set to keep it sharp." : "Keep going. Review missed questions and try a fresh set."}</p>
+        ${missed.length ? `<button class="pill-button" data-action="reviewMissed">Review Missed (${missed.length})</button>` : ""}
+        <button class="pill-button" data-action="restartQuiz">Fresh 10 Questions</button>
+        <button class="pill-button secondary" data-action="goHome">Home</button>
+      </section>
+    </main>
+  `;
+}
+
+function renderFlashCards() {
+  const cards = state.flashCards.length ? state.flashCards : flashCardBank;
+  const card = cards[state.flashIndex] || cards[0];
+  const saved = Boolean(state.savedCards[card.id]);
+  return `
+    <main class="screen flash-screen" data-swipe="flashcards">
+      ${topbar("Flash Cards")}
+      <div class="flash-meta"><span>${state.flashIndex + 1} / ${cards.length}</span><span>${escapeHtml(flashSubjectTitle(state.flashFilterTopic))}</span></div>
+      <div class="flash-tools">
+        <button class="flash-tool" data-action="chooseFlashSubject">Subject</button>
+        <button class="flash-tool ${saved ? "saved" : ""}" data-action="saveFlashCard">${saved ? "Saved" : "Save"}</button>
+        <button class="flash-tool" data-action="openFlashTopic">Open Tile</button>
+      </div>
+      <button class="flash-card ${state.flashFlipped ? "flipped" : ""}" data-action="flipFlashCard">
+        <span class="flash-label">${state.flashFlipped ? "Answer" : "Term"}</span>
+        <strong>${escapeHtml(state.flashFlipped ? card.definition : card.term)}</strong>
+        <small>${state.flashFlipped ? "Tap to see the term" : "Tap to reveal the answer"}</small>
+      </button>
+      ${dots(cards.length, state.flashIndex)}
+      <nav class="bottom-nav">
+        <button class="icon-button" data-action="prevFlashCard">${svg("back")}</button>
+        <button class="pill-button secondary" data-action="shuffleFlashCards">Shuffle</button>
+        <button class="pill-button" data-action="flipFlashCard">Flip</button>
+        <button class="icon-button" data-action="nextFlashCard">${svg("next")}</button>
+      </nav>
+    </main>
+  `;
+}
+
+function renderFlashSubjectPicker() {
+  const subjects = flashSubjects();
+  return `
+    <main class="screen topic-screen">
+      ${topbar("Choose Subject")}
+      <section class="list">
+        ${subjects.map((subject) => `
+          <button class="lesson-row" data-flash-topic="${subject.id}">
+            <span class="mini-icon">${subject.id === "all" ? "All" : svg(subject.icon)}</span>
+            <strong>${escapeHtml(subject.title)}</strong>
+            <span class="subject-count">${subject.count}</span>
+          </button>
+        `).join("")}
+      </section>
+    </main>
+  `;
+}
+
+function renderSearch() {
+  return `
+    <main class="screen topic-screen">
+      ${topbar("Search")}
+      <section class="search-panel">
+        <input id="searchBox" class="search-input" type="search" value="${escapeHtml(state.searchQuery)}" placeholder="Search variables, loops, RAPTOR..." autocomplete="off">
+        <div class="search-results">${renderSearchResults(state.searchQuery)}</div>
+      </section>
+    </main>
+  `;
+}
+
+function renderSearchResults(query) {
+  const results = searchItems(query);
+  if (!query.trim()) return `<p class="empty-note">Search lessons and flash cards by term, symbol, or problem pattern.</p>`;
+  if (!results.length) return `<p class="empty-note">No matches yet. Try a shorter term.</p>`;
+  return results.map((item) => {
+    if (item.kind === "lesson") {
+      return `
+        <button class="search-row" data-search-topic="${item.topic.id}" data-search-lesson="${item.lessonIndex}">
+          <span>Lesson</span><strong>${escapeHtml(item.lesson.title)}</strong><small>${escapeHtml(item.topic.title)}</small>
+        </button>
+      `;
+    }
+    return `
+      <button class="search-row" data-search-card="${item.card.id}">
+        <span>Flash Card</span><strong>${escapeHtml(item.card.term)}</strong><small>${escapeHtml(topicById(item.card.topic).title)}</small>
+      </button>
+    `;
+  }).join("");
+}
+
+function quizTitle() {
+  if (state.quizTopic === "daily") return "Fresh 10 Drill";
+  const topic = topicById(state.quizTopic);
+  return `${topic.title} Quiz`;
+}
+
+function dots(total, active) {
+  return `<div class="progress-strip">${Array.from({ length: total }, (_, index) => `<span class="progress-dot ${index === active ? "active" : ""}"></span>`).join("")}</div>`;
+}
+
+function startQuiz(topicId, options = {}) {
+  state.screen = "quiz";
+  state.quizTopic = topicId;
+  state.quizSourceLessonIndex = typeof options.lessonIndex === "number" ? options.lessonIndex : null;
+  state.quizIndex = 0;
+  state.selected = null;
+  state.answers = {};
+  state.resultSaved = false;
+  const source = options.questions || pickQuizSource(topicId, state.quizSourceLessonIndex);
+  state.activeQuestions = source.map(randomizeQuestion);
+  render();
+}
+
+function pickQuizSource(topicId, lessonIndex = null) {
+  if (topicId === "daily") return shuffle(fullQuestionBank).slice(0, 10);
+  const lessonQuestions = typeof lessonIndex === "number"
+    ? fullQuestionBank.filter((item) => item.topic === topicId && item.lessonIndex === lessonIndex)
+    : [];
+  const topicQuestions = fullQuestionBank.filter((item) => item.topic === topicId && !lessonQuestions.some((qItem) => qItem.id === item.id));
+  const combined = [...shuffle(lessonQuestions), ...shuffle(topicQuestions)];
+  const seen = new Set();
+  const picked = [];
+  combined.forEach((item) => {
+    if (!seen.has(item.id) && picked.length < 10) {
+      picked.push(item);
+      seen.add(item.id);
+    }
+  });
+  if (picked.length < 10) {
+    shuffle(fullQuestionBank).forEach((item) => {
+      if (!seen.has(item.id) && picked.length < 10) {
+        picked.push(item);
+        seen.add(item.id);
+      }
+    });
+  }
+  return shuffle(picked).slice(0, 10);
+}
+
+function randomizeQuestion(item) {
+  const choices = item.choices.map((text, index) => ({ text, correct: index === item.answer }));
+  const shuffled = shuffle(choices);
+  return {
+    ...item,
+    id: `${item.id}-${Math.random().toString(36).slice(2)}`,
+    choices: shuffled.map((choice) => choice.text),
+    answer: shuffled.findIndex((choice) => choice.correct)
+  };
+}
+
+function recordQuizResult(questions, correct) {
+  const score = Math.round((correct / questions.length) * 100);
+  const best = Math.max(load(STORAGE.bestQuiz, 0), score);
+  save(STORAGE.bestQuiz, best);
+  const stats = load(STORAGE.stats, {});
+  questions.forEach((question) => {
+    if (!stats[question.topic]) stats[question.topic] = { correct: 0, total: 0, attempts: 0 };
+    stats[question.topic].total += 1;
+    stats[question.topic].attempts += 1;
+    if (state.answers[question.id]?.correct) stats[question.topic].correct += 1;
+  });
+  if (state.quizTopic) {
+    if (!stats[state.quizTopic]) stats[state.quizTopic] = { correct: 0, total: 0, attempts: 0 };
+    stats[state.quizTopic].attempts += 1;
+  }
+  save(STORAGE.stats, stats);
+}
+
+function checkAnswer() {
+  const current = currentQuestion();
+  if (!current || state.answers[current.id] || state.selected === null) return;
+  state.answers[current.id] = {
+    selected: state.selected,
+    correct: state.selected === current.answer
+  };
+  render();
+}
+
+function showAnswer() {
+  const current = currentQuestion();
+  if (!current || state.answers[current.id]) return;
+  state.answers[current.id] = { selected: current.answer, correct: true };
+  state.selected = current.answer;
+  render();
+}
+
+function currentQuestion() {
+  return state.activeQuestions[state.quizIndex];
+}
+
+function moveQuestion(direction) {
+  const next = state.quizIndex + direction;
+  state.selected = null;
+  if (next < 0) return;
+  if (next >= state.activeQuestions.length) {
+    state.quizIndex = state.activeQuestions.length;
+  } else {
+    state.quizIndex = next;
+  }
+  render();
+}
+
+function moveLesson(direction) {
+  const topic = topicById(state.topicId);
+  const next = state.lessonIndex + direction;
+  if (next >= 0 && next < topic.lessons.length) {
+    state.lessonIndex = next;
+  } else if (next >= topic.lessons.length) {
+    state.screen = "topic";
+  }
+  render();
+}
+
+function markDone() {
+  state.complete[`${state.topicId}:${state.lessonIndex}`] = true;
+  save(STORAGE.complete, state.complete);
+}
+
+function back() {
+  if (state.screen === "home") return;
+  if (state.screen === "lesson" || state.screen === "quiz") state.screen = "topic";
+  else if (state.screen === "topic" || state.screen === "flashcards" || state.screen === "search" || state.screen === "flashSubjects") state.screen = "home";
+  render();
+}
+
+function toggleBookmark() {
+  if (state.screen !== "lesson") return;
+  const key = `${state.topicId}:${state.lessonIndex}`;
+  if (state.bookmarks[key]) delete state.bookmarks[key];
+  else state.bookmarks[key] = true;
+  save(STORAGE.bookmarks, state.bookmarks);
+  render();
+}
+
+function startFlashCards(topicId = "all") {
+  const cards = topicId === "saved"
+    ? flashCardBank.filter((card) => state.savedCards[card.id])
+    : topicId === "all" ? flashCardBank : flashCardBank.filter((card) => card.topic === topicId);
+  state.screen = "flashcards";
+  state.flashCards = shuffle(cards.length ? cards : flashCardBank);
+  state.flashIndex = 0;
+  state.flashFlipped = false;
+  state.flashFilterTopic = topicId;
+  render();
+}
+
+function flashSubjects() {
+  const subjects = [{ id: "all", title: "All Flash Cards", icon: "cards", count: flashCardBank.length }];
+  const savedCount = flashCardBank.filter((card) => state.savedCards[card.id]).length;
+  if (savedCount) subjects.push({ id: "saved", title: "Saved Flash Cards", icon: "star", count: savedCount });
+  topics.forEach((topic) => {
+    const count = flashCardBank.filter((card) => card.topic === topic.id).length;
+    if (count) subjects.push({ id: topic.id, title: topic.title, icon: topic.icon, count });
+  });
+  return subjects;
+}
+
+function flashSubjectTitle(topicId) {
+  if (topicId === "all") return "All subjects";
+  if (topicId === "saved") return "Saved cards";
+  return topicById(topicId).title;
+}
+
+function moveFlashCard(direction) {
+  const cards = state.flashCards.length ? state.flashCards : flashCardBank;
+  state.flashIndex = (state.flashIndex + direction + cards.length) % cards.length;
+  state.flashFlipped = false;
+  render();
+}
+
+function toggleSaveFlashCard() {
+  const cards = state.flashCards.length ? state.flashCards : flashCardBank;
+  const card = cards[state.flashIndex];
+  if (!card) return;
+  if (state.savedCards[card.id]) delete state.savedCards[card.id];
+  else state.savedCards[card.id] = true;
+  save(STORAGE.savedCards, state.savedCards);
+  render();
+}
+
+function openFlashTopic() {
+  const cards = state.flashCards.length ? state.flashCards : flashCardBank;
+  const card = cards[state.flashIndex];
+  if (!card) return;
+  state.screen = "topic";
+  state.topicId = card.topic;
+  render();
+}
+
+function searchItems(query) {
+  const needle = query.trim().toLowerCase();
+  if (!needle) return [];
+  const results = [];
+  topics.forEach((topic) => {
+    topic.lessons.forEach((lesson, lessonIndex) => {
+      const haystack = [
+        topic.title,
+        lesson.title,
+        ...(lesson.body || []),
+        lesson.remember || "",
+        ...(lesson.sections || []).flatMap((section) => [section.title, ...(section.items || [])])
+      ].join(" ").toLowerCase();
+      if (haystack.includes(needle)) results.push({ kind: "lesson", topic, lesson, lessonIndex });
+    });
+  });
+  flashCardBank.forEach((card) => {
+    const haystack = `${card.term} ${card.definition} ${topicById(card.topic).title}`.toLowerCase();
+    if (haystack.includes(needle)) results.push({ kind: "flash", card });
+  });
+  return results.slice(0, 30);
 }
 
 function shuffle(items) {
@@ -1759,306 +1873,145 @@ function shuffle(items) {
   return copy;
 }
 
-function renderRaptor() {
-  const scenario = scenarios.find((item) => item.id === state.scenarioId) || scenarios[0];
-  return `
-    <section class="section-head">
-      <div>
-        <h2>Word Problem Translator</h2>
-        <p>Move the same problem through clues, IPO, pseudocode, RAPTOR symbols, and Python.</p>
-      </div>
-      <button class="ghost-button" data-copy-scenario="${scenario.id}">${icon("copy")}${state.copyNotice || "Copy Pseudocode"}</button>
-    </section>
-
-    <section class="symbol-grid" style="margin-bottom: 14px;">
-      ${renderSymbols()}
-    </section>
-
-    <section class="scenario-layout">
-      <aside class="panel scenario-list">
-        ${scenarios.map((item) => `
-          <button class="scenario-button ${item.id === scenario.id ? "active" : ""}" data-select-scenario="${item.id}">
-            <strong>${escapeHtml(item.title)}</strong>
-            <span style="display:block;color:var(--muted);margin-top:5px;">${escapeHtml(item.brief)}</span>
-          </button>
-        `).join("")}
-      </aside>
-      <article class="lesson-detail">
-        <div class="panel">
-          <h2 style="margin:0;">${escapeHtml(scenario.title)}</h2>
-          <p>${escapeHtml(scenario.brief)}</p>
-        </div>
-        <div class="translation-grid">
-          <section class="lesson-card"><h3>English Clues</h3>${list(scenario.clues)}</section>
-          <section class="lesson-card"><h3>IPO Sort</h3>${renderIpo(scenario.ipo)}</section>
-          <section class="lesson-card"><h3>Pseudocode</h3>${codeBlock(scenario.pseudocode)}</section>
-          <section class="lesson-card"><h3>Python Starter</h3>${codeBlock(scenario.python)}</section>
-        </div>
-        <section class="lesson-card">
-          <h3>RAPTOR Build Plan</h3>
-          <div class="flow-stack">
-            ${scenario.raptor.map(([kind, text]) => `
-              <div class="flow-step">
-                ${shape(kind)}
-                <div>${escapeHtml(text)}</div>
-              </div>
-            `).join("")}
-          </div>
-        </section>
-        <section class="callout">
-          <strong>RAPTOR branch sanity check:</strong>
-          <p>Read a diamond as a question. If the condition is quantity <= 0, the Yes branch is the invalid path. If the condition is quantity > 0, the Yes branch is the valid path. Either can work, but the branch contents must match the question.</p>
-        </section>
-      </article>
-    </section>
-  `;
+function animateStats() {
+  setTimeout(() => {
+    document.querySelectorAll(".stat-ring").forEach((ring) => {
+      const value = ring.style.getPropertyValue("--value") || "0%";
+      const color = ring.classList.contains("readiness-build") ? "var(--green)" : "var(--accent)";
+      ring.style.background = `conic-gradient(${color} ${value}, rgba(255,255,255,0.08) 0)`;
+    });
+  }, 80);
 }
 
-function renderSymbols() {
-  const symbols = [
-    ["start", "Start/End", "Program begins or ends."],
-    ["input", "Input", "User types a value into a variable."],
-    ["output", "Output", "Program displays text or values."],
-    ["assignment", "Assignment", "Formula or stored value."],
-    ["selection", "Selection", "Yes/No decision branch."],
-    ["loop", "Loop", "Repeated steps."]
-  ];
-  return symbols.map(([kind, title, text]) => `
-    <div class="symbol-panel">
-      ${shape(kind, title)}
-      <h3>${title}</h3>
-      <p>${text}</p>
-    </div>
-  `).join("");
+function addSwipe(element) {
+  element.addEventListener("touchstart", (event) => {
+    touchStartX = event.changedTouches[0].screenX;
+  }, { passive: true });
+  element.addEventListener("touchend", (event) => {
+    touchEndX = event.changedTouches[0].screenX;
+    const delta = touchEndX - touchStartX;
+    if (Math.abs(delta) < 70) return;
+    if (element.dataset.swipe === "lesson") moveLesson(delta < 0 ? 1 : -1);
+    if (element.dataset.swipe === "quiz") moveQuestion(delta < 0 ? 1 : -1);
+    if (element.dataset.swipe === "flashcards") moveFlashCard(delta < 0 ? 1 : -1);
+  }, { passive: true });
 }
 
-function shape(kind, label) {
-  const display = label || kind.charAt(0).toUpperCase() + kind.slice(1);
-  return `<div class="raptor-shape shape-${kind}"><span>${escapeHtml(display)}</span></div>`;
-}
-
-function renderIpo(ipo) {
-  return `
-    <p><strong>Input</strong></p>${list(ipo.input)}
-    <p><strong>Processing</strong></p>${list(ipo.processing)}
-    <p><strong>Output</strong></p>${list(ipo.output)}
-    <p><strong>Decision</strong></p>${list(ipo.decisions)}
-  `;
-}
-
-function renderGlossary() {
-  const query = state.query.trim().toLowerCase();
-  const filtered = glossary.filter(([term, definition]) => {
-    if (!query) return true;
-    return `${term} ${definition}`.toLowerCase().includes(query);
-  });
-  return `
-    <section class="section-head">
-      <div>
-        <h2>Glossary</h2>
-        <p>Small definitions for the terms that keep showing up in pseudocode, Python, and RAPTOR.</p>
-      </div>
-    </section>
-    <div class="search-row">
-      <input type="search" value="${escapeHtml(state.query)}" data-search placeholder="Search glossary">
-      <button class="ghost-button" data-clear-search>${icon("reset")}Clear</button>
-    </div>
-    <section class="glossary-grid">
-      ${filtered.length ? filtered.map(([term, definition]) => `
-        <article class="glossary-card">
-          <h3>${escapeHtml(term)}</h3>
-          <p>${escapeHtml(definition)}</p>
-        </article>
-      `).join("") : `<div class="empty-state">No glossary match found.</div>`}
-    </section>
-  `;
-}
-
-app.addEventListener("click", (event) => {
-  const target = event.target.closest("button, .flashcard-face");
-  if (!target) return;
-
-  if (target.dataset.nav) {
-    state.view = target.dataset.nav;
-    state.query = "";
-    if (state.view === "practice" && !state.quiz) startQuiz(state.quizTopic);
-    render();
-    return;
-  }
-
-  if (target.dataset.openTopic) {
-    state.view = "lessons";
-    state.topicId = target.dataset.openTopic;
-    state.lessonIndex = 0;
-    state.query = "";
-    render();
-    return;
-  }
-
-  if (target.dataset.openLesson) {
-    state.view = "lessons";
-    state.topicId = target.dataset.openLesson;
-    state.lessonIndex = Number(target.dataset.lessonIndex || 0);
-    render();
-    return;
-  }
-
-  if (target.dataset.selectTopic) {
-    state.topicId = target.dataset.selectTopic;
-    state.lessonIndex = 0;
-    render();
-    return;
-  }
-
-  if (target.dataset.prevLesson !== undefined) {
-    moveLesson(-1);
-    return;
-  }
-
-  if (target.dataset.nextLesson !== undefined) {
-    moveLesson(1);
-    return;
-  }
-
-  if (target.dataset.completeLesson) {
-    progress.completed[completedKey(target.dataset.completeLesson, Number(target.dataset.lessonIndex))] = true;
-    saveProgress();
-    render();
-    return;
-  }
-
-  if (target.dataset.clearSearch !== undefined) {
-    state.query = "";
-    render();
-    return;
-  }
-
-  if (target.dataset.resetProgress !== undefined) {
-    progress = { completed: {}, quizScores: [] };
-    saveProgress();
-    render();
-    return;
-  }
-
-  if (target.dataset.quizAnswer !== undefined && state.quiz) {
-    state.quiz.answers[state.quiz.index] = Number(target.dataset.quizAnswer);
-    render();
-    return;
-  }
-
-  if (target.dataset.nextQuestion !== undefined && state.quiz) {
-    if (state.quiz.index < state.quiz.questions.length - 1) {
-      state.quiz.index += 1;
-    } else {
-      finishQuiz();
-    }
-    render();
-    return;
-  }
-
-  if (target.dataset.restartQuiz !== undefined) {
-    startQuiz(state.quizTopic);
-    render();
-    return;
-  }
-
-  if (target.dataset.toggleFlash !== undefined || target.classList.contains("flashcard-face")) {
-    state.flashBack = !state.flashBack;
-    render();
-    return;
-  }
-
-  if (target.dataset.nextFlash !== undefined) {
-    state.flashIndex = (state.flashIndex + 1) % flashcards.length;
-    state.flashBack = false;
-    render();
-    return;
-  }
-
-  if (target.dataset.selectScenario) {
-    state.scenarioId = target.dataset.selectScenario;
-    state.copyNotice = "";
-    render();
-    return;
-  }
-
-  if (target.dataset.copyScenario) {
-    copyScenario(target.dataset.copyScenario);
-  }
-});
-
-app.addEventListener("input", (event) => {
-  if (event.target.matches("[data-search]")) {
-    state.query = event.target.value;
-    render();
-  }
-});
-
-app.addEventListener("change", (event) => {
-  if (event.target.matches("[data-quiz-topic]")) {
-    state.quizTopic = event.target.value;
-    startQuiz(state.quizTopic);
-    render();
-  }
-});
-
-function moveLesson(direction) {
-  const topic = topics.find((item) => item.id === state.topicId) || topics[0];
-  let nextIndex = state.lessonIndex + direction;
-  let topicIndex = topics.indexOf(topic);
-
-  if (nextIndex < 0 && topicIndex > 0) {
-    topicIndex -= 1;
-    state.topicId = topics[topicIndex].id;
-    nextIndex = topics[topicIndex].lessons.length - 1;
-  } else if (nextIndex >= topic.lessons.length && topicIndex < topics.length - 1) {
-    topicIndex += 1;
-    state.topicId = topics[topicIndex].id;
-    nextIndex = 0;
-  } else {
-    nextIndex = Math.max(0, Math.min(nextIndex, topic.lessons.length - 1));
-  }
-
-  state.lessonIndex = nextIndex;
-  render();
-}
-
-function finishQuiz() {
-  const quiz = state.quiz;
-  const correct = quiz.answers.filter((answer, i) => answer === quiz.questions[i].answer).length;
-  const percent = Math.round((correct / quiz.questions.length) * 100);
-  quiz.completed = true;
-  progress.quizScores.push({
-    date: new Date().toISOString(),
-    topic: state.quizTopic,
-    correct,
-    total: quiz.questions.length,
-    percent
-  });
-  progress.quizScores = progress.quizScores.slice(-20);
-  saveProgress();
-}
-
-function copyScenario(id) {
-  const scenario = scenarios.find((item) => item.id === id);
-  if (!scenario) return;
-  const text = scenario.pseudocode.join("\n");
-  if (navigator.clipboard && navigator.clipboard.writeText) {
-    navigator.clipboard.writeText(text).then(() => {
-      state.copyNotice = "Copied";
-      render();
-      window.setTimeout(() => {
-        state.copyNotice = "";
-        render();
-      }, 1400);
-    }).catch(() => {
-      state.copyNotice = "Copy blocked";
+function wire() {
+  document.querySelectorAll("[data-topic]").forEach((button) => {
+    button.addEventListener("click", () => {
+      state.screen = "topic";
+      state.topicId = button.dataset.topic;
+      state.lessonIndex = 0;
       render();
     });
-  } else {
-    state.copyNotice = "Copy unavailable";
-    render();
+  });
+  document.querySelectorAll("[data-lesson]").forEach((button) => {
+    button.addEventListener("click", () => {
+      state.screen = "lesson";
+      state.lessonIndex = Number(button.dataset.lesson);
+      render();
+    });
+  });
+  document.querySelectorAll("[data-answer]").forEach((button) => {
+    button.addEventListener("click", () => {
+      const current = currentQuestion();
+      if (!current || state.answers[current.id]) return;
+      state.selected = Number(button.dataset.answer);
+      render();
+    });
+  });
+  document.querySelectorAll("[data-bookmark-topic]").forEach((button) => {
+    button.addEventListener("click", () => {
+      state.screen = "lesson";
+      state.topicId = button.dataset.bookmarkTopic;
+      state.lessonIndex = Number(button.dataset.bookmarkLesson);
+      render();
+    });
+  });
+  document.querySelectorAll("[data-flash-topic]").forEach((button) => {
+    button.addEventListener("click", () => startFlashCards(button.dataset.flashTopic));
+  });
+  document.querySelectorAll("[data-search-topic]").forEach((button) => {
+    button.addEventListener("click", () => {
+      state.screen = "lesson";
+      state.topicId = button.dataset.searchTopic;
+      state.lessonIndex = Number(button.dataset.searchLesson);
+      render();
+    });
+  });
+  document.querySelectorAll("[data-search-card]").forEach((button) => {
+    button.addEventListener("click", () => {
+      const card = flashCardBank.find((item) => item.id === button.dataset.searchCard);
+      if (!card) return;
+      state.screen = "flashcards";
+      state.flashCards = [card];
+      state.flashIndex = 0;
+      state.flashFlipped = false;
+      state.flashFilterTopic = card.topic;
+      render();
+    });
+  });
+  document.querySelectorAll("[data-action]").forEach((button) => {
+    button.addEventListener("click", () => act(button.dataset.action));
+  });
+  document.querySelectorAll("[data-swipe]").forEach(addSwipe);
+  const searchBox = document.getElementById("searchBox");
+  if (searchBox) {
+    searchBox.addEventListener("input", () => {
+      state.searchQuery = searchBox.value;
+      const results = document.querySelector(".search-results");
+      if (results) results.innerHTML = renderSearchResults(state.searchQuery);
+      wire();
+    });
   }
+}
+
+function act(action) {
+  if (action === "back") return back();
+  if (action === "info") return alert("Swipe left or right on lesson, quiz, and flash card screens. Progress is stored only on this device.");
+  if (action === "star") return toggleBookmark();
+  if (action === "startDailyDrill") return startQuiz("daily");
+  if (action === "startFlashCards") return startFlashCards();
+  if (action === "openSearch") {
+    state.screen = "search";
+    state.searchQuery = "";
+    return render();
+  }
+  if (action === "topicQuiz") return startQuiz(state.topicId);
+  if (action === "lessonQuiz") return startQuiz(state.topicId, { lessonIndex: state.lessonIndex });
+  if (action === "prevLesson") return moveLesson(-1);
+  if (action === "nextLesson") return moveLesson(1);
+  if (action === "markDone") {
+    markDone();
+    return moveLesson(1);
+  }
+  if (action === "check") return checkAnswer();
+  if (action === "showAnswer") return showAnswer();
+  if (action === "prevQuestion") return moveQuestion(-1);
+  if (action === "nextQuestion") return moveQuestion(1);
+  if (action === "reviewMissed") {
+    const missed = state.activeQuestions.filter((item) => state.answers[item.id] && !state.answers[item.id].correct);
+    return startQuiz(state.quizTopic || "daily", { questions: missed.length ? missed : pickQuizSource(state.quizTopic || "daily") });
+  }
+  if (action === "restartQuiz") return startQuiz(state.quizTopic || "daily", { lessonIndex: state.quizSourceLessonIndex });
+  if (action === "goHome") {
+    state.screen = "home";
+    return render();
+  }
+  if (action === "chooseFlashSubject") {
+    state.screen = "flashSubjects";
+    return render();
+  }
+  if (action === "flipFlashCard") {
+    state.flashFlipped = !state.flashFlipped;
+    return render();
+  }
+  if (action === "saveFlashCard") return toggleSaveFlashCard();
+  if (action === "shuffleFlashCards") return startFlashCards(state.flashFilterTopic);
+  if (action === "prevFlashCard") return moveFlashCard(-1);
+  if (action === "nextFlashCard") return moveFlashCard(1);
+  if (action === "openFlashTopic") return openFlashTopic();
 }
 
 if ("serviceWorker" in navigator) {

@@ -1,7 +1,7 @@
 {
   "name": "BringItOnPython",
   "short_name": "Python",
-  "description": "A beginner-friendly CIT 129 study app for Python, pseudocode, word problems, and RAPTOR.",
+  "description": "A beginner-friendly study app for Python, pseudocode, word problems, and RAPTOR.",
   "start_url": "./",
   "display": "standalone",
   "background_color": "#10170f",

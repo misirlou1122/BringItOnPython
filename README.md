@@ -1,6 +1,6 @@
 # BringItOnPython
 
-BringItOnPython is a lightweight static study app for CIT 129 learners. It focuses on:
+BringItOnPython is a lightweight static study app for Python learners. It focuses on:
 
 - Python beginner concepts
 - Pseudocode
