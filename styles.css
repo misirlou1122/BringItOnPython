@@ -51,6 +51,8 @@ button {
 }
 
 .app-shell {
+  position: relative;
+  isolation: isolate;
   min-height: 100dvh;
   overflow-x: hidden;
   padding: calc(env(safe-area-inset-top) + 18px) 14px calc(env(safe-area-inset-bottom) + 18px);
@@ -63,7 +65,27 @@ button {
   background-size: auto, auto, 46px 46px, 46px 46px, auto;
 }
 
+.app-shell::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 18% 24%, rgba(255, 124, 207, 0.42) 0 1px, transparent 2px),
+    radial-gradient(circle at 72% 18%, rgba(127, 220, 255, 0.44) 0 1px, transparent 2px),
+    radial-gradient(circle at 86% 72%, rgba(229, 237, 248, 0.34) 0 1px, transparent 2px),
+    radial-gradient(circle at 34% 82%, rgba(255, 124, 207, 0.24) 0 1px, transparent 2px),
+    linear-gradient(132deg, transparent 0 22%, rgba(127, 220, 255, 0.10) 22.1%, transparent 22.6% 49%, rgba(255, 124, 207, 0.10) 49.2%, transparent 49.7% 74%, rgba(217, 229, 245, 0.07) 74.2%, transparent 74.7%),
+    repeating-radial-gradient(circle at 50% 46%, transparent 0 82px, rgba(127, 220, 255, 0.045) 83px 84px);
+  background-size: 132px 132px, 168px 168px, 218px 218px, 156px 156px, auto, auto;
+  mix-blend-mode: screen;
+  opacity: 0.72;
+}
+
 .screen {
+  position: relative;
+  z-index: 1;
   width: min(760px, 100%);
   min-height: calc(100dvh - env(safe-area-inset-top) - env(safe-area-inset-bottom) - 36px);
   margin: 0 auto;
@@ -361,10 +383,10 @@ button {
   position: relative;
   display: grid;
   place-items: center;
-  border: 3px solid var(--tile-accent);
-  color: var(--tile-accent);
-  background: radial-gradient(circle, rgba(217, 229, 245, 0.28), rgba(7, 17, 31, 0.94));
-  box-shadow: 0 0 25px rgba(127, 220, 255, 0.28), 0 0 22px rgba(255, 124, 207, 0.10), 0 10px 30px rgba(0, 0, 0, 0.5);
+  border: 3px solid var(--accent);
+  color: var(--accent);
+  background: radial-gradient(circle at 50% 28%, rgba(255, 124, 207, 0.34), rgba(7, 17, 31, 0.94) 72%);
+  box-shadow: 0 0 24px rgba(255, 124, 207, 0.48), 0 0 34px rgba(127, 220, 255, 0.16), 0 10px 30px rgba(0, 0, 0, 0.5);
 }
 
 .topic-card span:last-child {
@@ -379,8 +401,17 @@ button {
 
 .feature-card {
   background:
-    linear-gradient(180deg, rgba(99, 136, 178, 0.78), rgba(9, 20, 37, 0.94)),
+    radial-gradient(circle at 50% 6%, rgba(255, 124, 207, 0.18), transparent 52%),
+    linear-gradient(180deg, rgba(118, 162, 210, 0.82), rgba(15, 31, 52, 0.96)),
     rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 124, 207, 0.32);
+  box-shadow: var(--shadow), 0 0 24px rgba(255, 124, 207, 0.12);
+}
+
+.feature-card .topic-icon {
+  color: #ff8bd8;
+  border-color: #ff8bd8;
+  box-shadow: 0 0 28px rgba(255, 124, 207, 0.56), 0 0 38px rgba(127, 220, 255, 0.18), 0 10px 30px rgba(0, 0, 0, 0.5);
 }
 
 .section-heading {
@@ -807,6 +838,14 @@ button {
   font-weight: 850;
 }
 
+.flash-screen {
+  padding-bottom: calc(94px + env(safe-area-inset-bottom));
+}
+
+.flash-screen .return-home-top {
+  margin-bottom: 12px;
+}
+
 .flash-tool {
   min-height: 36px;
   padding: 7px 10px;
@@ -848,6 +887,10 @@ button {
 .flash-card small {
   color: var(--muted);
   font-size: 1rem;
+}
+
+.flash-bottom-nav {
+  grid-template-columns: minmax(0, 1.18fr) 58px minmax(0, 0.84fr) 58px;
 }
 
 .search-panel {
@@ -1140,6 +1183,10 @@ button {
     font-size: 0.86rem;
   }
 
+  .flash-bottom-nav {
+    grid-template-columns: minmax(0, 1.18fr) 44px minmax(0, 0.82fr) 44px;
+  }
+
   .quiz-panel {
     padding: 4px 0 calc(126px + env(safe-area-inset-bottom));
   }
@@ -1284,6 +1331,10 @@ button {
     width: calc(100% - 16px);
     grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr) minmax(0, 0.85fr) minmax(0, 1.15fr);
     gap: 6px;
+  }
+
+  .flash-bottom-nav {
+    grid-template-columns: minmax(0, 1.16fr) 40px minmax(0, 0.78fr) 40px;
   }
 
   .bottom-nav .icon-button,

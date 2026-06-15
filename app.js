@@ -2240,7 +2240,7 @@ function renderHome() {
           <span>Flash Cards</span>
         </button>
         ${topics.map((topic) => `
-          <button class="topic-card" data-topic="${topic.id}" aria-label="${escapeHtml(topic.title)}">
+          <button class="topic-card ${topic.id === "map" ? "feature-card" : ""}" data-topic="${topic.id}" aria-label="${escapeHtml(topic.title)}">
             <span class="topic-icon">${svg(topic.icon)}</span>
             <span>${escapeHtml(topic.title)}</span>
           </button>
@@ -2477,6 +2477,7 @@ function renderFlashCards() {
   return `
     <main class="screen flash-screen" data-swipe="flashcards">
       ${topbar("Flash Cards")}
+      <button class="return-home-link return-home-top" data-action="goHome">Return Home</button>
       <div class="flash-meta"><span>${state.flashIndex + 1} / ${cards.length}</span><span>${escapeHtml(flashSubjectTitle(state.flashFilterTopic))}</span></div>
       <div class="flash-tools">
         <button class="flash-tool" data-action="chooseFlashSubject">Subject</button>
@@ -2488,10 +2489,9 @@ function renderFlashCards() {
         <strong>${escapeHtml(state.flashFlipped ? card.definition : card.term)}</strong>
         <small>${state.flashFlipped ? "Tap to see the term" : "Tap to reveal the answer"}</small>
       </button>
-      ${dots(cards.length, state.flashIndex)}
-      <nav class="bottom-nav">
+      <nav class="bottom-nav flash-bottom-nav">
+        <button class="pill-button secondary return-home-bottom" data-action="goHome">Return Home</button>
         <button class="icon-button" data-action="prevFlashCard">${svg("back")}</button>
-        <button class="pill-button secondary" data-action="shuffleFlashCards">Shuffle</button>
         <button class="pill-button" data-action="flipFlashCard">Flip</button>
         <button class="icon-button" data-action="nextFlashCard">${svg("next")}</button>
       </nav>
