@@ -73,39 +73,69 @@ button {
 }
 
 .app-shell::before {
-  inset: -22% -18%;
+  top: -118px;
+  right: -118px;
+  width: min(88vw, 520px);
+  aspect-ratio: 1;
+  border-radius: 50%;
   background:
-    linear-gradient(118deg, transparent 0 23%, rgba(183, 108, 255, 0.08) 30%, transparent 43%),
-    linear-gradient(42deg, transparent 0 46%, rgba(213, 169, 255, 0.065) 54%, transparent 67%),
-    linear-gradient(151deg, transparent 0 64%, rgba(138, 77, 255, 0.075) 73%, transparent 85%);
-  filter: blur(18px);
+    radial-gradient(circle at 29% 24%, rgba(255, 255, 255, 0.92) 0 2%, rgba(255, 255, 255, 0.34) 5%, transparent 17%),
+    radial-gradient(circle at 60% 72%, rgba(2, 5, 10, 0.78), transparent 54%),
+    repeating-conic-gradient(from 12deg, rgba(255, 255, 255, 0.18) 0deg 5deg, transparent 5deg 13deg),
+    repeating-linear-gradient(74deg, rgba(255, 255, 255, 0.12) 0 1px, transparent 1px 22px),
+    repeating-linear-gradient(-18deg, rgba(255, 255, 255, 0.10) 0 1px, transparent 1px 24px),
+    conic-gradient(from 18deg, rgba(183, 108, 255, 0.88), rgba(84, 218, 255, 0.58), rgba(255, 204, 117, 0.52), rgba(255, 94, 178, 0.62), rgba(138, 77, 255, 0.86), rgba(183, 108, 255, 0.88));
+  background-blend-mode: screen, multiply, soft-light, screen, screen, normal;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  box-shadow:
+    0 0 54px rgba(183, 108, 255, 0.30),
+    0 0 110px rgba(84, 218, 255, 0.12),
+    inset 24px 18px 46px rgba(255, 255, 255, 0.13),
+    inset -44px -58px 70px rgba(2, 5, 10, 0.56);
+  filter: saturate(1.12);
   mix-blend-mode: screen;
-  opacity: 0.95;
-  animation: ambientDrift 28s ease-in-out infinite alternate;
+  opacity: 0.82;
+  animation: ambientDrift 32s ease-in-out infinite alternate;
   will-change: transform;
 }
 
 .app-shell::after {
-  inset: 0;
+  inset: -12%;
   background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.035), transparent 14% 86%, rgba(183, 108, 255, 0.04)),
-    linear-gradient(126deg, transparent 0 38%, rgba(255, 255, 255, 0.04) 39%, transparent 40% 62%, rgba(183, 108, 255, 0.045) 63%, transparent 64%);
+    conic-gradient(from 218deg at 84% 4%, transparent 0 6deg, rgba(213, 169, 255, 0.16) 8deg, transparent 14deg 29deg, rgba(84, 218, 255, 0.08) 32deg, transparent 39deg 56deg, rgba(255, 204, 117, 0.07) 59deg, transparent 68deg),
+    radial-gradient(ellipse at 78% 6%, rgba(213, 169, 255, 0.22), transparent 23%),
+    linear-gradient(122deg, transparent 0 42%, rgba(255, 255, 255, 0.05) 47%, transparent 54%),
+    linear-gradient(38deg, transparent 0 58%, rgba(183, 108, 255, 0.07) 63%, transparent 70%);
+  filter: blur(12px);
   mix-blend-mode: screen;
-  opacity: 0.42;
+  opacity: 0.72;
+  animation: ambientSweep 38s ease-in-out infinite alternate;
+  will-change: transform;
 }
 
 @keyframes ambientDrift {
   0% {
-    transform: translate3d(-2%, -1%, 0) scale(1);
+    transform: translate3d(-1%, -1%, 0) rotate(-5deg) scale(1);
   }
 
   100% {
-    transform: translate3d(2%, 1%, 0) scale(1.035);
+    transform: translate3d(2%, 1.5%, 0) rotate(3deg) scale(1.04);
+  }
+}
+
+@keyframes ambientSweep {
+  0% {
+    transform: translate3d(-1%, -1%, 0) rotate(-2deg);
+  }
+
+  100% {
+    transform: translate3d(1.5%, 1.5%, 0) rotate(2deg);
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .app-shell::before {
+  .app-shell::before,
+  .app-shell::after {
     animation: none;
   }
 }
