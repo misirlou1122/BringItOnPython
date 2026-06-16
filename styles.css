@@ -369,7 +369,7 @@ button {
   position: relative;
   display: block;
   border: 2px solid var(--cyan);
-  color: var(--cyan);
+  color: #f8fbff;
   background: radial-gradient(circle, rgba(138, 77, 255, 0.4), rgba(2, 5, 10, 0.9));
   box-shadow: 0 0 25px rgba(138, 77, 255, 0.35), 0 10px 30px rgba(0, 0, 0, 0.5);
 }
@@ -401,7 +401,7 @@ button {
 }
 
 .feature-card .topic-icon {
-  color: var(--cyan);
+  color: #f8fbff;
   border-color: var(--cyan);
   background: radial-gradient(circle, rgba(138, 77, 255, 0.4), rgba(2, 5, 10, 0.9));
   box-shadow: 0 0 25px rgba(138, 77, 255, 0.35), 0 10px 30px rgba(0, 0, 0, 0.5);
