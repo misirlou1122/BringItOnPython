@@ -54,6 +54,8 @@ button {
 }
 
 .app-shell {
+  position: relative;
+  isolation: isolate;
   min-height: 100dvh;
   overflow-x: hidden;
   padding: calc(env(safe-area-inset-top) + 18px) 14px calc(env(safe-area-inset-bottom) + 18px);
@@ -62,7 +64,55 @@ button {
     linear-gradient(180deg, #02050a 0%, #05070d 48%, #02050a 100%);
 }
 
+.app-shell::before,
+.app-shell::after {
+  content: "";
+  position: fixed;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.app-shell::before {
+  inset: -22% -18%;
+  background:
+    linear-gradient(118deg, transparent 0 23%, rgba(183, 108, 255, 0.08) 30%, transparent 43%),
+    linear-gradient(42deg, transparent 0 46%, rgba(213, 169, 255, 0.065) 54%, transparent 67%),
+    linear-gradient(151deg, transparent 0 64%, rgba(138, 77, 255, 0.075) 73%, transparent 85%);
+  filter: blur(18px);
+  mix-blend-mode: screen;
+  opacity: 0.95;
+  animation: ambientDrift 28s ease-in-out infinite alternate;
+  will-change: transform;
+}
+
+.app-shell::after {
+  inset: 0;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.035), transparent 14% 86%, rgba(183, 108, 255, 0.04)),
+    linear-gradient(126deg, transparent 0 38%, rgba(255, 255, 255, 0.04) 39%, transparent 40% 62%, rgba(183, 108, 255, 0.045) 63%, transparent 64%);
+  mix-blend-mode: screen;
+  opacity: 0.42;
+}
+
+@keyframes ambientDrift {
+  0% {
+    transform: translate3d(-2%, -1%, 0) scale(1);
+  }
+
+  100% {
+    transform: translate3d(2%, 1%, 0) scale(1.035);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .app-shell::before {
+    animation: none;
+  }
+}
+
 .screen {
+  position: relative;
+  z-index: 1;
   width: min(760px, 100%);
   min-height: calc(100dvh - env(safe-area-inset-top) - env(safe-area-inset-bottom) - 36px);
   margin: 0 auto;

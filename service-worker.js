@@ -1,6 +1,6 @@
 "use strict";
 
-const CACHE_NAME = "bring-it-on-python-v12";
+const CACHE_NAME = "bring-it-on-python-v13";
 const APP_SHELL = [
   "./",
   "./index.html",
