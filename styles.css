@@ -73,53 +73,56 @@ button {
 }
 
 .app-shell::before {
-  top: -118px;
-  right: -118px;
-  width: min(88vw, 520px);
+  top: 50%;
+  left: 50%;
+  width: min(1350px, 128vmax);
   aspect-ratio: 1;
   border-radius: 50%;
   background:
-    radial-gradient(circle at 29% 24%, rgba(255, 255, 255, 0.92) 0 2%, rgba(255, 255, 255, 0.34) 5%, transparent 17%),
-    radial-gradient(circle at 60% 72%, rgba(2, 5, 10, 0.78), transparent 54%),
-    repeating-conic-gradient(from 12deg, rgba(255, 255, 255, 0.18) 0deg 5deg, transparent 5deg 13deg),
-    repeating-linear-gradient(74deg, rgba(255, 255, 255, 0.12) 0 1px, transparent 1px 22px),
-    repeating-linear-gradient(-18deg, rgba(255, 255, 255, 0.10) 0 1px, transparent 1px 24px),
-    conic-gradient(from 18deg, rgba(183, 108, 255, 0.88), rgba(84, 218, 255, 0.58), rgba(255, 204, 117, 0.52), rgba(255, 94, 178, 0.62), rgba(138, 77, 255, 0.86), rgba(183, 108, 255, 0.88));
-  background-blend-mode: screen, multiply, soft-light, screen, screen, normal;
+    radial-gradient(circle at 30% 22%, rgba(255, 255, 255, 0.96) 0 2.5%, rgba(255, 255, 255, 0.48) 6%, transparent 18%),
+    radial-gradient(circle at 28% 34%, rgba(255, 242, 167, 0.48), transparent 21%),
+    radial-gradient(circle at 72% 66%, rgba(2, 5, 10, 0.74), transparent 52%),
+    repeating-linear-gradient(0deg, transparent 0 42px, rgba(255, 255, 255, 0.28) 42px 45px, transparent 45px 84px),
+    repeating-linear-gradient(90deg, transparent 0 43px, rgba(255, 255, 255, 0.24) 43px 46px, transparent 46px 86px),
+    repeating-conic-gradient(from 5deg, rgba(255, 255, 255, 0.18) 0deg 4deg, rgba(255, 255, 255, 0.02) 4deg 10deg, rgba(2, 5, 10, 0.12) 10deg 13deg),
+    conic-gradient(from 16deg, rgba(255, 237, 88, 0.92), rgba(255, 75, 174, 0.86), rgba(76, 224, 255, 0.82), rgba(44, 87, 255, 0.88), rgba(255, 95, 81, 0.82), rgba(196, 92, 255, 0.88), rgba(255, 237, 88, 0.92));
+  background-blend-mode: screen, screen, multiply, overlay, overlay, soft-light, normal;
   border: 1px solid rgba(255, 255, 255, 0.16);
   box-shadow:
-    0 0 54px rgba(183, 108, 255, 0.30),
-    0 0 110px rgba(84, 218, 255, 0.12),
-    inset 24px 18px 46px rgba(255, 255, 255, 0.13),
-    inset -44px -58px 70px rgba(2, 5, 10, 0.56);
-  filter: saturate(1.12);
+    0 0 70px rgba(255, 75, 174, 0.24),
+    0 0 150px rgba(84, 218, 255, 0.16),
+    0 0 220px rgba(183, 108, 255, 0.20),
+    inset 34px 22px 70px rgba(255, 255, 255, 0.18),
+    inset -80px -90px 120px rgba(2, 5, 10, 0.62);
+  filter: saturate(1.24) contrast(1.04);
   mix-blend-mode: screen;
-  opacity: 0.82;
-  animation: ambientDrift 32s ease-in-out infinite alternate;
+  opacity: 0.58;
+  animation: ambientDrift 34s ease-in-out infinite alternate;
   will-change: transform;
 }
 
 .app-shell::after {
   inset: -12%;
   background:
-    conic-gradient(from 218deg at 84% 4%, transparent 0 6deg, rgba(213, 169, 255, 0.16) 8deg, transparent 14deg 29deg, rgba(84, 218, 255, 0.08) 32deg, transparent 39deg 56deg, rgba(255, 204, 117, 0.07) 59deg, transparent 68deg),
-    radial-gradient(ellipse at 78% 6%, rgba(213, 169, 255, 0.22), transparent 23%),
-    linear-gradient(122deg, transparent 0 42%, rgba(255, 255, 255, 0.05) 47%, transparent 54%),
-    linear-gradient(38deg, transparent 0 58%, rgba(183, 108, 255, 0.07) 63%, transparent 70%);
-  filter: blur(12px);
+    radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.12), transparent 18%),
+    conic-gradient(from 210deg at 50% 50%, transparent 0 7deg, rgba(255, 75, 174, 0.18) 10deg, transparent 18deg 34deg, rgba(84, 218, 255, 0.14) 38deg, transparent 48deg 66deg, rgba(255, 237, 88, 0.10) 71deg, transparent 84deg),
+    radial-gradient(ellipse at 50% 50%, rgba(196, 92, 255, 0.22), transparent 43%),
+    linear-gradient(128deg, transparent 0 34%, rgba(255, 255, 255, 0.055) 43%, transparent 52%),
+    linear-gradient(36deg, transparent 0 56%, rgba(84, 218, 255, 0.07) 63%, transparent 72%);
+  filter: blur(14px);
   mix-blend-mode: screen;
-  opacity: 0.72;
-  animation: ambientSweep 38s ease-in-out infinite alternate;
+  opacity: 0.82;
+  animation: ambientSweep 42s ease-in-out infinite alternate;
   will-change: transform;
 }
 
 @keyframes ambientDrift {
   0% {
-    transform: translate3d(-1%, -1%, 0) rotate(-5deg) scale(1);
+    transform: translate3d(-50%, -50%, 0) rotate(-7deg) scale(1);
   }
 
   100% {
-    transform: translate3d(2%, 1.5%, 0) rotate(3deg) scale(1.04);
+    transform: translate3d(-50%, -50%, 0) rotate(5deg) scale(1.035);
   }
 }
 
