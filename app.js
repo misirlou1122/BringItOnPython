@@ -1947,6 +1947,685 @@ function addDeepLessons() {
 
 addDeepLessons();
 
+function addExpandedStudyMaterial() {
+  const append = (topicId, lessons) => {
+    const topic = topics.find((item) => item.id === topicId);
+    if (topic) topic.lessons.push(...lessons);
+  };
+
+  append("map", [
+    L("Reading A Problem Like A Programmer", [
+      "A word problem is not just a paragraph. It is a set of hidden program requirements. Read it once for the story, then read it again for actions.",
+      "Circle words that sound like input, underline formulas or decisions, and box the final result. This turns the story into a map before pseudocode begins.",
+      "The goal is to separate what the user gives, what the program computes, what the program decides, and what the user sees at the end."
+    ], "Read for actions: receive, calculate, decide, repeat, display.", [
+      S("Second-Read Checklist", [
+        "Who or what is the program about?",
+        "Which values must be typed by the user?",
+        "Which values are fixed rules, rates, limits, or conversion factors?",
+        "Which phrases say the program must choose a branch?",
+        "Which phrase describes the final output?"
+      ]),
+      S("Translation Notes", [
+        "A noun such as price or score usually becomes a variable.",
+        "A phrase such as ask for becomes a Write prompt followed by Input.",
+        "A phrase such as calculate the total becomes a Set statement.",
+        "A phrase such as if the value is invalid becomes a selection or validation loop."
+      ])
+    ]),
+    L("From Story To Test Plan", [
+      "A strong design includes test values before the program is built. Test values prove that formulas, branches, and loops are doing the right work.",
+      "For a discount problem, test values just below, on, and above the cutoff. For a loop, test the smallest allowed number of repetitions and a normal number of repetitions.",
+      "Testing should not wait until Python. A trace table can test the pseudocode and the RAPTOR chart before the final program exists."
+    ], "A test plan is part of the design, not an afterthought.", [
+      S("Test Value Types", [
+        "Normal case: a common value that should pass.",
+        "Boundary case: a value exactly on a cutoff.",
+        "Outside case: a value just below or above the allowed range.",
+        "Branch case: one value for every decision path.",
+        "Loop case: smallest count, typical count, and invalid count."
+      ]),
+      S("Mini Scenario", [
+        "If valid item counts are 1 through 30, test 0, 1, 30, and 31.",
+        "If free delivery starts at 50 items, test 49, 50, and 51.",
+        "If a denominator cannot be zero, test a normal division and zero.",
+        "If a report totals selected values, test values inside and outside that selected range."
+      ])
+    ])
+  ]);
+
+  append("basics", [
+    L("How Data Lives In The Machine", [
+      "Computers store every value as patterns of bits. A bit is a single 0 or 1. A byte is a small group of bits commonly used as a basic storage unit.",
+      "The same bit pattern can mean different things depending on the data type. A program has to know whether a value should be treated as a number, character, Boolean, or other kind of data.",
+      "This is why type choices matter. If the program treats text as a number or a number as text, calculations and comparisons can fail."
+    ], "Bits store data; types give the bits meaning.", [
+      S("Type Meaning", [
+        "Integer values are used for whole-number counts.",
+        "Floating-point values are used for measurements, rates, money, and averages.",
+        "Strings store text, even when the text contains digits.",
+        "Booleans store true or false decisions."
+      ]),
+      S("Beginner Trap", [
+        "A phone number is usually a string because you do not calculate with it.",
+        "A ZIP code is usually a string because leading zeros matter.",
+        "A count of items is an integer because partial items are not allowed.",
+        "A price is usually a float because cents are possible."
+      ])
+    ]),
+    L("Software Layers And Translation", [
+      "A high-level program is written for humans first. The computer still needs the instructions translated into a form it can execute.",
+      "Some languages are compiled before running, and some are interpreted while running. Python is commonly introduced through an interpreter, which makes testing short programs quick.",
+      "Even when the tool changes, the logic does not. The same IPO plan can become pseudocode, a RAPTOR flowchart, or Python statements."
+    ], "The tool changes, but the algorithm is the same.", [
+      S("Layer View", [
+        "Problem: the real-world task.",
+        "Algorithm: the ordered solution steps.",
+        "Pseudocode: readable planning language.",
+        "RAPTOR: visual flowchart form.",
+        "Python: runnable code form."
+      ]),
+      S("Why This Helps", [
+        "Syntax errors belong to the coding layer.",
+        "Logic errors belong to the algorithm layer.",
+        "Wrong output can come from either layer.",
+        "A clear design makes it easier to know where the mistake lives."
+      ])
+    ])
+  ]);
+
+  append("design", [
+    L("IPO To Detailed Algorithm", [
+      "An IPO chart is the short version of the design. Detailed pseudocode is the expanded version.",
+      "Do not jump from IPO directly to a finished program when the problem has several rules. Turn every input, formula, validation rule, branch, and output into its own step.",
+      "A detailed algorithm should be clear enough that another beginner could build the same RAPTOR chart from it without asking what you meant."
+    ], "IPO names the pieces; pseudocode orders the pieces.", [
+      S("Expansion Pattern", [
+        "Input item count becomes Write prompt and Input itemCount.",
+        "Processing subtotal becomes Set subtotal = itemCount * unitPrice.",
+        "Decision for free delivery becomes If itemCount >= cutoff Then.",
+        "Output summary becomes labeled Write statements."
+      ]),
+      S("Design Quality Check", [
+        "Every value used in a formula has been declared or input.",
+        "Every displayed value has been calculated first.",
+        "Every decision has a true path and a false path.",
+        "Every loop has a starting value, a condition, and an update."
+      ])
+    ]),
+    L("Report-Style Output Planning", [
+      "Many beginner programs end with a report. A report is more than one number. It usually includes headings, echoed input, calculated values, and final totals.",
+      "Plan the report before writing the calculations. If the report needs item name, item price, total amount, and selected subtotal, those values must be available at the right time.",
+      "In loops, decide which output happens inside the loop and which output happens after the loop. Per-item output belongs inside. Final summary output belongs after."
+    ], "Inside the loop shows each item; after the loop shows totals.", [
+      S("Report Pieces", [
+        "Heading line that tells the user what the columns mean.",
+        "One line for each repeated item or reading.",
+        "Running totals updated while the loop runs.",
+        "Final report section after the loop stops.",
+        "Clear labels for totals, averages, fees, and messages."
+      ]),
+      S("RAPTOR Placement", [
+        "Output heading before the loop.",
+        "Input one record inside the loop.",
+        "Assignment symbols update totals inside the loop.",
+        "Output one record inside the loop.",
+        "Output final totals after the loop."
+      ])
+    ]),
+    L("Defensive Design Before Coding", [
+      "Defensive design means deciding how the program should handle bad input before the bad input happens.",
+      "Validation belongs before the value is used in important processing. If quantity must be from 1 through 30, do not calculate totals until the value is inside that range.",
+      "A validation loop is often clearer than one giant decision because the loop keeps asking until the value is usable."
+    ], "Validate before using a value.", [
+      S("Validation Questions", [
+        "What is the smallest allowed value?",
+        "What is the largest allowed value?",
+        "Is zero allowed?",
+        "Are decimals allowed?",
+        "Should the user get another chance or should the program stop?"
+      ]),
+      S("Pseudocode Shape", [
+        "Input value.",
+        "While value is outside the allowed range.",
+        "Write error message.",
+        "Input value again.",
+        "End While."
+      ])
+    ])
+  ]);
+
+  append("pseudocode", [
+    L("Line Categories In Pseudocode", [
+      "Most pseudocode lines belong to a small set of categories. The category tells you how to translate the line into RAPTOR and Python.",
+      "Write and Input lines communicate with the user. Set lines calculate or store values. If lines choose a path. While or For lines repeat a group of steps.",
+      "When you get stuck, label each line by category before worrying about exact wording."
+    ], "Line category controls the translation.", [
+      S("Category Map", [
+        "Write prompt -> Output symbol or print statement.",
+        "Input variable -> Input symbol or input conversion.",
+        "Set variable = expression -> Assignment symbol or assignment statement.",
+        "If condition Then -> Selection symbol or if statement.",
+        "While condition -> Loop symbol or while statement."
+      ]),
+      S("Example", [
+        "Write \"Enter price\" is output because it displays a prompt.",
+        "Input price is input because the user supplies the value.",
+        "Set subtotal = price * quantity is processing.",
+        "If quantity < 1 Then is a decision.",
+        "While price < 0 OR price > 500 repeats validation."
+      ])
+    ]),
+    L("Pseudocode For Repeated Records", [
+      "Repeated records need a loop body. The body is the work that happens once for each item, reading, score, or record.",
+      "Put initialization before the loop, record input and updates inside the loop, and final summary output after the loop.",
+      "If a value needs validation, place the validation loop close to the input for that value."
+    ], "Initialize before, process inside, report after.", [
+      S("Record Loop Skeleton", [
+        "Set total = 0.",
+        "Input how many records will be processed.",
+        "For each record.",
+        "Input and validate the record values.",
+        "Update totals and display the record.",
+        "End For.",
+        "Display final totals."
+      ]),
+      S("Common Mistakes", [
+        "Resetting total to 0 inside the loop.",
+        "Displaying final totals inside the loop.",
+        "Updating the counter outside the loop body.",
+        "Processing an invalid value before validation finishes."
+      ])
+    ])
+  ]);
+
+  append("variables", [
+    L("Choosing Types From Word Problems", [
+      "A variable type should match how the value is used. The same-looking value can need a different type in different programs.",
+      "If a value will be counted, use an integer. If it can contain decimals, use a floating-point value. If it is only displayed or compared as text, use a string.",
+      "Boolean variables are useful when a program needs to remember whether a condition has happened, such as foundItem, isValid, or keepGoing."
+    ], "Choose the type from the job the value performs.", [
+      S("Type Clues", [
+        "Number of readings -> Integer.",
+        "Temperature or price -> Float.",
+        "Item name or menu symbol -> String.",
+        "Is the input valid? -> Boolean.",
+        "Running total -> usually Float when money or measurements are involved."
+      ]),
+      S("Type Mistakes", [
+        "Using integer for a value that may have cents.",
+        "Using float for a count that should be whole.",
+        "Using string for a number that must be added.",
+        "Using a number for a code that should keep leading zeros."
+      ])
+    ]),
+    L("Variables That Change Over Time", [
+      "Some variables hold one input. Other variables change while the program runs. Counters, accumulators, current record values, and flags all change over time.",
+      "A counter tracks how many times something has happened. An accumulator keeps a running total. A flag stores a true or false state.",
+      "When tracing, pay special attention to variables that update from their old value because those variables are easy to place in the wrong part of a loop."
+    ], "Counters count, accumulators total, flags remember true or false.", [
+      S("Update Examples", [
+        "Set count = count + 1.",
+        "Set total = total + price.",
+        "Set inRangeTotal = inRangeTotal + temperature.",
+        "Set found = true.",
+        "Set largest = value when value is greater than largest."
+      ]),
+      S("Placement Rules", [
+        "Initialize counters and totals before the loop.",
+        "Update counters and totals inside the loop.",
+        "Do not reset a running total inside the loop unless starting a new group.",
+        "Display final totals after all updates are complete."
+      ])
+    ])
+  ]);
+
+  append("operators", [
+    L("Building Formulas From English", [
+      "A formula should be built from the meaning of the sentence, not just the order of the words.",
+      "Words such as total, difference, product, average, percent, convert, and remaining usually point to arithmetic operations.",
+      "Use intermediate variables when a formula has several parts. A named subtotal, discount, tax, or average makes the program easier to trace."
+    ], "Give each important formula result a name.", [
+      S("Formula Translations", [
+        "Total cost means quantity * unitPrice.",
+        "Average means sum / count.",
+        "Tax amount means taxableAmount * taxRate.",
+        "Discount amount means subtotal * discountRate.",
+        "Current balance means starting balance + deposits - withdrawals."
+      ]),
+      S("RAPTOR Translation", [
+        "Every formula becomes an Assignment symbol.",
+        "The variable receiving the result goes on the left.",
+        "The expression using values goes on the right.",
+        "Use parentheses when the intended order could be misunderstood."
+      ])
+    ]),
+    L("Remainders, Whole Parts, And Decimal Results", [
+      "Division can produce different kinds of answers. Normal division gives a decimal-capable result. Integer-style division keeps the whole part. Modulus gives the remainder.",
+      "Coin, grouping, and leftover problems often need both the whole part and the remainder.",
+      "When a problem asks how many full groups can be made and how many are left over, look for division and modulus working together."
+    ], "Division answers how many; modulus answers what is left.", [
+      S("Pattern Examples", [
+        "quarters = cents // 25.",
+        "remaining = cents % 25.",
+        "groups = items // groupSize.",
+        "leftOver = items % groupSize.",
+        "isEven = number % 2 == 0."
+      ]),
+      S("Trace Habit", [
+        "Pick one small value.",
+        "Calculate the whole-part answer by hand.",
+        "Calculate the remainder by hand.",
+        "Check that wholePart * divisor + remainder equals the original value."
+      ])
+    ])
+  ]);
+
+  append("python", [
+    L("Input Conversion Workflow", [
+      "Python input starts as text, so numeric programs need a conversion step. Decide the intended type before doing math.",
+      "When a program has validation, conversion and validation work together. First get the value, then check whether it is in the allowed range.",
+      "For beginner programs, keep input, conversion, validation, calculation, and output in separate readable steps."
+    ], "Input text must become a number before numeric math.", [
+      S("Workflow", [
+        "Prompt with print or input message.",
+        "Read the value.",
+        "Convert to int or float when math is needed.",
+        "Validate range or menu choice.",
+        "Calculate only after the value is usable."
+      ]),
+      S("Code Shape", [
+        "count = int(input(\"How many? \"))",
+        "while count < 1 or count > 10:",
+        "    print(\"Try again.\")",
+        "    count = int(input(\"How many? \"))"
+      ])
+    ]),
+    L("Readable Output And Comments", [
+      "Output should explain itself. A number by itself may be correct, but it is not friendly or easy to grade by eye.",
+      "Comments should explain purpose, formulas, and important decisions. They should not repeat every obvious statement.",
+      "When translating from a flowchart, comments can mark major sections such as input, validation, processing, and report output."
+    ], "Labels and useful comments make a program easier to check.", [
+      S("Output Habits", [
+        "Use a heading before table-like output.",
+        "Label every summary value.",
+        "Show units when the value has units.",
+        "Echo important input when the report needs it.",
+        "Keep wording consistent from pseudocode to Python."
+      ]),
+      S("Comment Habits", [
+        "Comment the purpose of the program.",
+        "Comment a formula when the formula comes from a rule.",
+        "Comment why a validation range exists.",
+        "Avoid comments that merely restate the same line."
+      ])
+    ])
+  ]);
+
+  append("decisions", [
+    L("Single, Dual, And Multiway Decisions", [
+      "A single-alternative decision has action only when the condition is true. A dual-alternative decision has one path for true and another path for false.",
+      "A multiway decision chooses from several related paths. In Python this is usually an if, elif, else chain. In RAPTOR it becomes connected selection structures.",
+      "Choose the structure from the problem wording. If the problem says otherwise, you probably need an else path."
+    ], "The wording tells you how many branches are needed.", [
+      S("Decision Clues", [
+        "If only one special action is mentioned, use single-alternative.",
+        "If the problem says otherwise, use dual-alternative.",
+        "If there are several ranges or categories, use multiway selection.",
+        "If the second question depends on the first, use a nested decision."
+      ]),
+      S("Examples", [
+        "If price is invalid, show an error.",
+        "If score is passing, show pass, otherwise show retry.",
+        "If temperature is below one cutoff, show one message, else show another.",
+        "If operator is division, then check denominator."
+      ])
+    ]),
+    L("Compound Conditions For Validation", [
+      "Compound conditions combine simple comparisons. Use AND when both conditions must be true. Use OR when either condition can make the whole condition true.",
+      "Inside-range checks usually use AND. Outside-range validation usually uses OR.",
+      "Write the condition in words first. Then translate each part into a comparison."
+    ], "Inside range uses AND; outside range uses OR.", [
+      S("Range Patterns", [
+        "Valid from 1 through 30: count >= 1 AND count <= 30.",
+        "Invalid outside 1 through 30: count < 1 OR count > 30.",
+        "Valid symbol + or -: operator == \"+\" OR operator == \"-\".",
+        "Invalid menu symbol: operator != \"+\" AND operator != \"-\"."
+      ]),
+      S("RAPTOR Detail", [
+        "The Selection condition goes in the diamond.",
+        "The Yes branch matches the condition being true.",
+        "The No branch handles the condition being false.",
+        "Validation loops repeat while the bad condition is true."
+      ])
+    ])
+  ]);
+
+  append("loops", [
+    L("Counter Loops And Running Totals", [
+      "A counter loop repeats a known number of times. It is useful when the program first asks how many readings, items, or scores will be processed.",
+      "A running total must start before the loop and update inside the loop. The final total is displayed after the loop.",
+      "If the program totals only selected values, put the accumulator update inside an If statement inside the loop."
+    ], "Count the records, update totals inside, report after.", [
+      S("Loop Skeleton", [
+        "Input numberOfRecords.",
+        "Validate numberOfRecords.",
+        "Set total = 0.",
+        "For counter = 1 to numberOfRecords.",
+        "Input one record.",
+        "Update total.",
+        "End For.",
+        "Write final total."
+      ]),
+      S("Selected Total Example", [
+        "If fahrenheit >= 50 AND fahrenheit <= 80 Then.",
+        "Set selectedTotal = selectedTotal + fahrenheit.",
+        "End If.",
+        "This update belongs inside the loop because it depends on each reading."
+      ])
+    ]),
+    L("Nested Decisions Inside Loops", [
+      "Many report programs use a loop with a decision inside. The loop processes every record, and the decision decides what to do with the current record.",
+      "For each item, the program might validate price, add price to total, check whether the price is in a special range, and display a message.",
+      "Trace one full loop cycle at a time. Do not jump to the final total until you know how one record changes the variables."
+    ], "The loop repeats records; the decision classifies each record.", [
+      S("Common Pattern", [
+        "Loop for each reading.",
+        "Input and validate current reading.",
+        "Convert or calculate current result.",
+        "If current result is in a target range, add to selected total.",
+        "If current result meets message rule, write matching message."
+      ]),
+      S("Placement Checks", [
+        "Input for the current record is inside the loop.",
+        "Validation for the current record is inside the loop.",
+        "Current output is inside the loop.",
+        "Final summary output is after the loop."
+      ])
+    ])
+  ]);
+
+  append("functions", [
+    L("Function Design From A Task List", [
+      "A function should have one clear job. If a task list has input, validation, calculation, and display, those tasks may become separate functions later.",
+      "Start by naming each task with a verb phrase. Then decide whether the task needs input values, returns a result, or simply displays something.",
+      "A good main function reads like a table of contents: get data, process data, display results."
+    ], "Function names should reveal the job.", [
+      S("Task-To-Function Ideas", [
+        "get_item_count returns a validated count.",
+        "get_valid_price returns one valid price.",
+        "calculate_total returns a total.",
+        "display_report prints final labels and values.",
+        "classify_temperature returns a message."
+      ]),
+      S("Design Questions", [
+        "What data does this function need?",
+        "Does it return a value?",
+        "Does it display output?",
+        "Can it be tested with one small example?",
+        "Is the job small enough to explain in one sentence?"
+      ])
+    ]),
+    L("Parameters, Returns, And Side Effects", [
+      "A parameter receives information. A return sends information back. A side effect changes something outside the function, such as printing output or modifying a global value.",
+      "Calculation functions are easiest to test when they receive parameters and return a value without printing.",
+      "Display functions are allowed to print, but they should not secretly change important calculation variables."
+    ], "Receive with parameters; send back with return.", [
+      S("Clean Function Roles", [
+        "calculate_tax(subtotal, rate) returns tax.",
+        "convert_celsius(celsius) returns fahrenheit.",
+        "is_valid_price(price) returns true or false.",
+        "display_item(name, price) prints one line.",
+        "display_report(total, selectedTotal) prints final totals."
+      ]),
+      S("RAPTOR Connection", [
+        "A Call symbol can represent a void-style task.",
+        "A subchart can organize repeated logic.",
+        "A value-returning idea in pseudocode often becomes Set result = functionName(arguments).",
+        "Keep subchart names short and action-based."
+      ])
+    ])
+  ]);
+
+  append("raptor", [
+    L("Symbol Translation Workshop", [
+      "RAPTOR becomes easier when each pseudocode line is labeled first. Do not choose a symbol from memory alone; choose it from the action.",
+      "Write and Input lines connect to communication with the user. Set lines connect to assignment. If lines connect to selection. Loop lines connect to repeated paths.",
+      "When a flowchart looks confusing, compare it against the pseudocode line by line."
+    ], "The action chooses the symbol.", [
+      S("Symbol Match", [
+        "Write prompt -> Output symbol.",
+        "Input value -> Input symbol.",
+        "Set total = total + price -> Assignment symbol.",
+        "If price is invalid -> Selection symbol.",
+        "Repeat for each item -> Loop structure.",
+        "Run displayReport -> Call symbol."
+      ]),
+      S("Build Order", [
+        "Start with Start and End.",
+        "Place top-level actions in order.",
+        "Add validation loops near the inputs they validate.",
+        "Add selection branches where the pseudocode says If.",
+        "Test with one small case before adding more complexity."
+      ])
+    ]),
+    L("Comments, Prompts, And Output In RAPTOR", [
+      "RAPTOR comments explain the flowchart, but comments do not interact with the user. Output symbols are what the user sees when the program runs.",
+      "Prompts should be output before input so the user knows what to enter. A final report should use output symbols after calculations are complete.",
+      "Good comments mark sections such as input, validation, processing, and report output."
+    ], "Comments explain the chart; output talks to the user.", [
+      S("Do Not Mix These Up", [
+        "Comment: note for the programmer.",
+        "Output prompt: message asking the user for input.",
+        "Input: receives the typed value.",
+        "Output report: displays final results or messages."
+      ]),
+      S("Flow Order Example", [
+        "Output: Enter item count.",
+        "Input: itemCount.",
+        "Selection or loop: validate itemCount.",
+        "Assignment: calculate totals.",
+        "Output: display report."
+      ])
+    ])
+  ]);
+
+  append("patterns", [
+    L("Purchase Report Pattern", [
+      "A purchase report problem usually combines input, validation, loops, running totals, selected totals, and final output.",
+      "The program first learns how many records to process. Then it loops once per record and updates totals as each record is handled.",
+      "If the report needs a total for only certain prices, put that accumulator update inside a decision inside the loop."
+    ], "Purchase reports are loop plus totals plus selected totals.", [
+      S("Planning Steps", [
+        "Input and validate the number of records.",
+        "Display a heading for repeated output.",
+        "Loop once for each record.",
+        "Input and validate the current name or price.",
+        "Add current price to all-items total.",
+        "If current price is in the target range, add it to selected total.",
+        "Display current record.",
+        "After the loop, display final totals."
+      ]),
+      S("Practice Variation Ideas", [
+        "Books with prices from 1 to 200.",
+        "Tickets with values in a reward range.",
+        "Supplies with a taxable subtotal.",
+        "Snack orders with a premium-price subtotal."
+      ])
+    ]),
+    L("Temperature Table Pattern", [
+      "A temperature table problem uses a loop to process multiple readings and a formula to convert each value.",
+      "The conversion is processing. The heading and each row are output. The reading count and each temperature are input.",
+      "A message rule, such as cold or okay, is a decision based on the converted value."
+    ], "Each reading follows input, validate, convert, classify, display.", [
+      S("Algorithm Shape", [
+        "Input and validate number of readings.",
+        "Output heading.",
+        "For each reading, input Celsius.",
+        "Validate Celsius range.",
+        "Set Fahrenheit = 9 / 5 * Celsius + 32.",
+        "If Fahrenheit meets message rule, choose message.",
+        "Output Celsius, Fahrenheit, and message."
+      ]),
+      S("Testing Ideas", [
+        "A value below the allowed range.",
+        "A value above the allowed range.",
+        "A reading that converts below the message cutoff.",
+        "A reading that converts exactly on a cutoff.",
+        "A reading inside the selected total range."
+      ])
+    ]),
+    L("Coin And Unit Conversion Pattern", [
+      "Conversion problems are good practice because they have a simple formula but still require clean variables and labels.",
+      "Coin problems often use multiplication when converting coins to cents. Some change-making problems use integer division and modulus to break a total into coin counts.",
+      "Unit conversions use a fixed factor. Store the factor with a meaningful name so the formula explains itself."
+    ], "Conversion problems are formula practice with careful labels.", [
+      S("Common Conversion Steps", [
+        "Input the original value.",
+        "Use a named conversion factor.",
+        "Set convertedValue = originalValue * factor or originalValue / factor.",
+        "Output both the original and converted values.",
+        "Include units in the output label."
+      ]),
+      S("Practice Examples", [
+        "Gallons to liters.",
+        "Coins to total cents.",
+        "Minutes to hours and remaining minutes.",
+        "Celsius to Fahrenheit.",
+        "Recipe amount scaled by desired servings."
+      ])
+    ])
+  ]);
+
+  append("calculator", [
+    L("Calculator Decision Tree", [
+      "A menu calculator is a decision-tree problem. First validate the numbers, then validate the operator, then choose the matching operation.",
+      "The division branch needs its own nested decision because only division has a denominator problem.",
+      "Keep invalid number, invalid operator, and divide-by-zero as separate messages so the user knows what went wrong."
+    ], "Validate inputs before choosing the operation.", [
+      S("Decision Order", [
+        "Input first number and second number.",
+        "If either number is outside range, show number error.",
+        "Else input operator.",
+        "If operator is invalid, show operator error.",
+        "Else choose addition, subtraction, multiplication, or division.",
+        "Inside division, check denominator before dividing."
+      ]),
+      S("RAPTOR Structure", [
+        "Selection for valid number range.",
+        "Selection for valid operator.",
+        "Nested selections for operation choices.",
+        "Nested selection inside division for denominator zero.",
+        "Output result or error at the correct branch end."
+      ])
+    ]),
+    L("Calculator Trace Practice", [
+      "Tracing a calculator is easier when the same two numbers give different answers for each operator.",
+      "Use numbers like 8 and 2. Addition gives 10, subtraction gives 6, multiplication gives 16, and division gives 4.",
+      "Trace invalid cases separately. A number outside the allowed range should stop before operator processing. A zero denominator should only matter inside the division path."
+    ], "Test every operation and every error path.", [
+      S("Trace Set", [
+        "8, 2, + should produce 10.",
+        "8, 2, - should produce 6.",
+        "8, 2, * should produce 16.",
+        "8, 2, / should produce 4.",
+        "8, 0, / should show denominator error.",
+        "A bad operator should show operator error."
+      ]),
+      S("Branch Checks", [
+        "Did invalid number skip all calculations?",
+        "Did invalid operator skip operation formulas?",
+        "Did division by zero avoid the division formula?",
+        "Did valid operations display the correct label and result?"
+      ])
+    ])
+  ]);
+
+  append("collections", [
+    L("Lists As Repeated Storage", [
+      "A list is useful when a program needs to keep many related values instead of processing and forgetting each one.",
+      "Loops and lists work together. A loop can append values, visit each value, search for a target, or compute totals from stored data.",
+      "If the program only needs a final total, a running total may be enough. If it must revisit, search, sort, or report individual values later, a list is useful."
+    ], "Use a list when values must be kept and revisited.", [
+      S("List Decision", [
+        "Need only a total? Use an accumulator.",
+        "Need to print all values later? Use a list.",
+        "Need to find a largest or smallest after input? A list can help.",
+        "Need to search by name or code? A dictionary may be better later."
+      ]),
+      S("Loop Jobs With Lists", [
+        "Append one value per loop cycle.",
+        "Validate before appending.",
+        "Use for value in list to process each value.",
+        "Use indexes when matching parallel lists."
+      ])
+    ]),
+    L("Parallel Lists And Simple Records", [
+      "Parallel lists store related pieces of data in separate lists at matching indexes. For example, itemNames[2] and itemPrices[2] describe the same item.",
+      "Parallel lists are easy to understand, but they require discipline. If one list changes and the other does not, the records no longer match.",
+      "For beginner practice, parallel lists connect naturally to repeated input: read a name and price, append both, then report using the same index."
+    ], "Matching indexes act like simple records.", [
+      S("Parallel List Rules", [
+        "Append related values during the same loop cycle.",
+        "Keep lists the same length.",
+        "Use the same index to access related values.",
+        "When deleting or sorting, keep related values together."
+      ]),
+      S("Report Pattern", [
+        "For index from 0 to length - 1.",
+        "Write itemNames[index].",
+        "Write itemPrices[index].",
+        "Update totals from itemPrices[index]."
+      ])
+    ])
+  ]);
+
+  append("files", [
+    L("File Reading Report Pattern", [
+      "A file report is like a loop over user input, except the records come from a file instead of the keyboard.",
+      "The program opens the file, reads each record, processes it, updates totals, and then displays or writes a final report.",
+      "The same placement rules still apply: initialize before the loop, update inside the loop, and display final totals after the loop."
+    ], "A file loop is a record-processing loop.", [
+      S("File Loop Shape", [
+        "Open the file.",
+        "Set totals and counters to 0.",
+        "For each record in the file.",
+        "Split or convert record fields if needed.",
+        "Update totals, counters, or selected totals.",
+        "End loop.",
+        "Close file or use a with block.",
+        "Display final report."
+      ]),
+      S("Beginner Checks", [
+        "Does each line have the expected fields?",
+        "Are numeric fields converted before math?",
+        "Are totals initialized before reading?",
+        "Is the final report outside the loop?"
+      ])
+    ]),
+    L("Exceptions As User-Friendly Recovery", [
+      "An exception is a runtime problem. A program can catch some exceptions and respond with a useful message instead of crashing.",
+      "Number conversion and file opening are common places where exceptions can happen. A user may type text where a number is expected, or a file may be missing.",
+      "Exception handling should be specific. Catch the expected problem and explain it clearly."
+    ], "Handle predictable runtime problems with specific messages.", [
+      S("Common Exception Plans", [
+        "ValueError: input could not be converted to a number.",
+        "FileNotFoundError: file name or location is wrong.",
+        "ZeroDivisionError: denominator is zero.",
+        "IndexError: list position does not exist."
+      ]),
+      S("Design Rule", [
+        "Use validation for rules you can check before the operation.",
+        "Use exceptions for problems discovered while the operation runs.",
+        "Do not hide every error with a vague catch-all message.",
+        "After an error, tell the user what to fix."
+      ])
+    ])
+  ]);
+}
+
+addExpandedStudyMaterial();
+
 let questionCounter = 0;
 
 const manualQuestions = [
@@ -2020,6 +2699,237 @@ function makeChoices(correct, pool) {
   return shuffle([correct, ...picked]);
 }
 
+function pick(items) {
+  return items[Math.floor(Math.random() * items.length)];
+}
+
+function scenarioProblems() {
+  const places = ["campus bookstore", "coffee cart", "pet supply kiosk", "music shop", "student club table"];
+  const items = ["notebooks", "lattes", "dog treats", "vinyl sleeves", "event tickets"];
+  const measures = ["temperature readings", "quiz scores", "daily sales", "package weights", "walk times"];
+  return [
+    {
+      topic: "map",
+      story: `A student reads a program request, lists the values the user must type, writes the formulas, then sketches the matching flowchart symbols before coding.`,
+      phrase: "lists the values the user must type",
+      role: "Input",
+      pseudo: "Create an input list before writing the steps",
+      raptor: "Input symbol",
+      explanation: "Values typed by the user become input requirements before they become flowchart symbols."
+    },
+    {
+      topic: "basics",
+      story: `A program stores a whole number count, a decimal price, a true-or-false membership flag, and a customer name before making a receipt.`,
+      phrase: "true-or-false membership flag",
+      role: "Boolean",
+      pseudo: "Declare isMember as Boolean",
+      raptor: "Assignment symbol",
+      explanation: "A true-or-false value is Boolean data and can be stored or updated with an assignment."
+    },
+    {
+      topic: "design",
+      story: `A ${pick(places)} asks the user for the number of ${pick(items)}, multiplies by a unit price, applies a discount when the quantity is high enough, and displays a final total.`,
+      phrase: "asks the user for the number",
+      role: "Input",
+      pseudo: "Write prompt, then Input quantity",
+      raptor: "Input symbol",
+      explanation: "The phrase asks the program to receive a value from the user."
+    },
+    {
+      topic: "design",
+      story: `A delivery estimator receives item count and price, then determines whether the order earns free delivery before showing the final charge.`,
+      phrase: "determines whether the order earns free delivery",
+      role: "Decision",
+      pseudo: "If itemCount >= freeDeliveryCount Then",
+      raptor: "Selection symbol",
+      explanation: "Determines whether means the program must choose between branches."
+    },
+    {
+      topic: "pseudocode",
+      story: `A recipe planner asks for desired servings and scales cups of flour from a base recipe.`,
+      phrase: "scales cups of flour",
+      role: "Processing",
+      pseudo: "Set flourNeeded = desiredServings / baseServings * baseFlour",
+      raptor: "Assignment symbol",
+      explanation: "Scaling a measurement is a calculation, so it becomes a Set statement."
+    },
+    {
+      topic: "variables",
+      story: `A program stores a customer name, number of reward points, current balance, and whether the account is active.`,
+      phrase: "whether the account is active",
+      role: "Boolean",
+      pseudo: "Declare accountActive As Boolean",
+      raptor: "Assignment symbol",
+      explanation: "A yes-or-no state is best represented as Boolean data."
+    },
+    {
+      topic: "operators",
+      story: `A coin counter receives quarters, dimes, and nickels, then calculates total cents.`,
+      phrase: "calculates total cents",
+      role: "Processing",
+      pseudo: "Set totalCents = quarters * 25 + dimes * 10 + nickels * 5",
+      raptor: "Assignment symbol",
+      explanation: "The phrase requires arithmetic, so it belongs in a Set or Assignment step."
+    },
+    {
+      topic: "python",
+      story: `A small Python program reads a price typed by the user and then adds it to a running total.`,
+      phrase: "reads a price typed by the user",
+      role: "Input conversion",
+      pseudo: "Set price = float(input(\"Price: \"))",
+      raptor: "Input symbol",
+      explanation: "Python receives text first, so a price should be converted before numeric math."
+    },
+    {
+      topic: "decisions",
+      story: `A program accepts only values from 1 through 30 and asks again when the number is outside that range.`,
+      phrase: "outside that range",
+      role: "Validation condition",
+      pseudo: "While value < 1 OR value > 30",
+      raptor: "Loop with a bad-input condition",
+      explanation: "Outside-range validation repeats while the value is below the minimum or above the maximum."
+    },
+    {
+      topic: "loops",
+      story: `A report asks how many ${pick(measures)} will be entered, then processes each one and keeps a running total.`,
+      phrase: "processes each one",
+      role: "Loop",
+      pseudo: "For counter = 1 To numberOfReadings",
+      raptor: "Loop structure",
+      explanation: "Processing each value is repeated work, so it belongs in a loop."
+    },
+    {
+      topic: "loops",
+      story: `A temperature table converts each Celsius reading to Fahrenheit and adds only Fahrenheit values from 50 through 80 to a special total.`,
+      phrase: "adds only Fahrenheit values from 50 through 80",
+      role: "Decision inside a loop",
+      pseudo: "If fahrenheit >= 50 AND fahrenheit <= 80 Then",
+      raptor: "Selection symbol inside the loop",
+      explanation: "The program repeats for each reading, then decides whether the current value belongs in the selected total."
+    },
+    {
+      topic: "functions",
+      story: `A program needs one reusable task that converts Celsius to Fahrenheit and sends the converted value back to the caller.`,
+      phrase: "sends the converted value back",
+      role: "Return value",
+      pseudo: "Return fahrenheit",
+      raptor: "Assignment using a returned result",
+      explanation: "Sending a value back means the task is value-returning."
+    },
+    {
+      topic: "raptor",
+      story: `A flowchart receives quantity and price, calculates subtotal, checks a discount rule, and displays the total.`,
+      phrase: "calculates subtotal",
+      role: "Processing",
+      pseudo: "Set subtotal = quantity * price",
+      raptor: "Assignment symbol",
+      explanation: "Calculations and stored results use RAPTOR assignment symbols."
+    },
+    {
+      topic: "patterns",
+      story: `A purchase report repeats for several items, validates each price, displays each item, and shows a final report after the loop.`,
+      phrase: "shows a final report after the loop",
+      role: "Output after repetition",
+      pseudo: "Write totalAmount after End For",
+      raptor: "Output symbol after the loop",
+      explanation: "The final report belongs after all repeated records have been processed."
+    },
+    {
+      topic: "calculator",
+      story: `A calculator accepts two numbers and an operator. When the operator is division, it must reject a second number of zero.`,
+      phrase: "reject a second number of zero",
+      role: "Nested decision",
+      pseudo: "If operator == \"/\" Then If num2 == 0 Then",
+      raptor: "Selection symbol inside the division branch",
+      explanation: "The zero check only matters after the program knows division was chosen."
+    },
+    {
+      topic: "collections",
+      story: `A program stores item names in one list and matching item prices in another list, then reports each name with the price at the same index.`,
+      phrase: "same index",
+      role: "Parallel list relationship",
+      pseudo: "Write itemNames[index] and itemPrices[index]",
+      raptor: "Loop with indexed output",
+      explanation: "Parallel lists connect related values by using the same position."
+    },
+    {
+      topic: "files",
+      story: `A file report reads one sales record at a time, converts the amount field to a number, updates totals, and prints a summary.`,
+      phrase: "reads one sales record at a time",
+      role: "Sequential file loop",
+      pseudo: "For each record in the file",
+      raptor: "Loop structure",
+      explanation: "Sequential file processing repeats the same logic for each record."
+    }
+  ];
+}
+
+function generatedScenarioQuestions() {
+  const roleChoices = [
+    "Input",
+    "Processing",
+    "Output",
+    "Decision",
+    "Loop",
+    "Validation condition",
+    "Decision inside a loop",
+    "Return value",
+    "Parallel list relationship",
+    "Sequential file loop",
+    "Input conversion",
+    "Nested decision",
+    "Output after repetition",
+    "Boolean"
+  ];
+  const pseudoDistractors = [
+    "Write \"Done\"",
+    "Input result",
+    "Set answer = answer",
+    "If total Then",
+    "For no value",
+    "Call unknownTask"
+  ];
+  const raptorChoices = [
+    "Input symbol",
+    "Output symbol",
+    "Assignment symbol",
+    "Selection symbol",
+    "Loop structure",
+    "Call symbol",
+    "Selection symbol inside the loop",
+    "Output symbol after the loop",
+    "Loop with a bad-input condition",
+    "Loop with indexed output",
+    "Assignment using a returned result"
+  ];
+  return scenarioProblems().flatMap((item, index) => [
+    makeQuestion(
+      item.topic,
+      null,
+      `Word problem: ${item.story} What part of the algorithm is "${item.phrase}"?`,
+      item.role,
+      roleChoices,
+      item.explanation
+    ),
+    makeQuestion(
+      item.topic,
+      null,
+      `For this word problem, which pseudocode line best represents "${item.phrase}"?`,
+      item.pseudo,
+      pseudoDistractors,
+      `A good pseudocode line names the exact action: ${item.pseudo}.`
+    ),
+    makeQuestion(
+      item.topic,
+      null,
+      `Which RAPTOR structure best matches "${item.pseudo}"?`,
+      item.raptor,
+      raptorChoices,
+      `${item.pseudo} translates to ${item.raptor}.`
+    )
+  ].map((question) => ({ ...question, id: `${question.id}-scenario-${index}-${Math.random().toString(36).slice(2)}` })));
+}
+
 const fullQuestionBank = [...manualQuestions, ...generatedQuestions()];
 
 const manualFlashCards = [
@@ -2061,7 +2971,7 @@ function generatedFlashCards() {
       fc(lesson.title, conciseDefinition(lesson.remember || (lesson.body || [])[0] || topic.title), topic.id)
     ];
     (lesson.sections || []).forEach((section, sectionIndex) => {
-      const items = (section.items || []).slice(0, 2);
+      const items = (section.items || []).slice(0, 4);
       items.forEach((item, itemIndex) => {
         cards.push({
           id: `${topic.id}-${lessonIndex}-${sectionIndex}-${itemIndex}-${section.title.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`,
@@ -2085,7 +2995,10 @@ function conciseDefinition(text) {
 function shortTerm(text) {
   const cleaned = String(text || "").replace(/\s+/g, " ").trim();
   const beforeColon = cleaned.split(":")[0];
-  return (beforeColon.length <= 34 ? beforeColon : cleaned.slice(0, 34)).replace(/[.!?]$/, "");
+  const source = beforeColon.length <= 38 ? beforeColon : cleaned;
+  if (source.length <= 38) return source.replace(/[.!?]$/, "");
+  const clipped = source.slice(0, 35).replace(/\s+\S*$/, "").replace(/[.!?,;:]$/, "").trim();
+  return `${clipped || source.slice(0, 35).trim()}...`;
 }
 
 function dedupeCards(cards) {
@@ -2573,26 +3486,36 @@ function startQuiz(topicId, options = {}) {
 }
 
 function pickQuizSource(topicId, lessonIndex = null) {
-  if (topicId === "daily") return shuffle(fullQuestionBank).slice(0, 10);
-  const lessonQuestions = typeof lessonIndex === "number"
-    ? fullQuestionBank.filter((item) => item.topic === topicId && item.lessonIndex === lessonIndex)
-    : [];
-  const topicQuestions = fullQuestionBank.filter((item) => item.topic === topicId && !lessonQuestions.some((qItem) => qItem.id === item.id));
-  const combined = [...shuffle(lessonQuestions), ...shuffle(topicQuestions)];
-  const seen = new Set();
+  const activeBank = [...fullQuestionBank, ...generatedScenarioQuestions()];
   const picked = [];
-  combined.forEach((item) => {
-    if (!seen.has(item.id) && picked.length < 10) {
+  const seen = new Set();
+  const addPicked = (item) => {
+    if (item && !seen.has(item.id) && picked.length < 10) {
       picked.push(item);
       seen.add(item.id);
     }
+  };
+  const isScenario = (item) => item.id.includes("-scenario-");
+  const directWordProblem = (item) => isScenario(item) && item.prompt.startsWith("Word problem:");
+  if (topicId === "daily") {
+    shuffle(activeBank.filter(directWordProblem)).slice(0, 1).forEach(addPicked);
+    shuffle(activeBank.filter(isScenario)).slice(0, 3).forEach(addPicked);
+    shuffle(activeBank).forEach(addPicked);
+    return shuffle(picked).slice(0, 10);
+  }
+  const lessonQuestions = typeof lessonIndex === "number"
+    ? activeBank.filter((item) => item.topic === topicId && item.lessonIndex === lessonIndex)
+    : [];
+  const topicQuestions = activeBank.filter((item) => item.topic === topicId && !lessonQuestions.some((qItem) => qItem.id === item.id));
+  const combined = [...shuffle(lessonQuestions), ...shuffle(topicQuestions)];
+  shuffle(activeBank.filter((item) => item.topic === topicId && directWordProblem(item))).slice(0, 1).forEach(addPicked);
+  shuffle(activeBank.filter((item) => item.topic === topicId && isScenario(item))).slice(0, 3).forEach(addPicked);
+  combined.forEach((item) => {
+    addPicked(item);
   });
   if (picked.length < 10) {
-    shuffle(fullQuestionBank).forEach((item) => {
-      if (!seen.has(item.id) && picked.length < 10) {
-        picked.push(item);
-        seen.add(item.id);
-      }
+    shuffle(activeBank).forEach((item) => {
+      addPicked(item);
     });
   }
   return shuffle(picked).slice(0, 10);
