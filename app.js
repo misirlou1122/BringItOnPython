@@ -83,7 +83,7 @@ const topics = [
         ])
       ]),
       L("How To Study Without Copying", [
-        "Use assignment-like patterns as practice, but do not memorize or copy one exact solution. Change the story, numbers, and variable names so you have to rebuild the logic yourself.",
+        "Use practice patterns as practice, but do not memorize or copy one exact solution. Change the story, numbers, and variable names so you have to rebuild the logic yourself.",
         "A good practice session asks: What are the inputs? What is the formula? What output should appear? What would happen with small test values?",
         "When you can explain a solution in your own words, you can usually rebuild it in pseudocode, RAPTOR, or Python without needing the original example."
       ], "Learn the pattern, then write your own version.", [
@@ -244,7 +244,7 @@ const topics = [
       ]),
       L("Echo Printing", [
         "Echo printing means displaying the input values along with the calculated results. This helps the user verify what they typed.",
-        "Many assignment-style programs expect output to include both input and calculated values. If the problem says display all input values and all calculated results, echo printing is required.",
+        "Many beginner programs expect output to include both input and calculated values. If the problem says display all input values and all calculated results, echo printing is required.",
         "Use clear labels so each output value is easy to read."
       ], "Echo print inputs when the output should show what was entered.", [
         S("Output Labels", [
@@ -289,7 +289,7 @@ const topics = [
       L("Declare, Input, Set, Write", [
         "Declare prepares a variable name and type. Input stores a value from the user. Set stores a calculated or assigned value. Write displays text or values.",
         "These four actions handle many early programming problems. When you feel stuck, ask which of the four actions the next line should perform.",
-        "In RAPTOR, there is no separate Declare symbol. Variables are created when first given a value through Input or Assignment."
+        "In RAPTOR, there is no separate Declare symbol. Variables are created when first given a value through Input or Set Statement."
       ], "Declare prepares. Input receives. Set changes. Write displays.", [
         S("Common Mistakes", [
           "Using Write when the program needs to receive input.",
@@ -398,9 +398,9 @@ const topics = [
       ]),
       L("Python Variables", [
         "Python does not require Declare lines. A Python variable is created when a value is assigned to it.",
-        "The equal sign performs assignment. The right side is evaluated first, then the result is stored in the left-side variable.",
+        "The equal sign performs storing a value. The right side is evaluated first, then the result is stored in the left-side variable.",
         "Python variable names often use lowercase with underscores, such as gross_pay or grand_total."
-      ], "Python creates variables through assignment.", [
+      ], "Python creates variables through storing a value.", [
         S("Python Habits", [
           "Use clear lowercase names with underscores.",
           "Assign before using a variable.",
@@ -432,16 +432,16 @@ const topics = [
     title: "Operators",
     icon: "code",
     lessons: [
-      L("Assignment And Comparison", [
+      L("Set Values And Compare", [
         "One equals sign assigns a value. It changes the variable on the left.",
         "Double equals compares values. It asks whether the left and right side are equal.",
-        "In pseudocode, Set total = price * quantity is assignment. If operator == \"+\" Then is comparison."
+        "In pseudocode, Set total = price * quantity is storing a value. If operator == \"+\" Then is comparison."
       ], "One equals stores. Two equals compares.", [
         S("Use Correctly", [
-          "Assignment: Set money = 50.",
+          "Set/store: Set money = 50.",
           "Comparison: If money == 50 Then.",
-          "Invalid assignment: 50 = money.",
-          "Python uses = for assignment and == for equality comparison."
+          "Invalid Set line: 50 = money.",
+          "Python uses = for storing a value and == for equality comparison."
         ])
       ]),
       L("Arithmetic Operators", [
@@ -548,9 +548,9 @@ const topics = [
         "liters = gallons * 3.78541"
       ].join("\n")),
       L("Python Formatting Basics", [
-        "Beginner assignments often do not require formatted decimals, so follow the assignment requirements carefully.",
+        "Beginner exercises often do not require formatted decimals, so follow the requested style carefully.",
         "When formatting is allowed, Python f-strings can display values with labels and decimal places.",
-        "Do not use a formatting feature if your current course material has not covered it and the assignment says not to use outside techniques."
+        "Do not use a formatting feature if your current study path has not covered it or the directions say not to use outside techniques."
       ], "Follow the expected style for the current lesson.", [
         S("Useful Later", [
           "f\"Total = ${total:.2f}\" displays two decimal places.",
@@ -813,14 +813,14 @@ const topics = [
     lessons: [
       L("RAPTOR Symbol Map", [
         "RAPTOR is a flowchart tool. It lets you focus on logic without writing full Python syntax.",
-        "Each flowchart symbol matches a type of pseudocode action. Start and End mark boundaries. Input receives values. Output displays values. Assignment calculates or stores. Selection branches. Loop repeats. Call runs a subchart.",
+        "Each flowchart symbol matches a type of pseudocode action. Start and End mark boundaries. Input receives values. Output displays values. Set Statement calculates or stores. Selection branches. Loop repeats. Call runs a subchart.",
         "The fastest build method is to translate one pseudocode line at a time."
       ], "Pseudocode line type tells you the RAPTOR symbol.", [
         S("Symbol Match", [
           "Start or End -> Oval.",
           "Input variable -> Input parallelogram.",
           "Write result -> Output parallelogram.",
-          "Set variable = expression -> Assignment rectangle.",
+          "Set variable = expression -> Set/Calculate rectangle.",
           "If condition -> Selection diamond.",
           "While or repeat -> Loop symbol.",
           "Call module -> Call symbol."
@@ -838,11 +838,11 @@ const topics = [
           "Use comments to explain the logic, not to display results."
         ])
       ]),
-      L("Assignment Symbols", [
-        "An Assignment symbol stores a value in a variable or calculates a new value.",
+      L("Set/Calculate Symbols", [
+        "A Set/Calculate symbol stores a value in a variable or calculates a new value.",
         "The receiving variable is on the left. The expression is on the right. The expression is evaluated first.",
-        "Use one assignment symbol per important calculation when you want the flowchart to be easy to read."
-      ], "Assignment changes a variable.", [
+        "Use one set/calculate symbol per important calculation when you want the flowchart to be easy to read."
+      ], "Set changes a variable.", [
         S("Examples", [
           "total = quantity * price",
           "tax = total * (taxRate / 100)",
@@ -869,7 +869,7 @@ const topics = [
       ], "Most RAPTOR errors are spelling, order, type, or branch errors.", [
         S("Fix Checklist", [
           "Check spelling and capitalization of every variable.",
-          "Make sure each variable has an Input or Assignment before use.",
+          "Make sure each variable has an Input or Set Statement before use.",
           "Keep numeric variables numeric and text variables text.",
           "Verify Yes and No branches match the condition.",
           "Separate comments from Output symbols."
@@ -1083,8 +1083,8 @@ const topics = [
         "    print(\"Add\")"
       ].join("\n")),
       L("When Not To Use Lists Yet", [
-        "Sometimes a shorter Python feature is not the right choice for the assignment.",
-        "If the current material is practicing variables, formulas, and decisions, use those tools unless the assignment says lists are allowed.",
+        "Sometimes a shorter Python feature is not the right choice for the practice goal.",
+        "If the current material is practicing variables, formulas, and decisions, use those tools unless lists are clearly allowed.",
         "Learning the expected pattern matters more than producing the shortest possible code."
       ], "Use the tool the lesson is practicing.", [
         S("Early-Course Discipline", [
@@ -1147,7 +1147,7 @@ const topics = [
           "User types text when a number is required.",
           "File does not exist.",
           "Division by zero.",
-          "A variable is used before assignment."
+          "A variable is used before storing a value."
         ])
       ]),
       L("Validation Before Exceptions", [
@@ -1195,7 +1195,7 @@ function addDeepLessons() {
     L("From Rough Idea To Exact Logic", [
       "A rough idea says what you want. Exact logic says how the computer can do it. The difference matters because computers cannot guess missing steps.",
       "Rough: calculate the bill. Exact: Set subtotal = price * quantity, Set tax = subtotal * taxRate, Set total = subtotal + tax.",
-      "Before translating to Python, rewrite every vague verb into a specific action: input, assignment, output, decision, or loop."
+      "Before translating to Python, rewrite every vague verb into a specific action: input, set, output, decision, or loop."
     ], "Replace vague verbs with exact program actions.", [
       S("Rewrite Examples", [
         "Get the number -> Write prompt, then Input number.",
@@ -1209,7 +1209,7 @@ function addDeepLessons() {
   append("basics", [
     L("Inside The CPU Cycle", [
       "The CPU repeatedly fetches an instruction, decodes what it means, and executes it. This is why program order matters.",
-      "If a program tries to use a variable before an input or assignment gives it a value, the instruction order is wrong.",
+      "If a program tries to use a variable before an input or storing a value gives it a value, the instruction order is wrong.",
       "Pseudocode should read in the same order the computer must act: prepare variables, collect inputs, calculate, decide, repeat when needed, then output."
     ], "Instruction order is part of the logic.", [
       S("Order Problems To Watch", [
@@ -1278,12 +1278,12 @@ function addDeepLessons() {
     ]),
     L("Flowcharts Before RAPTOR", [
       "A flowchart is the visual version of an algorithm. RAPTOR is one tool for creating and running a flowchart.",
-      "Before placing symbols, identify the shape each pseudocode action needs: input/output, assignment, selection, loop, or call.",
+      "Before placing symbols, identify the shape each pseudocode action needs: input/output, set/calculate, selection, loop, or call.",
       "If the pseudocode is clear, the flowchart becomes a translation job instead of a guessing job."
     ], "Match each pseudocode action to a flowchart symbol.", [
       S("Shape Matching", [
         "Input and Write use input/output symbols.",
-        "Set statements use assignment symbols.",
+        "Set statements use set/calculate symbols.",
         "If and Else use selection diamonds.",
         "While and repeat patterns use loop structures.",
         "Module calls use call symbols."
@@ -1299,7 +1299,7 @@ function addDeepLessons() {
     ], "Finished pseudocode can be translated line by line.", [
       S("Refinement Checklist", [
         "Every input has a variable name.",
-        "Every formula has an assignment target.",
+        "Every formula has an target variable.",
         "Every If has a clear Boolean condition.",
         "Every loop has a clear stopping condition.",
         "Every output has a label or clear value."
@@ -1461,7 +1461,7 @@ function addDeepLessons() {
         "Label every displayed value.",
         "Use consistent wording.",
         "Round or format only when the requirement allows it.",
-        "Do not hide input values when the assignment asks for them."
+        "Do not hide input values when the prompt asks for them."
       ])
     ], [
       "total = 12.5",
@@ -1470,7 +1470,7 @@ function addDeepLessons() {
     L("Using Import Statements", [
       "An import statement lets a Python program use code from a module.",
       "The math module contains common math functions and constants. The random module can generate random choices or numbers.",
-      "Only import modules that the assignment allows. For early practice, the goal is often to learn the basic logic without extra shortcuts."
+      "Only import modules that the current practice allows. For early practice, the goal is often to learn the basic logic without extra shortcuts."
     ], "Import modules when the program needs outside tools.", [
       S("Common Beginner Modules", [
         "math for square roots, powers, and constants.",
@@ -1655,7 +1655,7 @@ function addDeepLessons() {
       S("Build Checklist", [
         "Start with the pseudocode beside you.",
         "Add input symbols for user values.",
-        "Add assignment symbols for Set statements.",
+        "Add set/calculate symbols for Set statements.",
         "Add selection symbols for If statements.",
         "Add loop structures for repeated logic.",
         "Add output symbols for final messages."
@@ -1701,7 +1701,7 @@ function addDeepLessons() {
     L("Subcharts And Calls", [
       "A larger RAPTOR program can be divided into subcharts. A call symbol runs a named subchart.",
       "Subcharts match the same modular design idea as functions. They help keep the main chart readable when a program has repeated or separate tasks.",
-      "Use subcharts for clear tasks such as input, calculation, validation, or display when the assignment allows modular design."
+      "Use subcharts for clear tasks such as input, calculation, validation, or display when the current practice allows modular design."
     ], "A call symbol can run a separate subchart.", [
       S("Subchart Candidates", [
         "getInput",
@@ -2068,7 +2068,7 @@ function addExpandedStudyMaterial() {
       S("RAPTOR Placement", [
         "Output heading before the loop.",
         "Input one record inside the loop.",
-        "Assignment symbols update totals inside the loop.",
+        "Set/Calculate symbols update totals inside the loop.",
         "Output one record inside the loop.",
         "Output final totals after the loop."
       ])
@@ -2104,7 +2104,7 @@ function addExpandedStudyMaterial() {
       S("Category Map", [
         "Write prompt -> Output symbol or print statement.",
         "Input variable -> Input symbol or input conversion.",
-        "Set variable = expression -> Assignment symbol or assignment statement.",
+        "Set variable = expression -> Set/Calculate symbol or Python storing line.",
         "If condition Then -> Selection symbol or if statement.",
         "While condition -> Loop symbol or while statement."
       ]),
@@ -2194,7 +2194,7 @@ function addExpandedStudyMaterial() {
         "Current balance means starting balance + deposits - withdrawals."
       ]),
       S("RAPTOR Translation", [
-        "Every formula becomes an Assignment symbol.",
+        "Every formula becomes a Set/Calculate symbol.",
         "The variable receiving the result goes on the left.",
         "The expression using values goes on the right.",
         "Use parentheses when the intended order could be misunderstood."
@@ -2390,13 +2390,13 @@ function addExpandedStudyMaterial() {
   append("raptor", [
     L("Symbol Translation Workshop", [
       "RAPTOR becomes easier when each pseudocode line is labeled first. Do not choose a symbol from memory alone; choose it from the action.",
-      "Write and Input lines connect to communication with the user. Set lines connect to assignment. If lines connect to selection. Loop lines connect to repeated paths.",
+      "Write and Input lines connect to communication with the user. Set lines connect to storing a value. If lines connect to selection. Loop lines connect to repeated paths.",
       "When a flowchart looks confusing, compare it against the pseudocode line by line."
     ], "The action chooses the symbol.", [
       S("Symbol Match", [
         "Write prompt -> Output symbol.",
         "Input value -> Input symbol.",
-        "Set total = total + price -> Assignment symbol.",
+        "Set total = total + price -> Set/Calculate symbol.",
         "If price is invalid -> Selection symbol.",
         "Repeat for each item -> Loop structure.",
         "Run displayReport -> Call symbol."
@@ -2424,7 +2424,7 @@ function addExpandedStudyMaterial() {
         "Output: Enter item count.",
         "Input: itemCount.",
         "Selection or loop: validate itemCount.",
-        "Assignment: calculate totals.",
+        "Set/store: calculate totals.",
         "Output: display report."
       ])
     ])
@@ -2626,6 +2626,166 @@ function addExpandedStudyMaterial() {
 
 addExpandedStudyMaterial();
 
+function addBeginnerStudyScaffolds() {
+  const patterns = {
+    map: {
+      plain: "This lesson is about choosing the next form of the same idea. A story becomes inputs, processing, outputs, then ordered steps, then a chart or code.",
+      spot: ["Look for the final result first.", "Find values the user must provide.", "Separate math, choices, and repeated work.", "Ask what must be tested before coding."],
+      pseudo: ["Start", "Write a prompt for each needed value", "Input each value", "Set calculated values", "Use If or While when the story chooses or repeats", "Write the final result", "End"],
+      raptor: ["Input/output symbols handle prompts, typed values, and displayed results.", "Set/Calculate symbols handle formulas, counters, and running totals.", "Selection symbols handle true-or-false questions.", "Loop symbols handle repeated steps.", "Call symbols are useful when a larger task is split into named parts."],
+      python: ["Use input() for typed values.", "Convert numeric input before math.", "Use = to store a value.", "Use if, elif, else, while, and for to match the plan."],
+      warnings: ["Do not start with Python syntax before you know the steps.", "Input means the user gives data to the program.", "Output means the program shows information back.", "A test value should prove one branch, formula, or loop at a time."],
+      examples: ["Warm Up: A badge maker asks for a name and displays a greeting.", "Level Up: A smoothie counter asks for drink count and price, then displays a total.", "Challenge: A reading tracker asks for pages read each day, keeps a total, and displays the average."]
+    },
+    basics: {
+      plain: "This lesson is about how programs store and move information. A computer follows exact steps, so data needs a clear name, type, and purpose.",
+      spot: ["Nouns often become stored values.", "Counts are usually whole numbers.", "Prices, weights, and averages usually allow decimals.", "Yes-or-no facts usually become true-or-false values."],
+      pseudo: ["Declare needed names and types", "Write a clear prompt", "Input the value", "Set any calculated result", "Write a labeled result"],
+      raptor: ["Input/output symbols receive values and display messages.", "Set/Calculate symbols create stored results.", "Selection symbols choose paths from true-or-false facts.", "Loop symbols repeat storage and update steps."],
+      python: ["Use int() for whole-number input.", "Use float() for decimal input.", "Use strings for names, codes, and menu choices.", "Use booleans for true-or-false flags."],
+      warnings: ["A value that contains digits is not always a number.", "ZIP codes, phone numbers, and menu letters are usually text.", "A variable stores one current value unless a list is used.", "Use == when checking equality in Python."],
+      examples: ["Warm Up: Store a player name and display it with a welcome message.", "Level Up: Store minutes walked and calculate miles from a pace value.", "Challenge: Store item count, item price, and membership status, then decide whether a discount applies."]
+    },
+    design: {
+      plain: "This lesson is about planning before coding. The plan should make inputs, formulas, decisions, repeated steps, and outputs obvious.",
+      spot: ["Ask, enter, type, or receive usually points to input.", "Display, print, show, or report points to output.", "Calculate, convert, add, multiply, or average points to processing.", "If, when, unless, valid, or invalid points to a decision."],
+      pseudo: ["Start", "Declare variables", "Write prompt", "Input value", "Set result = formula", "If condition Then", "Write result", "End If", "End"],
+      raptor: ["Input/output symbols handle user communication.", "Set/Calculate symbols handle formulas and updates.", "Selection symbols handle rules and validation checks.", "Loop symbols handle repeated records or repeated asking."],
+      python: ["Plan variable names before typing code.", "Put prompts before input().", "Calculate before printing final results.", "Use comments to mark major sections when the program grows."],
+      warnings: ["Do not hide formulas in vague words like do math.", "Every displayed value should be calculated or received first.", "Every decision needs a true path and a false path.", "Validation should happen before a bad value is used."],
+      examples: ["Warm Up: Plan a sticker total from count and price.", "Level Up: Plan a parking total with an extra fee after a time limit.", "Challenge: Plan a weekly budget report with repeated spending entries and a final balance."]
+    },
+    pseudocode: {
+      plain: "This lesson is about writing a readable plan. Pseudocode should be exact enough to build, but still easier to read than final code.",
+      spot: ["A prompt becomes Write.", "A typed value becomes Input.", "A formula becomes Set.", "A rule becomes If or While.", "Repeated records become a loop."],
+      pseudo: ["Start", "Declare values", "Write prompt", "Input value", "While value is not acceptable", "Write correction message", "Input value", "End While", "Set result = formula", "Write result", "End"],
+      raptor: ["Write and Input steps become input/output symbols.", "Set steps become Set/Calculate symbols.", "If steps become selection symbols.", "While and For steps become loop symbols."],
+      python: ["Keep pseudocode line order close to Python line order.", "Translate Declare into clear variable setup when needed.", "Translate Set into a Python = statement.", "Translate End If and End While into indentation ending."],
+      warnings: ["Pseudocode still needs exact variable names.", "A formula should show the operators.", "A loop needs a condition that can eventually stop.", "Use == for comparison in Python-style conditions."],
+      examples: ["Warm Up: Write steps to ask for a name and show it.", "Level Up: Write steps to calculate a recipe multiplier.", "Challenge: Write steps to validate a game score, add valid scores, and show the average."]
+    },
+    variables: {
+      plain: "This lesson is about giving values useful names. A variable name should explain what the value means and how the program will use it.",
+      spot: ["A count suggests an integer.", "A measurement or money amount suggests a decimal.", "A name, code, or message suggests text.", "A yes-or-no rule suggests a Boolean value."],
+      pseudo: ["Declare variableName As Type", "Write prompt", "Input variableName", "Set newValue = expression", "Write variableName"],
+      raptor: ["Input/output symbols can create values when the user types them.", "Set/Calculate symbols can create or update stored values.", "Selection symbols read variables inside conditions.", "Loop symbols often update counters and totals."],
+      python: ["Use clear snake_case names such as item_count.", "Store text directly from input().", "Convert input before numeric formulas.", "Use = when a variable receives a value."],
+      warnings: ["Declare announces a variable before use in pseudocode.", "A variable name is not the same thing as the value inside it.", "Do not put numeric variables in quotes when doing math.", "Update a running value inside the loop, not after it."],
+      examples: ["Warm Up: Choose a name for a number of pets.", "Level Up: Choose names for ticket price, ticket count, and total cost.", "Challenge: Choose names for valid reading count, running page total, and average pages."]
+    },
+    operators: {
+      plain: "This lesson is about turning English math into exact formulas. Operators tell the program how values should combine or compare.",
+      spot: ["Total, sum, combined, or all together points to addition.", "Difference or left over points to subtraction.", "Each, per, or times points to multiplication.", "Average points to total divided by count.", "Remainder points to modulus."],
+      pseudo: ["Set subtotal = quantity * price", "Set tax = subtotal * taxRate", "Set total = subtotal + tax", "If total >= limit Then", "Write total"],
+      raptor: ["Set/Calculate symbols hold arithmetic formulas.", "Selection symbols hold comparison formulas.", "Loop symbols may repeat the same formula for many entries.", "Input/output symbols should not do hidden math."],
+      python: ["Use +, -, *, /, //, %, and ** carefully.", "Use parentheses to control order.", "Use ==, !=, <, <=, >, and >= for comparisons.", "Convert input before using arithmetic operators."],
+      warnings: ["= stores a value; == compares values.", "A formula must be stored or displayed to matter.", "Division by zero must be blocked before dividing.", "Integer division and decimal division are not the same."],
+      examples: ["Warm Up: Calculate points earned as games * points_per_game.", "Level Up: Calculate a snack total with tax.", "Challenge: Calculate weekly savings, remainder dollars, and whether a goal was reached."]
+    },
+    python: {
+      plain: "This lesson is about translating the plan into Python. Python needs exact spelling, punctuation, indentation, and type conversion.",
+      spot: ["User entry becomes input().", "A decimal formula needs float conversion.", "A whole-number count needs int conversion.", "Branching needs if, elif, and else.", "Repeated work needs for or while."],
+      pseudo: ["Write prompt", "Input value", "Set numericValue = converted value", "Set result = formula", "Write result"],
+      raptor: ["The same order should appear in the chart: prompt, input, calculate, decide, repeat, output.", "Set/Calculate symbols match Python = lines.", "Selection symbols match if statements.", "Loop symbols match while or for statements."],
+      python: ["name = input(\"Enter name: \")", "count = int(input(\"Enter count: \"))", "total = count * price", "print(\"Total:\", total)"],
+      warnings: ["input() returns text until converted.", "Indentation controls which lines belong inside if and loops.", "A colon starts an if, elif, else, for, or while block.", "Print text labels so output is understandable."],
+      examples: ["Warm Up: Print a greeting from a typed name.", "Level Up: Convert ounces to pounds and display both values.", "Challenge: Ask for several workout times, total them, and print the average."]
+    },
+    decisions: {
+      plain: "This lesson is about choosing a path. A decision asks a true-or-false question and runs different steps depending on the answer.",
+      spot: ["If, when, otherwise, eligible, valid, invalid, at least, and between often signal a decision.", "A range rule usually needs two comparisons.", "A menu choice usually needs several branches.", "A rejected value usually needs validation."],
+      pseudo: ["If condition Then", "Write message for true path", "Else", "Write message for false path", "End If"],
+      raptor: ["Selection symbols hold conditions.", "Input/output symbols show branch messages.", "Set/Calculate symbols store results inside each branch.", "Loop symbols can repeat a validation decision until input is acceptable."],
+      python: ["Use if for the first condition.", "Use elif for more choices.", "Use else for the fallback.", "Use and when both parts must be true; use or when either part is enough."],
+      warnings: ["Use == for equality checks.", "A range such as 0 through 500 usually uses value >= 0 and value <= 500.", "Invalid outside a range usually uses value < low or value > high.", "Do not divide until the denominator has been checked."],
+      examples: ["Warm Up: Decide whether a score is passing.", "Level Up: Decide whether a movie ticket gets a discount.", "Challenge: Validate a dog-food serving amount, then warn if the amount is outside a safe range."]
+    },
+    loops: {
+      plain: "This lesson is about repeating steps without rewriting them. A loop is needed when the same action happens for many values or until a rule is satisfied.",
+      spot: ["Each, every, repeat, until, while, for all, and keep asking usually signal a loop.", "A known number of times points to a counter-controlled loop.", "An unknown stopping point points to a condition-controlled or sentinel loop.", "Validation usually repeats while input is unacceptable."],
+      pseudo: ["Set total = 0", "Set count = 0", "While moreData", "Input value", "Set total = total + value", "Set count = count + 1", "End While", "Set average = total / count", "Write average"],
+      raptor: ["Loop symbols repeat a body of steps.", "Set/Calculate symbols initialize and update counters and totals.", "Selection symbols can sit inside loops for special cases.", "Input/output symbols can ask again during validation."],
+      python: ["Use for when the count is known.", "Use while when the stop condition depends on data.", "Initialize totals before the loop.", "Update counters inside the loop."],
+      warnings: ["A running total should start at 0 before the loop.", "A counter should change inside the loop.", "A validation loop repeats until the input is acceptable.", "A loop must have a way to stop."],
+      examples: ["Warm Up: Count from 1 to 5 and display each number.", "Level Up: Add five quiz scores and display the average.", "Challenge: Keep asking for spending amounts until the user enters a stop code, then display the total."]
+    },
+    functions: {
+      plain: "This lesson is about splitting a program into named tasks. A function should do one clear job and communicate through inputs and return values.",
+      spot: ["A repeated task can become a function.", "A named calculation can become a function.", "A separate input, validation, or report step can become a function.", "A value needed by the caller should be returned."],
+      pseudo: ["Module taskName(parameters)", "Set result = formula", "Return result", "End Module", "Set answer = taskName(values)"],
+      raptor: ["Call/subchart symbols can represent a named task.", "Input/output symbols still handle communication.", "Set/Calculate symbols prepare values before a call.", "Selection and loop symbols can live inside a subchart when needed."],
+      python: ["Use def to define a function.", "Use parameters for values entering the function.", "Use return for a value going back.", "Call the function from the main flow."],
+      warnings: ["Do not depend on hidden global values when parameters are clearer.", "A printed value is not the same as a returned value.", "Use one clear job per function.", "Name functions with action words."],
+      examples: ["Warm Up: Write a function that doubles a number.", "Level Up: Write a function that returns a ticket total.", "Challenge: Write functions to get valid input, calculate an average, and display a report."]
+    },
+    raptor: {
+      plain: "This lesson is about matching written steps to flowchart symbols. RAPTOR is easiest when one clear pseudocode action becomes one clear symbol.",
+      spot: ["Ask or enter points to input/output.", "Calculate, store, add, or update points to Set/Calculate.", "If, valid, invalid, or compare points to selection.", "Repeat, each, while, or until points to loop.", "A named task points to a call/subchart."],
+      pseudo: ["Start", "Write prompt", "Input value", "Set result = formula", "If condition Then", "Write result", "End If", "End"],
+      raptor: ["Input/output symbol: prompts, user entries, and displayed results.", "Set/Calculate symbol: formulas, variable updates, totals, and counters.", "Selection symbol: if/else rules, validation checks, and comparisons.", "Loop symbol: repeated input, validation loops, counter loops, and sentinel loops.", "Call/subchart symbol: named helper tasks."],
+      python: ["A RAPTOR input becomes input() in Python.", "A RAPTOR calculation becomes a = line.", "A RAPTOR selection becomes if/else.", "A RAPTOR loop becomes for or while."],
+      warnings: ["Use one symbol for one major action.", "Do not put final output inside a loop unless it should appear every time.", "A comparison checks a condition; storing a value changes data.", "Trace each path with tiny test values."],
+      examples: ["Warm Up: Draw a chart that asks for a name and displays it.", "Level Up: Draw a chart that calculates parking cost from hours.", "Challenge: Draw a chart that validates a score, repeats for several players, and displays the average."]
+    },
+    patterns: {
+      plain: "This lesson is about common program shapes. Once you know the shape, you can change the story while keeping the same logic.",
+      spot: ["A conversion has input, formula, output.", "A report has repeated records and final totals.", "A safety checker has validation and decisions.", "A budget tracker has running totals and comparisons."],
+      pseudo: ["Set total = 0", "Repeat for each entry", "Input value", "Validate value", "Set total = total + value", "End repeat", "Write report"],
+      raptor: ["Loop symbols handle repeated entries.", "Set/Calculate symbols update totals and averages.", "Selection symbols handle special messages or ranges.", "Input/output symbols handle prompts and report lines."],
+      python: ["Use loops for repeated records.", "Use accumulator variables for totals.", "Use if statements for selected totals or warnings.", "Print a clear final report after the loop."],
+      warnings: ["Do not reset a running total inside the loop unless starting over is intended.", "Do not calculate an average until count is known.", "Check for count greater than 0 before dividing.", "Keep final report output after repeated entry work."],
+      examples: ["Warm Up: Convert inches to feet.", "Level Up: Track three snack purchases and show total cost.", "Challenge: Track workout minutes by day, count high-effort days, and display a summary."]
+    },
+    calculator: {
+      plain: "This lesson is about choosing formulas from a menu or operator. The program must know which calculation the user requested before it can calculate.",
+      spot: ["A menu, operator, or choice points to multiway selection.", "Division needs a zero check.", "Unknown choices need a fallback message.", "Each operation should store or display one clear result."],
+      pseudo: ["Input firstNumber", "Input operatorChoice", "Input secondNumber", "If operatorChoice == plus Then", "Set result = firstNumber + secondNumber", "Else If operatorChoice == divide Then", "If secondNumber == 0 Then", "Write error message", "Else", "Set result = firstNumber / secondNumber"],
+      raptor: ["Selection symbols choose the operation.", "A nested selection symbol checks division by zero.", "Set/Calculate symbols store the result.", "Input/output symbols collect numbers and show the result or message."],
+      python: ["Use if, elif, and else for operation choices.", "Compare menu choices with ==.", "Convert numeric entries before formulas.", "Check zero before division."],
+      warnings: ["Do not divide before checking the denominator.", "Menu choices are often strings.", "Use == to compare the operator.", "Give a message for an unknown choice."],
+      examples: ["Warm Up: Choose add or subtract for two numbers.", "Level Up: Choose from four operations and display the result.", "Challenge: Repeat calculator runs until the user chooses to stop, while blocking division by zero."]
+    },
+    collections: {
+      plain: "This lesson is about storing many related values. A list helps when one variable is not enough for repeated data.",
+      spot: ["Several scores, names, prices, or days point to a list.", "The same position in two lists can connect related values.", "A list often pairs with a loop.", "Searching or reporting usually visits each item."],
+      pseudo: ["Declare values As List", "For each item in values", "Set total = total + item", "End For", "Set average = total / number of items", "Write average"],
+      raptor: ["Loop symbols step through positions.", "Set/Calculate symbols update totals or indexes.", "Selection symbols test each item.", "Input/output symbols can display each stored value."],
+      python: ["Use list names that describe the group.", "Use append() to add values.", "Use for item in listName to visit values.", "Use indexes when matching parallel lists."],
+      warnings: ["Python list indexes start at 0.", "Do not use an index that is outside the list.", "Parallel lists must stay in the same order.", "Use a loop instead of repeating nearly identical lines."],
+      examples: ["Warm Up: Store three favorite colors.", "Level Up: Store quiz scores and calculate an average.", "Challenge: Store movie titles and prices, then display only prices under a chosen limit."]
+    },
+    files: {
+      plain: "This lesson is about reading or writing stored data. File logic is often loop logic because a program handles one record at a time.",
+      spot: ["Read each line, save report, open file, missing file, and convert field are file clues.", "A file with many records usually needs a loop.", "Numeric fields still need conversion.", "File problems often need friendly error handling."],
+      pseudo: ["Open file", "Set total = 0", "For each record", "Read fields", "Convert numeric fields", "Set total = total + amount", "End For", "Write report"],
+      raptor: ["Loop symbols represent record-by-record work.", "Set/Calculate symbols update totals.", "Selection symbols check missing or invalid data.", "Input/output symbols may show status messages or final reports."],
+      python: ["Use with open(...) for file access.", "Use a for loop to read lines.", "Use split() when a line contains fields.", "Use try and except for expected runtime problems."],
+      warnings: ["Do not assume every line has perfect data.", "Convert numeric text before math.", "Close files or use with open().", "Explain what the user can fix when a file cannot be opened."],
+      examples: ["Warm Up: Read names from a file and print them.", "Level Up: Read daily totals and calculate a sum.", "Challenge: Read spending categories, skip invalid records, and display a clean summary."]
+    }
+  };
+
+  topics.forEach((topic) => {
+    const guide = patterns[topic.id] || patterns.design;
+    topic.lessons.forEach((lesson) => {
+      const sections = lesson.sections || [];
+      if (sections.some((section) => section.title === "Plain English")) return;
+      lesson.sections = [
+        ...sections,
+        S("Plain English", [guide.plain, `For "${lesson.title}", ask what information moves into the program, what changes inside it, and what should come back out.`]),
+        S("Spot It In A Story", guide.spot),
+        S("Pseudocode Pattern", guide.pseudo),
+        S("RAPTOR Map", guide.raptor),
+        S("Python Translation", guide.python),
+        S("Watch Out", guide.warnings),
+        S("Practice Set", guide.examples)
+      ];
+    });
+  });
+}
+
+addBeginnerStudyScaffolds();
+
 let questionCounter = 0;
 
 const manualQuestions = [
@@ -2639,7 +2799,7 @@ const manualQuestions = [
   q("decisions", "Which condition catches a number outside 0 through 500?", ["number >= 0 AND number <= 500", "number < 0 OR number > 500", "number == 0 AND number == 500", "number != 0 OR number != 500"], 1, "Any value below 0 or above 500 is invalid, so OR catches either bad case."),
   q("loops", "What must a loop have to avoid repeating forever?", ["A string variable", "A way for the condition to become false", "A file", "A comment after every line"], 1, "A loop must eventually change something that can stop it."),
   q("functions", "What does return do?", ["Displays a value only", "Sends a value back to the caller", "Creates a loop", "Deletes a variable"], 1, "return gives the caller a value to use later."),
-  q("raptor", "Which RAPTOR symbol matches Set total = price * quantity?", ["Input", "Output", "Assignment", "Loop"], 2, "Set statements translate to Assignment symbols."),
+  q("raptor", "Which RAPTOR symbol matches Set total = price * quantity?", ["Input", "Output", "Set/Calculate", "Loop"], 2, "Set statements translate to Set/Calculate symbols."),
   q("patterns", "For recipe scaling, what is the usual scale factor?", ["original / desired", "desired / original", "desired + original", "original % desired"], 1, "Desired amount divided by original amount gives the multiplier."),
   q("calculator", "What must be checked before division?", ["num1 == 0", "num2 == 0", "operator == '+'", "result == 0"], 1, "The second number is the denominator, so check it before dividing."),
   q("collections", "What index is the first item in a Python list?", ["0", "1", "-1", "10"], 0, "Python list indexes start at 0."),
@@ -2699,6 +2859,388 @@ function makeChoices(correct, pool) {
   return shuffle([correct, ...picked]);
 }
 
+function decoderQuestionSet() {
+  const scenario = decoderScenario();
+  return shuffle([
+    makeQuestion(
+      "decoder",
+      null,
+      `Word problem: ${scenario.story} Which phrase shows input?`,
+      scenario.inputPhrase,
+      [scenario.outputPhrase, scenario.processPhrase, scenario.decisionPhrase, "the final message"],
+      "Input is information the user gives to the program."
+    ),
+    makeQuestion(
+      "decoder",
+      null,
+      `Word problem: ${scenario.story} Which phrase shows output?`,
+      scenario.outputPhrase,
+      [scenario.inputPhrase, scenario.processPhrase, scenario.loopPhrase, "the typed value"],
+      "Output is information the program displays back to the user."
+    ),
+    makeQuestion(
+      "decoder",
+      null,
+      `Word problem: ${scenario.story} Which phrase shows processing or calculation?`,
+      scenario.processPhrase,
+      [scenario.inputPhrase, scenario.outputPhrase, scenario.decisionPhrase, "the user enters data"],
+      "Processing is where the program calculates, converts, updates, or compares values."
+    ),
+    makeQuestion(
+      "decoder",
+      null,
+      `Which variable name best fits the value "${scenario.variableMeaning}"?`,
+      scenario.bestVariable,
+      ["data", "number", "answer", "x"],
+      "A useful variable name describes the value's job in the program."
+    ),
+    makeQuestion(
+      "decoder",
+      null,
+      `Which RAPTOR symbol best matches this action: ${scenario.raptorAction}?`,
+      scenario.raptorSymbol,
+      ["Input/output symbol", "Set/Calculate symbol", "Selection symbol", "Loop symbol", "Call/subchart symbol"],
+      "Choose the symbol by the action: receive/display, calculate/store, choose, repeat, or call a named task."
+    ),
+    makeQuestion(
+      "decoder",
+      null,
+      `A value must be between ${scenario.low} and ${scenario.high}, including both ends. Which condition accepts it?`,
+      `${scenario.rangeName} >= ${scenario.low} AND ${scenario.rangeName} <= ${scenario.high}`,
+      [`${scenario.rangeName} < ${scenario.low} OR ${scenario.rangeName} > ${scenario.high}`, `${scenario.rangeName} == ${scenario.low} AND ${scenario.rangeName} == ${scenario.high}`, `${scenario.rangeName} != ${scenario.low} OR ${scenario.rangeName} != ${scenario.high}`],
+      "Inside a range means the value is at least the low number and at most the high number."
+    ),
+    makeQuestion(
+      "decoder",
+      null,
+      `The program must ${scenario.repeatedTask}. What structure is needed?`,
+      "Loop",
+      ["Single output", "One-time calculation", "Declare only", "Comment only"],
+      "Repeated work belongs in a loop."
+    ),
+    makeQuestion(
+      "decoder",
+      null,
+      `For the validation rule "${scenario.validationRule}", what should the loop repeat until?`,
+      scenario.validUntil,
+      [scenario.invalidWhile, "the final report is printed", "the counter is never changed", "the prompt is removed"],
+      "A validation loop keeps asking while the value is unacceptable and stops when the value is acceptable."
+    ),
+    makeQuestion(
+      "decoder",
+      null,
+      `Which pseudocode line should come first for this plan: ${scenario.orderPlan}?`,
+      scenario.firstLine,
+      [scenario.secondLine, scenario.thirdLine, scenario.finalLine],
+      "A program must receive or initialize needed values before using them."
+    ),
+    makeQuestion(
+      "decoder",
+      null,
+      `Which pseudocode structure best fits this task: ${scenario.structureTask}?`,
+      scenario.bestStructure,
+      scenario.structureDistractors,
+      scenario.structureWhy
+    )
+  ]).slice(0, 10);
+}
+
+function decoderScenario() {
+  const categories = [
+    {
+      story: () => {
+        const item = pick(["notebooks", "tea tins", "plant pots", "art markers"]);
+        const fee = pick([4, 5, 7]);
+        return `A shop asks for the number of ${item}, multiplies it by the item price, adds a ${fee} dollar packing fee when the order is small, and displays the final total.`;
+      },
+      inputPhrase: "asks for the number",
+      outputPhrase: "displays the final total",
+      processPhrase: "multiplies it by the item price",
+      decisionPhrase: "when the order is small",
+      loopPhrase: "for each item",
+      variableMeaning: "number of items ordered",
+      bestVariable: "itemCount",
+      raptorAction: "calculate subtotal = itemCount * itemPrice",
+      raptorSymbol: "Set/Calculate symbol",
+      repeatedTask: "process each item in a cart",
+      validationRule: "item count must be at least 1",
+      validUntil: "itemCount >= 1",
+      invalidWhile: "itemCount < 1",
+      orderPlan: "ask for item count, calculate subtotal, display total",
+      firstLine: "Input itemCount",
+      secondLine: "Set subtotal = itemCount * itemPrice",
+      thirdLine: "Write total",
+      finalLine: "End",
+      structureTask: "enter several purchases, add each price, and show one final total",
+      bestStructure: "Initialize total, loop through purchases, update total, then output the total",
+      structureDistractors: ["Output the total before entering prices", "Use only one If with no total update", "Set total to 0 inside every repeat"],
+      structureWhy: "The total starts before the loop, changes inside the loop, and displays after the loop."
+    },
+    {
+      story: () => {
+        const room = pick(["studio", "greenhouse", "server nook", "practice room"]);
+        return `A ${room} checker asks for a temperature reading, converts it to another scale, checks whether it is in the comfort range, and displays a message.`;
+      },
+      inputPhrase: "asks for a temperature reading",
+      outputPhrase: "displays a message",
+      processPhrase: "converts it to another scale",
+      decisionPhrase: "checks whether it is in the comfort range",
+      loopPhrase: "for each reading",
+      variableMeaning: "temperature entered by the user",
+      bestVariable: "temperatureInput",
+      raptorAction: "check whether the converted value is in range",
+      raptorSymbol: "Selection symbol",
+      repeatedTask: "read several temperatures and report each converted value",
+      validationRule: "temperature must be from -10 through 120",
+      validUntil: "temperatureInput >= -10 AND temperatureInput <= 120",
+      invalidWhile: "temperatureInput < -10 OR temperatureInput > 120",
+      orderPlan: "enter temperature, convert it, check comfort range, display message",
+      firstLine: "Input temperatureInput",
+      secondLine: "Set convertedTemp = formula result",
+      thirdLine: "If convertedTemp is in range Then",
+      finalLine: "Write message",
+      structureTask: "keep asking for a temperature until it is inside the allowed range",
+      bestStructure: "Input temperature, loop while it is outside the range, then continue",
+      structureDistractors: ["Convert before any value is entered", "Print the final message before validation", "Use a counter that never changes"],
+      structureWhy: "Validation repeats only while the typed value is outside the allowed range."
+    },
+    {
+      story: () => {
+        const activity = pick(["plank seconds", "cycling minutes", "yoga sessions", "lap counts"]);
+        return `A workout tracker asks for ${activity} for several days, adds the values, calculates the average, and displays the weekly summary.`;
+      },
+      inputPhrase: "asks for",
+      outputPhrase: "displays the weekly summary",
+      processPhrase: "calculates the average",
+      decisionPhrase: "for several days",
+      loopPhrase: "for several days",
+      variableMeaning: "running total of workout values",
+      bestVariable: "workoutTotal",
+      raptorAction: "repeat the same input step for each day",
+      raptorSymbol: "Loop symbol",
+      repeatedTask: "ask for a workout value for each day",
+      validationRule: "minutes must not be negative",
+      validUntil: "minutes >= 0",
+      invalidWhile: "minutes < 0",
+      orderPlan: "set total to zero, enter daily values, update total, calculate average",
+      firstLine: "Set workoutTotal = 0",
+      secondLine: "Input dailyMinutes",
+      thirdLine: "Set workoutTotal = workoutTotal + dailyMinutes",
+      finalLine: "Write weeklyAverage",
+      structureTask: "track values for a known number of days",
+      bestStructure: "Use a counter-controlled loop with a running total and average after the loop",
+      structureDistractors: ["Use one input with no loop", "Average before adding values", "Reset the total inside the loop"],
+      structureWhy: "A known number of days fits a counter-controlled loop."
+    },
+    {
+      story: () => {
+        const scoreName = pick(["project scores", "badge points", "practice ratings", "review scores"]);
+        return `A score tracker asks how many ${scoreName} will be entered, validates each score, adds the scores, and displays the average.`;
+      },
+      inputPhrase: "asks how many",
+      outputPhrase: "displays the average",
+      processPhrase: "adds the scores",
+      decisionPhrase: "validates each score",
+      loopPhrase: "each score",
+      variableMeaning: "number of valid scores entered",
+      bestVariable: "validScoreCount",
+      raptorAction: "reject a score outside the allowed range",
+      raptorSymbol: "Selection symbol",
+      repeatedTask: "validate and add each score",
+      validationRule: "score must be between 0 and 100",
+      validUntil: "score >= 0 AND score <= 100",
+      invalidWhile: "score < 0 OR score > 100",
+      orderPlan: "enter count, start total, enter scores, calculate average",
+      firstLine: "Input scoreCount",
+      secondLine: "Set scoreTotal = 0",
+      thirdLine: "Input score",
+      finalLine: "Write averageScore",
+      structureTask: "accept only scores from 0 through 100 while calculating an average",
+      bestStructure: "Use a loop for scores and a validation loop for bad entries",
+      structureDistractors: ["Use output only", "Skip score conversion", "Calculate the average before the total"],
+      structureWhy: "Repeated scores need a loop, and bad scores need validation."
+    },
+    {
+      story: () => {
+        const recipe = pick(["smoothie", "pancake", "soup", "trail mix"]);
+        return `A ${recipe} helper asks for desired servings, calculates a scale factor from the base servings, adjusts the ingredient amount, and displays the new amount.`;
+      },
+      inputPhrase: "asks for desired servings",
+      outputPhrase: "displays the new amount",
+      processPhrase: "calculates a scale factor",
+      decisionPhrase: "from the base servings",
+      loopPhrase: "for each ingredient",
+      variableMeaning: "servings wanted by the user",
+      bestVariable: "desiredServings",
+      raptorAction: "calculate adjustedAmount = baseAmount * scaleFactor",
+      raptorSymbol: "Set/Calculate symbol",
+      repeatedTask: "adjust each ingredient in a list",
+      validationRule: "desired servings must be greater than 0",
+      validUntil: "desiredServings > 0",
+      invalidWhile: "desiredServings <= 0",
+      orderPlan: "enter servings, calculate scale factor, calculate ingredient amount, display result",
+      firstLine: "Input desiredServings",
+      secondLine: "Set scaleFactor = desiredServings / baseServings",
+      thirdLine: "Set adjustedAmount = baseAmount * scaleFactor",
+      finalLine: "Write adjustedAmount",
+      structureTask: "resize multiple ingredient amounts from one scale factor",
+      bestStructure: "Calculate the scale factor once, then loop through ingredients",
+      structureDistractors: ["Print ingredients before calculating the scale factor", "Use a selection with no formula", "Set every ingredient equal to the serving count"],
+      structureWhy: "The same multiplier can be reused for each ingredient."
+    },
+    {
+      story: () => {
+        const pet = pick(["puppy", "senior dog", "rescue dog", "therapy dog"]);
+        return `A ${pet} meal checker asks for the dog's weight and meal size, checks the safe serving range, and displays an advice message.`;
+      },
+      inputPhrase: "asks for the dog's weight",
+      outputPhrase: "displays an advice message",
+      processPhrase: "checks the safe serving range",
+      decisionPhrase: "safe serving range",
+      loopPhrase: "until the meal size is valid",
+      variableMeaning: "meal size entered by the user",
+      bestVariable: "mealSize",
+      raptorAction: "choose a message based on whether the serving is safe",
+      raptorSymbol: "Selection symbol",
+      repeatedTask: "ask again until the meal size is valid",
+      validationRule: "meal size must be greater than 0",
+      validUntil: "mealSize > 0",
+      invalidWhile: "mealSize <= 0",
+      orderPlan: "enter weight, enter meal size, check range, display advice",
+      firstLine: "Input dogWeight",
+      secondLine: "Input mealSize",
+      thirdLine: "If mealSize is in safe range Then",
+      finalLine: "Write adviceMessage",
+      structureTask: "show one of three safety messages based on the serving amount",
+      bestStructure: "Use an If / Else If / Else structure for the message choices",
+      structureDistractors: ["Use a loop with no condition", "Calculate average before input", "Display every message every time"],
+      structureWhy: "Different messages require branching."
+    },
+    {
+      story: () => {
+        const cost = pick(["coffee", "parking", "streaming", "supplies"]);
+        return `A budget tracker asks for a monthly limit and each ${cost} cost, subtracts each cost from the remaining budget, and displays the ending balance.`;
+      },
+      inputPhrase: "asks for a monthly limit",
+      outputPhrase: "displays the ending balance",
+      processPhrase: "subtracts each cost",
+      decisionPhrase: "remaining budget",
+      loopPhrase: "each cost",
+      variableMeaning: "money left after spending",
+      bestVariable: "remainingBudget",
+      raptorAction: "update remainingBudget = remainingBudget - cost",
+      raptorSymbol: "Set/Calculate symbol",
+      repeatedTask: "subtract each cost from the balance",
+      validationRule: "cost must be from 0 through 500",
+      validUntil: "cost >= 0 AND cost <= 500",
+      invalidWhile: "cost < 0 OR cost > 500",
+      orderPlan: "enter limit, start balance, enter costs, update balance",
+      firstLine: "Input monthlyLimit",
+      secondLine: "Set remainingBudget = monthlyLimit",
+      thirdLine: "Set remainingBudget = remainingBudget - cost",
+      finalLine: "Write remainingBudget",
+      structureTask: "keep entering costs until a stop value is typed",
+      bestStructure: "Use a sentinel loop that stops when the user enters the stop value",
+      structureDistractors: ["Use a fixed five-repeat loop when the count is unknown", "Use only a final output", "Never update the cost value"],
+      structureWhy: "A stop value is a sentinel for an unknown number of entries."
+    },
+    {
+      story: () => {
+        const day = pick(["weekday", "weekend", "matinee", "late-night"]);
+        return `A movie counter asks for age and ${day} choice, chooses the correct ticket price, counts tickets sold, and displays the total money collected.`;
+      },
+      inputPhrase: "asks for age",
+      outputPhrase: "displays the total money collected",
+      processPhrase: "counts tickets sold",
+      decisionPhrase: "chooses the correct ticket price",
+      loopPhrase: "tickets sold",
+      variableMeaning: "total money collected from tickets",
+      bestVariable: "ticketRevenue",
+      raptorAction: "choose a price based on age and ticket choice",
+      raptorSymbol: "Selection symbol",
+      repeatedTask: "process each ticket sale",
+      validationRule: "age must be at least 0",
+      validUntil: "age >= 0",
+      invalidWhile: "age < 0",
+      orderPlan: "enter age, choose price, update ticket count, display revenue",
+      firstLine: "Input age",
+      secondLine: "If age qualifies for discount Then",
+      thirdLine: "Set ticketRevenue = ticketRevenue + ticketPrice",
+      finalLine: "Write ticketRevenue",
+      structureTask: "process many tickets and choose a price for each one",
+      bestStructure: "Use a loop for tickets with a selection inside the loop for price",
+      structureDistractors: ["Use one price for every ticket", "Put the final report inside every branch only", "Skip the ticket count update"],
+      structureWhy: "Each sale repeats, and each sale also needs a price decision."
+    },
+    {
+      story: () => {
+        const vehicle = pick(["scooter", "compact car", "van", "electric car"]);
+        return `A parking calculator asks for vehicle type and hours parked, validates the hours, applies the correct rate, and displays the parking fee.`;
+      },
+      inputPhrase: "asks for vehicle type",
+      outputPhrase: "displays the parking fee",
+      processPhrase: "applies the correct rate",
+      decisionPhrase: "validates the hours",
+      loopPhrase: "until hours are valid",
+      variableMeaning: "hours parked",
+      bestVariable: "hoursParked",
+      raptorAction: "ask again while hours are invalid",
+      raptorSymbol: "Loop symbol",
+      repeatedTask: "keep asking for hours until the value is valid",
+      validationRule: "hours must be between 1 and 24",
+      validUntil: "hoursParked >= 1 AND hoursParked <= 24",
+      invalidWhile: "hoursParked < 1 OR hoursParked > 24",
+      orderPlan: "enter hours, validate hours, choose rate, calculate fee",
+      firstLine: "Input hoursParked",
+      secondLine: "While hoursParked is invalid",
+      thirdLine: "Set fee = hoursParked * rate",
+      finalLine: "Write fee",
+      structureTask: "validate hours first, then calculate a fee from a selected rate",
+      bestStructure: "Use a validation loop before the calculation, then use selection for the rate",
+      structureDistractors: ["Calculate the fee before hours are checked", "Use no input step", "Display the final fee inside the invalid loop only"],
+      structureWhy: "The program should not calculate with an invalid hour value."
+    },
+    {
+      story: () => {
+        const game = pick(["puzzle", "arcade", "trivia", "rhythm"]);
+        return `A ${game} score tracker asks for player scores until a stop value is entered, keeps the high score, counts valid scores, and displays the final high score.`;
+      },
+      inputPhrase: "asks for player scores",
+      outputPhrase: "displays the final high score",
+      processPhrase: "keeps the high score",
+      decisionPhrase: "until a stop value is entered",
+      loopPhrase: "until a stop value is entered",
+      variableMeaning: "highest score seen so far",
+      bestVariable: "highScore",
+      raptorAction: "call a helper task that prints the final report",
+      raptorSymbol: "Call/subchart symbol",
+      repeatedTask: "read scores until the stop value appears",
+      validationRule: "score must be from 0 through 999",
+      validUntil: "score >= 0 AND score <= 999",
+      invalidWhile: "score < 0 OR score > 999",
+      orderPlan: "set high score, enter score, compare score, display high score",
+      firstLine: "Set highScore = 0",
+      secondLine: "Input score",
+      thirdLine: "If score > highScore Then",
+      finalLine: "Write highScore",
+      structureTask: "track the largest score while accepting an unknown number of scores",
+      bestStructure: "Use a sentinel loop with a selection that updates the high score",
+      structureDistractors: ["Use a single input only", "Reset highScore after every score", "Output highScore before scores are entered"],
+      structureWhy: "Unknown entry count needs a sentinel loop; largest-so-far logic needs a selection."
+    }
+  ];
+  const chosen = pick(categories);
+  const low = pick([0, 1, 5, 10, 20]);
+  const high = low + pick([10, 20, 50, 100, 500]);
+  return {
+    ...chosen,
+    story: chosen.story(),
+    low,
+    high,
+    rangeName: pick(["price", "score", "minutes", "hours", "amount"])
+  };
+}
+
 function pick(items) {
   return items[Math.floor(Math.random() * items.length)];
 }
@@ -2723,8 +3265,8 @@ function scenarioProblems() {
       phrase: "true-or-false membership flag",
       role: "Boolean",
       pseudo: "Declare isMember as Boolean",
-      raptor: "Assignment symbol",
-      explanation: "A true-or-false value is Boolean data and can be stored or updated with an assignment."
+      raptor: "Set/Calculate symbol",
+      explanation: "A true-or-false value is Boolean data and can be stored or updated with a Set step."
     },
     {
       topic: "design",
@@ -2750,7 +3292,7 @@ function scenarioProblems() {
       phrase: "scales cups of flour",
       role: "Processing",
       pseudo: "Set flourNeeded = desiredServings / baseServings * baseFlour",
-      raptor: "Assignment symbol",
+      raptor: "Set/Calculate symbol",
       explanation: "Scaling a measurement is a calculation, so it becomes a Set statement."
     },
     {
@@ -2759,7 +3301,7 @@ function scenarioProblems() {
       phrase: "whether the account is active",
       role: "Boolean",
       pseudo: "Declare accountActive As Boolean",
-      raptor: "Assignment symbol",
+      raptor: "Set/Calculate symbol",
       explanation: "A yes-or-no state is best represented as Boolean data."
     },
     {
@@ -2768,8 +3310,8 @@ function scenarioProblems() {
       phrase: "calculates total cents",
       role: "Processing",
       pseudo: "Set totalCents = quarters * 25 + dimes * 10 + nickels * 5",
-      raptor: "Assignment symbol",
-      explanation: "The phrase requires arithmetic, so it belongs in a Set or Assignment step."
+      raptor: "Set/Calculate symbol",
+      explanation: "The phrase requires arithmetic, so it belongs in a Set or calculation step."
     },
     {
       topic: "python",
@@ -2813,7 +3355,7 @@ function scenarioProblems() {
       phrase: "sends the converted value back",
       role: "Return value",
       pseudo: "Return fahrenheit",
-      raptor: "Assignment using a returned result",
+      raptor: "Set/store using a returned result",
       explanation: "Sending a value back means the task is value-returning."
     },
     {
@@ -2822,8 +3364,8 @@ function scenarioProblems() {
       phrase: "calculates subtotal",
       role: "Processing",
       pseudo: "Set subtotal = quantity * price",
-      raptor: "Assignment symbol",
-      explanation: "Calculations and stored results use RAPTOR assignment symbols."
+      raptor: "Set/Calculate symbol",
+      explanation: "Calculations and stored results use RAPTOR set/calculate symbols."
     },
     {
       topic: "patterns",
@@ -2892,7 +3434,7 @@ function generatedScenarioQuestions() {
   const raptorChoices = [
     "Input symbol",
     "Output symbol",
-    "Assignment symbol",
+    "Set/Calculate symbol",
     "Selection symbol",
     "Loop structure",
     "Call symbol",
@@ -2900,7 +3442,7 @@ function generatedScenarioQuestions() {
     "Output symbol after the loop",
     "Loop with a bad-input condition",
     "Loop with indexed output",
-    "Assignment using a returned result"
+    "Set/store using a returned result"
   ];
   return scenarioProblems().flatMap((item, index) => [
     makeQuestion(
@@ -2940,7 +3482,7 @@ const manualFlashCards = [
   fc("Float", "A decimal-capable type used for money, rates, and measurements.", "variables"),
   fc("String", "Text data such as names, prompts, and operators.", "variables"),
   fc("Boolean", "A true or false value.", "basics"),
-  fc("Assignment", "Putting the value on the right into the variable on the left.", "operators"),
+  fc("Set Statement", "Putting the value on the right into the variable on the left.", "operators"),
   fc("Comparison", "A true or false check such as operator == '+'.", "operators"),
   fc("Selection", "A decision structure with true and false paths.", "decisions"),
   fc("Loop", "A structure that repeats steps.", "loops"),
@@ -2951,7 +3493,7 @@ const manualFlashCards = [
   fc("Return", "A value sent back from a function.", "functions"),
   fc("Input Symbol", "A RAPTOR symbol that receives a user value.", "raptor"),
   fc("Output Symbol", "A RAPTOR symbol that displays text or values.", "raptor"),
-  fc("Assignment Symbol", "A RAPTOR symbol that calculates or stores a value.", "raptor"),
+  fc("Set/Calculate Symbol", "A RAPTOR symbol that calculates or stores a value.", "raptor"),
   fc("Selection Diamond", "A RAPTOR symbol that asks a yes or no question.", "raptor"),
   fc("Validation", "Checking input before using it.", "decisions"),
   fc("Sentinel", "A special value that means stop.", "loops"),
@@ -3152,6 +3694,10 @@ function renderHome() {
           <span class="topic-icon">${svg("cards")}</span>
           <span>Flash Cards</span>
         </button>
+        <button class="topic-card feature-card" data-action="startDecoderPractice" aria-label="Word Problem Decoder">
+          <span class="topic-icon">${svg("decision")}</span>
+          <span>Word Problem Decoder</span>
+        </button>
         ${topics.map((topic) => `
           <button class="topic-card ${topic.id === "map" ? "feature-card" : ""}" data-topic="${topic.id}" aria-label="${escapeHtml(topic.title)}">
             <span class="topic-icon">${svg(topic.icon)}</span>
@@ -3340,7 +3886,7 @@ function renderResults(questions) {
         <p>${score >= 80 ? "Strong work. Run another fresh set to keep it sharp." : "Keep going. Review missed questions and try a fresh set."}</p>
         ${missed.length ? `<button class="pill-button" data-action="reviewMissed">Review Missed (${missed.length})</button>` : ""}
         ${nextLesson ? `<button class="pill-button" data-action="quizNextLesson">Next Lesson</button>` : ""}
-        <button class="pill-button" data-action="restartQuiz">Fresh 10 Questions</button>
+        <button class="pill-button" data-action="restartQuiz">${state.quizTopic === "decoder" ? "Fresh Decoder Set" : "Fresh 10 Questions"}</button>
         <button class="pill-button secondary" data-action="goHome">Home</button>
       </section>
     </main>
@@ -3348,6 +3894,7 @@ function renderResults(questions) {
 }
 
 function resultNextLessonTarget() {
+  if (state.quizTopic === "decoder") return null;
   const sourceTopic = state.quizTopic === "daily" ? focusNextTarget().topicId : state.quizTopic;
   if (!sourceTopic) return null;
   if (typeof state.quizSourceLessonIndex === "number") {
@@ -3464,6 +4011,7 @@ function renderSearchResults(query) {
 
 function quizTitle() {
   if (state.quizTopic === "daily") return "Fresh 10 Drill";
+  if (state.quizTopic === "decoder") return "Word Problem Decoder";
   const topic = topicById(state.quizTopic);
   return `${topic.title} Quiz`;
 }
@@ -3486,6 +4034,7 @@ function startQuiz(topicId, options = {}) {
 }
 
 function pickQuizSource(topicId, lessonIndex = null) {
+  if (topicId === "decoder") return decoderQuestionSet();
   const activeBank = [...fullQuestionBank, ...generatedScenarioQuestions()];
   const picked = [];
   const seen = new Set();
@@ -3602,7 +4151,8 @@ function markDone() {
 
 function back() {
   if (state.screen === "home") return;
-  if (state.screen === "lesson" || state.screen === "quiz") state.screen = "topic";
+  if (state.screen === "quiz" && (state.quizTopic === "daily" || state.quizTopic === "decoder")) state.screen = "home";
+  else if (state.screen === "lesson" || state.screen === "quiz") state.screen = "topic";
   else if (state.screen === "topic" || state.screen === "flashcards" || state.screen === "search" || state.screen === "flashSubjects") state.screen = "home";
   render();
 }
@@ -3816,6 +4366,7 @@ function act(action) {
   if (action === "info") return alert("Swipe left or right on lesson, quiz, and flash card screens. Progress is stored only on this device.");
   if (action === "star") return toggleBookmark();
   if (action === "startDailyDrill") return startQuiz("daily");
+  if (action === "startDecoderPractice") return startQuiz("decoder");
   if (action === "startFlashCards") return startFlashCards();
   if (action === "openSearch") {
     state.screen = "search";
