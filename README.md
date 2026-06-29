@@ -9,6 +9,9 @@ BringItOnPython is a lightweight static study app for Python learners. It focuse
 - Decisions and loops
 - RAPTOR symbol planning
 - Randomized practice for translating stories into program steps
+- Programming practice for loops, validation, accumulators, and lists
+- Trace-the-output and pseudocode response questions
+- Device-local progress and missed-question review
 
 ## Run Locally
 

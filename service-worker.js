@@ -1,10 +1,11 @@
 "use strict";
 
-const CACHE_NAME = "bring-it-on-python-v18";
+const CACHE_NAME = "bring-it-on-python-v19";
 const APP_SHELL = [
   "./",
   "./index.html",
   "./styles.css",
+  "./programming-practice.js",
   "./app.js",
   "./manifest.webmanifest",
   "./assets/icon-192.png",

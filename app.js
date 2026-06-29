@@ -5,7 +5,8 @@ const STORAGE = {
   bookmarks: "bip-bookmarks-v2",
   stats: "bip-topic-stats-v2",
   bestQuiz: "bip-best-quiz-v2",
-  savedCards: "bip-saved-cards-v2"
+  savedCards: "bip-saved-cards-v2",
+  programmingPractice: "bip-programming-practice-v1"
 };
 
 let touchStartX = 0;
@@ -3568,9 +3569,18 @@ const state = {
   flashFlipped: false,
   flashFilterTopic: "all",
   searchQuery: "",
+  practiceTopicId: "loop-basics",
+  practiceQuestions: [],
+  practiceIndex: 0,
+  practiceAnswers: {},
+  practiceSelected: "",
+  practiceDraft: "",
+  practiceResultSaved: false,
+  practiceReviewMode: false,
   complete: load(STORAGE.complete, {}),
   bookmarks: load(STORAGE.bookmarks, {}),
-  savedCards: load(STORAGE.savedCards, {})
+  savedCards: load(STORAGE.savedCards, {}),
+  practiceProgress: normalizePracticeProgress(load(STORAGE.programmingPractice, {}))
 };
 
 function load(key, fallback) {
@@ -3636,6 +3646,8 @@ function render() {
   if (state.screen === "topic") app.innerHTML = renderTopic();
   else if (state.screen === "lesson") app.innerHTML = renderLesson();
   else if (state.screen === "quiz") app.innerHTML = renderQuiz();
+  else if (state.screen === "practiceHub") app.innerHTML = renderPracticeHub();
+  else if (state.screen === "practiceQuiz") app.innerHTML = renderPracticeQuiz();
   else if (state.screen === "flashcards") app.innerHTML = renderFlashCards();
   else if (state.screen === "flashSubjects") app.innerHTML = renderFlashSubjectPicker();
   else if (state.screen === "search") app.innerHTML = renderSearch();
@@ -3698,6 +3710,10 @@ function renderHome() {
           <span class="topic-icon">${svg("decision")}</span>
           <span>Word Problem Decoder</span>
         </button>
+        <button class="topic-card feature-card" data-action="openProgrammingPractice" aria-label="Programming Practice">
+          <span class="topic-icon">${svg("code")}</span>
+          <span>Programming Practice</span>
+        </button>
         ${topics.map((topic) => `
           <button class="topic-card ${topic.id === "map" ? "feature-card" : ""}" data-topic="${topic.id}" aria-label="${escapeHtml(topic.title)}">
             <span class="topic-icon">${svg(topic.icon)}</span>
@@ -3708,6 +3724,348 @@ function renderHome() {
       <p class="authorship-notice">Copyright 2026 Bianca Russek. All rights reserved.</p>
     </main>
   `;
+}
+
+function normalizePracticeProgress(value) {
+  const source = value && typeof value === "object" ? value : {};
+  return {
+    sessions: Number(source.sessions) || 0,
+    total: Number(source.total) || 0,
+    correct: Number(source.correct) || 0,
+    best: Number(source.best) || 0,
+    byTopic: source.byTopic && typeof source.byTopic === "object" ? source.byTopic : {},
+    missed: Array.isArray(source.missed) ? source.missed.slice(0, 80) : []
+  };
+}
+
+function practiceTopicProgress(topicId) {
+  const item = state.practiceProgress.byTopic[topicId] || {};
+  const total = Number(item.total) || 0;
+  const correct = Number(item.correct) || 0;
+  return {
+    sessions: Number(item.sessions) || 0,
+    total,
+    correct,
+    score: total ? Math.round((correct / total) * 100) : 0
+  };
+}
+
+function renderPracticeHub() {
+  const practice = window.ProgrammingPractice;
+  const progressData = state.practiceProgress;
+  const score = progressData.total ? Math.round((progressData.correct / progressData.total) * 100) : 0;
+  const missedCount = progressData.missed.length;
+  const topicCards = practice.topics.map((topic) => {
+    const topicProgress = practiceTopicProgress(topic.id);
+    const status = topicProgress.total
+      ? topicProgress.score + "% across " + topicProgress.total + " questions"
+      : "Fresh questions ready";
+    return [
+      '<button class="topic-card practice-topic-card" data-practice-topic="', topic.id, '" aria-label="', escapeHtml(topic.title), '">',
+      '<span class="topic-icon">', svg(topic.icon), '</span>',
+      '<span class="practice-topic-title">', escapeHtml(topic.title), '</span>',
+      '<small>', escapeHtml(status), '</small>',
+      '</button>'
+    ].join("");
+  }).join("");
+  return [
+    '<main class="screen practice-hub-screen">',
+    topbar("Programming Practice"),
+    '<p class="subtitle">Build durable skills with fresh loops, lists, tracing, and pseudocode.</p>',
+    '<section class="practice-overview" aria-label="Programming practice progress">',
+    '<div><strong>', progressData.sessions, '</strong><span>sessions</span></div>',
+    '<div><strong>', score, '%</strong><span>accuracy</span></div>',
+    '<div><strong>', missedCount, '</strong><span>to review</span></div>',
+    '</section>',
+    missedCount
+      ? '<button class="pill-button practice-review-button" data-action="reviewPracticeMissed">Review Mode (' + missedCount + ')</button>'
+      : '<p class="practice-review-note">Questions that need another look will collect here.</p>',
+    '<section class="topic-grid practice-topic-grid">', topicCards, '</section>',
+    '<button class="return-home-link practice-home-link" data-action="goHome">Return Home</button>',
+    '</main>'
+  ].join("");
+}
+
+function practiceTypeLabel(type) {
+  const labels = {
+    true_false: "True / False",
+    multiple_choice: "Multiple Choice",
+    trace_output: "Trace the Output",
+    short_response: "Pseudocode Response"
+  };
+  return labels[type] || "Practice";
+}
+
+function practiceDifficultyLabel(difficulty) {
+  const labels = {
+    "warm-up": "Warm Up",
+    "level-up": "Level Up",
+    challenge: "Challenge"
+  };
+  return labels[difficulty] || "Practice";
+}
+
+function practiceScreenTitle() {
+  if (state.practiceReviewMode) return "Review Mode";
+  return window.ProgrammingPractice.topicById(state.practiceTopicId).title;
+}
+
+function renderPracticeQuiz() {
+  const questions = state.practiceQuestions;
+  const current = questions[state.practiceIndex];
+  if (!current) return renderPracticeResults();
+  const record = state.practiceAnswers[current.id];
+  const answered = Boolean(record);
+  const selected = answered ? record.response : state.practiceSelected;
+  const choices = current.type === "short_response"
+    ? renderPracticeResponse(current, record)
+    : '<section class="answer-list">' + current.choices.map((choice, index) => {
+      let className = selected === choice ? "selected" : "";
+      if (answered && choice === current.correctAnswer) className += " correct";
+      if (answered && selected === choice && choice !== current.correctAnswer) className += " wrong";
+      return [
+        '<button class="answer ', className.trim(), '" data-practice-choice="', index, '"', answered ? " disabled" : "", '>',
+        '<span class="answer-letter">', String.fromCharCode(65 + index), '.</span>',
+        '<span class="answer-text">', escapeHtml(choice), '</span>',
+        '</button>'
+      ].join("");
+    }).join("") + '</section>';
+  const feedback = answered ? renderPracticeFeedback(current, record) : "";
+  const circles = questions.map((questionItem, index) => {
+    const className = [
+      index === state.practiceIndex ? "active" : "",
+      state.practiceAnswers[questionItem.id] ? "done" : ""
+    ].filter(Boolean).join(" ");
+    return '<span class="' + className + '">' + (index + 1) + '</span>';
+  }).join("");
+  return [
+    '<main class="screen quiz-screen practice-quiz-screen">',
+    topbar(practiceScreenTitle()),
+    '<section class="quiz-panel practice-panel">',
+    '<div class="quiz-circles">', circles, '</div>',
+    '<div class="practice-question-meta">',
+    '<span>', escapeHtml(practiceTypeLabel(current.type)), '</span>',
+    '<span>', escapeHtml(practiceDifficultyLabel(current.difficulty)), '</span>',
+    '</div>',
+    '<p class="question">', state.practiceIndex + 1, '. ', escapeHtml(current.prompt), '</p>',
+    current.code ? '<pre class="practice-code">' + escapeHtml(current.code) + '</pre>' : "",
+    choices,
+    feedback,
+    '</section>',
+    '<nav class="quiz-actions practice-actions">',
+    '<button class="quiz-nav-button" data-action="prevPracticeQuestion">', svg("back"), '<span>Prev</span></button>',
+    '<button class="quiz-primary ', answered ? (record.correct ? "correct" : "wrong") : "", '" data-action="checkPracticeAnswer">', answered ? (record.correct ? "Correct" : "Review") : "Check", '</button>',
+    '<button class="quiz-ghost" data-action="showPracticeAnswer">Show Answer</button>',
+    '<button class="quiz-nav-button" data-action="nextPracticeQuestion"><span>Next</span>', svg("next"), '</button>',
+    '</nav>',
+    '</main>'
+  ].join("");
+}
+
+function renderPracticeResponse(current, record) {
+  const value = record ? record.response : state.practiceDraft;
+  return [
+    '<label class="practice-response-label" for="practiceResponse">Your pseudocode</label>',
+    '<textarea id="practiceResponse" class="practice-response" rows="9" placeholder="Write your steps here..."',
+    record ? " disabled" : "",
+    '>', escapeHtml(value || ""), '</textarea>'
+  ].join("");
+}
+
+function renderPracticeFeedback(question, record) {
+  const heading = record.correct ? "You got it." : (record.revealed ? "Suggested answer" : "Review this one.");
+  const answerLabel = question.type === "short_response" ? "One strong structure" : "Correct answer";
+  return [
+    '<div class="feedback practice-feedback ', record.correct ? "is-correct" : "needs-review", '">',
+    '<strong>', heading, '</strong>',
+    '<p>', escapeHtml(question.explanation), '</p>',
+    '<span>', answerLabel, '</span>',
+    question.type === "short_response"
+      ? '<pre>' + escapeHtml(question.correctAnswer) + '</pre>'
+      : '<p class="practice-correct-answer">' + escapeHtml(question.correctAnswer) + '</p>',
+    '</div>'
+  ].join("");
+}
+
+function startProgrammingPractice(topicId, options = {}) {
+  const practice = window.ProgrammingPractice;
+  const count = topicId === "mixed-review" ? 10 : 8;
+  const source = options.questions || practice.buildQuestionSet(topicId, count);
+  state.screen = "practiceQuiz";
+  state.practiceTopicId = topicId;
+  state.practiceQuestions = source.map((questionItem) => ({
+    ...questionItem,
+    choices: shuffle(questionItem.choices || [])
+  }));
+  state.practiceIndex = 0;
+  state.practiceAnswers = {};
+  state.practiceSelected = "";
+  state.practiceDraft = "";
+  state.practiceResultSaved = false;
+  state.practiceReviewMode = Boolean(options.reviewMode);
+  render();
+}
+
+function startPracticeReview() {
+  const saved = state.practiceProgress.missed;
+  if (!saved.length) {
+    alert("No missed questions are waiting for review.");
+    return;
+  }
+  const questions = shuffle(saved).slice(0, 10).map((questionItem) => ({
+    ...questionItem,
+    id: questionItem.id + "-review-" + Math.random().toString(36).slice(2, 8),
+    reviewOf: questionItem.id,
+    choices: shuffle(questionItem.choices || [])
+  }));
+  startProgrammingPractice("review-mode", { questions, reviewMode: true });
+}
+
+function currentPracticeQuestion() {
+  return state.practiceQuestions[state.practiceIndex];
+}
+
+function normalizePracticeAnswer(value) {
+  return String(value || "")
+    .toLowerCase()
+    .replace(/[^a-z0-9<>=!+\-*/]+/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function practiceAnswerIsCorrect(question, response) {
+  if (question.type !== "short_response") {
+    return String(response) === String(question.correctAnswer);
+  }
+  const normalized = normalizePracticeAnswer(response);
+  if (!normalized) return false;
+  if (normalized === normalizePracticeAnswer(question.correctAnswer)) return true;
+  const groups = Array.isArray(question.requiredGroups) ? question.requiredGroups : [];
+  return groups.length > 0 && groups.every((group) => group.some((term) => {
+    const required = normalizePracticeAnswer(term);
+    if (!required) return false;
+    if (/^[a-z0-9]+(?: [a-z0-9]+)*$/.test(required)) {
+      return (" " + normalized + " ").includes(" " + required + " ");
+    }
+    return normalized.includes(required);
+  }));
+}
+
+function checkPracticeAnswer() {
+  const current = currentPracticeQuestion();
+  if (!current || state.practiceAnswers[current.id]) return;
+  const response = current.type === "short_response" ? state.practiceDraft.trim() : state.practiceSelected;
+  if (!response) return;
+  state.practiceAnswers[current.id] = {
+    response,
+    correct: practiceAnswerIsCorrect(current, response),
+    revealed: false
+  };
+  render();
+}
+
+function showPracticeAnswer() {
+  const current = currentPracticeQuestion();
+  if (!current || state.practiceAnswers[current.id]) return;
+  state.practiceAnswers[current.id] = {
+    response: current.type === "short_response" ? state.practiceDraft.trim() : "",
+    correct: false,
+    revealed: true
+  };
+  render();
+}
+
+function movePracticeQuestion(direction) {
+  const next = state.practiceIndex + direction;
+  state.practiceSelected = "";
+  state.practiceDraft = "";
+  if (next < 0) return;
+  state.practiceIndex = next >= state.practiceQuestions.length ? state.practiceQuestions.length : next;
+  render();
+}
+
+function clonePracticeQuestion(questionItem) {
+  const clone = JSON.parse(JSON.stringify(questionItem));
+  delete clone.reviewOf;
+  return clone;
+}
+
+function recordPracticeResult() {
+  const questions = state.practiceQuestions;
+  const correct = questions.filter((questionItem) => state.practiceAnswers[questionItem.id]?.correct).length;
+  const progressData = normalizePracticeProgress(state.practiceProgress);
+  progressData.sessions += 1;
+  progressData.total += questions.length;
+  progressData.correct += correct;
+  progressData.best = Math.max(progressData.best, Math.round((correct / questions.length) * 100));
+
+  const touchedTopics = new Set();
+  questions.forEach((questionItem) => {
+    const topicId = questionItem.topic;
+    if (!progressData.byTopic[topicId]) {
+      progressData.byTopic[topicId] = { sessions: 0, total: 0, correct: 0 };
+    }
+    progressData.byTopic[topicId].total += 1;
+    if (state.practiceAnswers[questionItem.id]?.correct) {
+      progressData.byTopic[topicId].correct += 1;
+    }
+    touchedTopics.add(topicId);
+  });
+  touchedTopics.forEach((topicId) => {
+    progressData.byTopic[topicId].sessions += 1;
+  });
+
+  if (state.practiceReviewMode) {
+    const mastered = new Set(questions
+      .filter((questionItem) => state.practiceAnswers[questionItem.id]?.correct)
+      .map((questionItem) => questionItem.reviewOf)
+      .filter(Boolean));
+    progressData.missed = progressData.missed.filter((questionItem) => !mastered.has(questionItem.id));
+  } else {
+    const newMisses = questions
+      .filter((questionItem) => !state.practiceAnswers[questionItem.id]?.correct)
+      .map(clonePracticeQuestion);
+    const seen = new Set();
+    progressData.missed = [...newMisses, ...progressData.missed].filter((questionItem) => {
+      if (seen.has(questionItem.id)) return false;
+      seen.add(questionItem.id);
+      return true;
+    }).slice(0, 80);
+  }
+
+  state.practiceProgress = progressData;
+  save(STORAGE.programmingPractice, progressData);
+}
+
+function renderPracticeResults() {
+  const questions = state.practiceQuestions;
+  const correct = questions.filter((questionItem) => state.practiceAnswers[questionItem.id]?.correct).length;
+  const score = questions.length ? Math.round((correct / questions.length) * 100) : 0;
+  if (!state.practiceResultSaved) {
+    recordPracticeResult();
+    state.practiceResultSaved = true;
+  }
+  const currentMissed = questions.length - correct;
+  return [
+    '<main class="screen practice-results-screen">',
+    topbar("Practice Results"),
+    '<section class="score-card">',
+    '<p>', correct, ' of ', questions.length, ' correct</p>',
+    '<div class="score">', score, '%</div>',
+    '<p>', score >= 80 ? "Strong pattern recognition. A fresh set will keep it flexible." : "Good practice. Review the misses, then try new values.", '</p>',
+    !state.practiceReviewMode && currentMissed
+      ? '<button class="pill-button" data-action="reviewPracticeMissed">Review Mode (' + state.practiceProgress.missed.length + ')</button>'
+      : "",
+    state.practiceReviewMode
+      ? (state.practiceProgress.missed.length
+        ? '<button class="pill-button" data-action="reviewPracticeMissed">Review Remaining</button>'
+        : "")
+      : '<button class="pill-button" data-action="restartProgrammingPractice">Fresh Questions</button>',
+    '<button class="pill-button secondary" data-action="openProgrammingPractice">Programming Practice</button>',
+    '<button class="pill-button secondary" data-action="goHome">Home</button>',
+    '</section>',
+    '</main>'
+  ].join("");
 }
 
 function renderStudyDashboard(p) {
@@ -4151,6 +4509,8 @@ function markDone() {
 
 function back() {
   if (state.screen === "home") return;
+  if (state.screen === "practiceQuiz") state.screen = "practiceHub";
+  else if (state.screen === "practiceHub") state.screen = "home";
   if (state.screen === "quiz" && (state.quizTopic === "daily" || state.quizTopic === "decoder")) state.screen = "home";
   else if (state.screen === "lesson" || state.screen === "quiz") state.screen = "topic";
   else if (state.screen === "topic" || state.screen === "flashcards" || state.screen === "search" || state.screen === "flashSubjects") state.screen = "home";
@@ -4346,6 +4706,17 @@ function wire() {
       render();
     });
   });
+  document.querySelectorAll("[data-practice-topic]").forEach((button) => {
+    button.addEventListener("click", () => startProgrammingPractice(button.dataset.practiceTopic));
+  });
+  document.querySelectorAll("[data-practice-choice]").forEach((button) => {
+    button.addEventListener("click", () => {
+      const current = currentPracticeQuestion();
+      if (!current || state.practiceAnswers[current.id]) return;
+      state.practiceSelected = current.choices[Number(button.dataset.practiceChoice)] || "";
+      render();
+    });
+  });
   document.querySelectorAll("[data-action]").forEach((button) => {
     button.addEventListener("click", () => act(button.dataset.action));
   });
@@ -4359,6 +4730,12 @@ function wire() {
       wire();
     });
   }
+  const practiceResponse = document.getElementById("practiceResponse");
+  if (practiceResponse) {
+    practiceResponse.addEventListener("input", () => {
+      state.practiceDraft = practiceResponse.value;
+    });
+  }
 }
 
 function act(action) {
@@ -4367,6 +4744,16 @@ function act(action) {
   if (action === "star") return toggleBookmark();
   if (action === "startDailyDrill") return startQuiz("daily");
   if (action === "startDecoderPractice") return startQuiz("decoder");
+  if (action === "openProgrammingPractice") {
+    state.screen = "practiceHub";
+    return render();
+  }
+  if (action === "reviewPracticeMissed") return startPracticeReview();
+  if (action === "checkPracticeAnswer") return checkPracticeAnswer();
+  if (action === "showPracticeAnswer") return showPracticeAnswer();
+  if (action === "prevPracticeQuestion") return movePracticeQuestion(-1);
+  if (action === "nextPracticeQuestion") return movePracticeQuestion(1);
+  if (action === "restartProgrammingPractice") return startProgrammingPractice(state.practiceTopicId);
   if (action === "startFlashCards") return startFlashCards();
   if (action === "openSearch") {
     state.screen = "search";

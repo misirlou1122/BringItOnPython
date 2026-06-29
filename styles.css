@@ -42,7 +42,8 @@ body {
 }
 
 button,
-input {
+input,
+textarea {
   font: inherit;
 }
 
@@ -993,6 +994,198 @@ button {
   line-height: 1.35;
 }
 
+.practice-overview {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1px;
+  margin: 0 0 14px;
+  overflow: hidden;
+  border: 1px solid rgba(183, 108, 255, 0.2);
+  border-radius: 20px;
+  background: rgba(183, 108, 255, 0.18);
+  box-shadow: 0 18px 44px rgba(0, 0, 0, 0.32);
+}
+
+.practice-overview div {
+  min-height: 86px;
+  display: grid;
+  place-items: center;
+  align-content: center;
+  gap: 4px;
+  padding: 12px 8px;
+  background: linear-gradient(180deg, rgba(76, 44, 123, 0.42), rgba(8, 5, 18, 0.94));
+  text-align: center;
+}
+
+.practice-overview strong {
+  color: var(--gold);
+  font-size: clamp(1.3rem, 5vw, 1.8rem);
+}
+
+.practice-overview span {
+  color: var(--muted);
+  font-size: 0.76rem;
+  font-weight: 850;
+}
+
+.practice-review-button {
+  width: min(360px, 100%);
+  margin: 0 auto 18px;
+}
+
+.practice-review-note {
+  margin: 0 auto 18px;
+  color: var(--muted);
+  text-align: center;
+  font-size: 0.9rem;
+}
+
+.practice-topic-grid {
+  margin-top: 2px;
+}
+
+.practice-topic-card {
+  min-height: 164px;
+  gap: 7px;
+}
+
+.practice-topic-card .practice-topic-title {
+  display: block;
+  max-width: 100%;
+  color: var(--gold);
+  font-size: clamp(0.82rem, 3vw, 1rem);
+  line-height: 1.12;
+  font-weight: 850;
+  overflow-wrap: anywhere;
+}
+
+.practice-topic-card small {
+  min-height: 2.35em;
+  color: var(--muted);
+  font-size: 0.7rem;
+  line-height: 1.18;
+  font-weight: 700;
+}
+
+.practice-home-link {
+  margin-top: 4px;
+}
+
+.practice-question-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: -8px 0 16px;
+}
+
+.practice-question-meta span {
+  min-height: 30px;
+  display: inline-flex;
+  align-items: center;
+  padding: 5px 10px;
+  border: 1px solid rgba(183, 108, 255, 0.2);
+  border-radius: 999px;
+  background: rgba(183, 108, 255, 0.1);
+  color: var(--accent-2);
+  font-size: 0.76rem;
+  font-weight: 850;
+}
+
+.practice-code {
+  margin: -10px 0 24px;
+  padding: 16px;
+  overflow-x: auto;
+  border: 1px solid rgba(183, 108, 255, 0.2);
+  border-radius: 16px;
+  background: rgba(0, 0, 0, 0.48);
+  color: #f7efff;
+  font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  white-space: pre;
+  -webkit-overflow-scrolling: touch;
+}
+
+.practice-response-label {
+  display: block;
+  margin-bottom: 8px;
+  color: var(--accent-2);
+  font-size: 0.86rem;
+  font-weight: 850;
+}
+
+.practice-response {
+  width: 100%;
+  min-height: 230px;
+  padding: 16px;
+  resize: vertical;
+  border: 1px solid rgba(183, 108, 255, 0.26);
+  border-radius: 16px;
+  outline: none;
+  background: rgba(0, 0, 0, 0.42);
+  color: var(--text);
+  font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+  font-size: 0.92rem;
+  line-height: 1.5;
+  caret-color: var(--accent-2);
+}
+
+.practice-response:focus {
+  border-color: var(--accent-2);
+  box-shadow: 0 0 0 3px rgba(183, 108, 255, 0.12);
+}
+
+.practice-response:disabled {
+  opacity: 0.86;
+}
+
+.practice-feedback {
+  display: grid;
+  gap: 8px;
+}
+
+.practice-feedback > strong {
+  color: var(--text);
+  font-size: 1rem;
+}
+
+.practice-feedback p,
+.practice-feedback span {
+  margin: 0;
+}
+
+.practice-feedback span {
+  color: var(--accent-2);
+  font-size: 0.78rem;
+  font-weight: 850;
+}
+
+.practice-feedback pre {
+  margin: 2px 0 0;
+  padding: 12px;
+  overflow-x: auto;
+  border-radius: 12px;
+  background: rgba(0, 0, 0, 0.34);
+  color: var(--text);
+  font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+  font-size: 0.82rem;
+  line-height: 1.45;
+  white-space: pre;
+}
+
+.practice-feedback.is-correct {
+  box-shadow: inset 4px 0 0 rgba(134, 255, 216, 0.72);
+}
+
+.practice-feedback.needs-review {
+  box-shadow: inset 4px 0 0 rgba(201, 147, 255, 0.72);
+}
+
+.practice-correct-answer {
+  color: var(--text);
+  font-weight: 800;
+}
+
 @media (max-width: 620px) {
   .app-shell {
     padding: calc(env(safe-area-inset-top) + 12px) 10px calc(env(safe-area-inset-bottom) + 12px);
@@ -1381,6 +1574,59 @@ button {
     gap: 8px;
     padding: 10px;
     border-radius: 16px;
+  }
+
+  .practice-overview {
+    margin-bottom: 12px;
+    border-radius: 16px;
+  }
+
+  .practice-overview div {
+    min-height: 72px;
+    padding: 9px 5px;
+  }
+
+  .practice-overview strong {
+    font-size: 1.18rem;
+  }
+
+  .practice-overview span {
+    font-size: 0.68rem;
+  }
+
+  .practice-topic-card {
+    min-height: 144px;
+    padding: 11px 7px;
+  }
+
+  .practice-topic-card .practice-topic-title {
+    font-size: clamp(0.84rem, 3.8vw, 0.98rem);
+  }
+
+  .practice-topic-card small {
+    font-size: 0.66rem;
+  }
+
+  .practice-question-meta {
+    margin: -4px 0 12px;
+  }
+
+  .practice-code {
+    margin: -6px 0 18px;
+    padding: 12px;
+    border-radius: 14px;
+    font-size: 0.78rem;
+    line-height: 1.46;
+  }
+
+  .practice-response {
+    min-height: 210px;
+    padding: 12px;
+    font-size: 0.82rem;
+  }
+
+  .practice-feedback pre {
+    font-size: 0.76rem;
   }
 }
 
